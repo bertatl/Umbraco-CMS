@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using NPoco;
+using NPoco.SqlServer;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Infrastructure.Persistence;
+using Microsoft.Data.SqlClient;
+
 
 namespace Umbraco.Extensions
 {
