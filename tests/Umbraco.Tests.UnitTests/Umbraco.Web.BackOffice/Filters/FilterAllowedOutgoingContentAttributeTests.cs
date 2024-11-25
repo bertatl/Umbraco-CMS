@@ -19,11 +19,6 @@ using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.BackOffice.Filters;
 using Umbraco.Extensions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
@@ -35,28 +30,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var attribute = new FilterAllowedOutgoingContentAttribute(
+            var filter = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
-                ActionBrowse.ActionLetter);
+                ActionBrowse.ActionLetter,
+                Mock.Of<IUserService>(),
+                Mock.Of<IEntityService>(),
+                AppCaches.Disabled,
+                Mock.Of<IBackOfficeSecurityAccessor>());
 
             var objectResult = new ObjectResult(expected);
 
-            // Use reflection to access the method on the attribute
-            var methodInfo = typeof(FilterAllowedOutgoingContentAttribute).GetMethod("OnResultExecuting", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-
-            // Create a mock ResultExecutingContext
-            var httpContext = new DefaultHttpContext();
-            var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
-            var resultExecutingContext = new ResultExecutingContext(
-                actionContext,
-                new List<IFilterMetadata>(),
-                objectResult,
-                new Mock<Controller>().Object);
-
-            methodInfo.Invoke(attribute, new object[] { resultExecutingContext });
-
-            var result = objectResult.Value;
+            // Use reflection to access the private method
+            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var result = methodInfo.Invoke(filter, new object[] { objectResult });
 
             Assert.AreEqual(expected, result);
         }
