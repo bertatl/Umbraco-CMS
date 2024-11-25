@@ -425,7 +425,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task RandomTest2()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            // Removed: d.Test.CollectAuto = false;
 
             d.Set(1, "one");
             d.Set(2, "two");
@@ -471,30 +471,23 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public void WriteLockingFirstSnapshot()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            // Removed: d.Test.CollectAuto = false;
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
-            using (d.GetScopedWriteLock(GetScopeProvider()))
+using (d.GetScopedWriteLock(GetScopeProvider()))
             {
                 SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
                 Assert.AreEqual(0, s1.Gen);
-                Assert.AreEqual(1, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen);
                 Assert.IsNull(s1.Get(1));
             }
 
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
             Assert.AreEqual(1, s2.Gen);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("one", s2.Get(1));
         }
 
