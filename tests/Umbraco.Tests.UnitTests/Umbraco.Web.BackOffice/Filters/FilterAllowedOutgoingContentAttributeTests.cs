@@ -79,9 +79,8 @@ public class PublicFilterAllowedOutgoingContentFilter
 
             var objectResult = new ObjectResult(expected);
 
-            // Use reflection to access the private method
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var result = methodInfo.Invoke(filter, new object[] { objectResult });
+            // Use the wrapper class to access the method
+            var result = filter.GetValueFromResponse(objectResult);
 
             Assert.AreEqual(expected, result);
         }
