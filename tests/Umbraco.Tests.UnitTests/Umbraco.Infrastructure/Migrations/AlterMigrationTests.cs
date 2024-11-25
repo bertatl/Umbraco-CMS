@@ -11,7 +11,6 @@ using Umbraco.Cms.Core.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Tests.Common.TestHelpers;
 using Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Stubs;
-using Umbraco.Cms.Infrastructure.Migrations.Expressions.Rename.Column;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations
 {
