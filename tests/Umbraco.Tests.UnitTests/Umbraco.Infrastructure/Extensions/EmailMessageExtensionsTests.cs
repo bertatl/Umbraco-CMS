@@ -1,7 +1,6 @@
 // Copyright (c) Umbraco.
 // See LICENSE for more details.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +9,6 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
-using MimeKit;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
@@ -18,27 +16,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
     public class EmailMessageExtensionsTests
     {
         private const string ConfiguredSender = "noreply@umbraco.com";
-
-        private static MimeMessage ConvertToMimeMessage(EmailMessage emailMessage, string configuredSender)
-        {
-            var message = new MimeMessage();
-            message.From.Add(MailboxAddress.Parse(emailMessage.From ?? configuredSender));
-            message.To.Add(MailboxAddress.Parse(emailMessage.To));
-            message.Subject = emailMessage.Subject;
-
-            var builder = new BodyBuilder();
-            if (emailMessage.IsBodyHtml)
-            {
-                builder.HtmlBody = emailMessage.Body;
-            }
-            else
-            {
-                builder.TextBody = emailMessage.Body;
-            }
-
-            message.Body = builder.ToMessageBody();
-            return message;
-        }
 
         [Test]
         public void Can_Construct_MimeMessage_From_Simple_EmailMessage()
@@ -50,15 +27,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = ConvertToMimeMessage(emailMessage, ConfiguredSender);
+            var result = emailMessage.ToMimeMessage(ConfiguredSender);
 
-            Assert.AreEqual(1, result.From.Count);
+            Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
-            Assert.AreEqual(1, result.To.Count);
+            Assert.AreEqual(1, result.To.Count());
             Assert.AreEqual(to, result.To.First().ToString());
             Assert.AreEqual(subject, result.Subject);
             Assert.IsNull(result.TextBody);
-            Assert.AreEqual(body, result.HtmlBody);
+            Assert.AreEqual(body, result.HtmlBody.ToString());
         }
 
         [Test]
