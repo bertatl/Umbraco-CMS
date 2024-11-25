@@ -54,6 +54,7 @@ namespace Umbraco.Cms.Tests.Common.Builders
 
             return new DataEditor(
                 Mock.Of<IIOHelper>(),
+                Mock.Of<IJsonSerializer>(),
                 name,
                 alias,
                 EditorType.PropertyValue)
