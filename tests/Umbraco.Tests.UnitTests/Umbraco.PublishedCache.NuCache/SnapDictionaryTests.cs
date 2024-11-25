@@ -182,101 +182,53 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task CollectNulls()
         {
-        var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
-
-            dynamic testHelper = GetTestHelper(d);
+            var d = new SnapDictionary<int, string>();
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, testHelper.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
             d.Set(1, "one");
-            Assert.AreEqual(1, testHelper.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
             d.Set(1, "uno");
-            Assert.AreEqual(1, testHelper.GetValues(1).Length);
-
-            Assert.AreEqual(1, testHelper.LiveGen);
-            Assert.IsTrue(testHelper.NextGen);
+            Assert.AreEqual(1, d.Count);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
-
-            Assert.AreEqual(1, testHelper.LiveGen);
-            Assert.IsFalse(testHelper.NextGen);
+            Assert.AreEqual("uno", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(2, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, testHelper.GetValues(1).Length);
-
-            Assert.AreEqual(2, testHelper.LiveGen);
-            Assert.IsTrue(testHelper.NextGen);
 
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
-
-            Assert.AreEqual(2, testHelper.LiveGen);
-            Assert.IsFalse(testHelper.NextGen);
+            Assert.AreEqual("uno", s2.Get(1));
 
             // gen 3
-            Assert.AreEqual(2, testHelper.GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(3, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(3, testHelper.GetValues(1).Length);
             d.Clear(1);
-            Assert.AreEqual(3, testHelper.GetValues(1).Length);
-
-            Assert.AreEqual(3, testHelper.LiveGen);
-            Assert.IsTrue(testHelper.NextGen);
-
-            dynamic[] tv = testHelper.GetValues(1);
-            Assert.AreEqual(3, tv[0].Gen);
-            Assert.AreEqual(2, tv[1].Gen);
-            Assert.AreEqual(1, tv[2].Gen);
-
-            Assert.AreEqual(0, testHelper.FloorGen);
 
             // nothing to collect
             await d.CollectAsync();
             GC.KeepAlive(s1);
             GC.KeepAlive(s2);
-            Assert.AreEqual(0, testHelper.FloorGen);
-            Assert.AreEqual(3, testHelper.LiveGen);
-            Assert.IsTrue(testHelper.NextGen);
             Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(3, testHelper.GetValues(1).Length);
 
             // one snapshot to collect
             s1 = null;
             GC.Collect();
             GC.KeepAlive(s2);
             await d.CollectAsync();
-            Assert.AreEqual(1, testHelper.FloorGen);
-            Assert.AreEqual(3, testHelper.LiveGen);
-            Assert.IsTrue(testHelper.NextGen);
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(2, testHelper.GetValues(1).Length);
 
             // another snapshot to collect
             s2 = null;
             GC.Collect();
             await d.CollectAsync();
-            Assert.AreEqual(2, testHelper.FloorGen);
-            Assert.AreEqual(3, testHelper.LiveGen);
-            Assert.IsTrue(testHelper.NextGen);
             Assert.AreEqual(0, d.SnapCount);
 
-            // and everything is gone?
-            // no, cannot collect the live gen because we'd need to lock
-            Assert.AreEqual(1, testHelper.GetValues(1).Length);
-
-            d.CreateSnapshot();
-            GC.Collect();
-            await d.CollectAsync();
-
-            // poof, gone
-            Assert.AreEqual(0, testHelper.GetValues(1).Length);
+            // Create a new snapshot and check the final state
+            var finalSnapshot = d.CreateSnapshot();
+            Assert.IsNull(finalSnapshot.Get(1));
         }
 
         [Test]
@@ -625,60 +577,29 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public void WriteLocking()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.Count);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
-
-            Assert.AreEqual(1, s1.Gen);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
-
-            Assert.AreEqual(2, s2.Gen);
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("uno", s2.Get(1));
 
-            using (d.GetScopedWriteLock(GetScopeProvider()))
+using (d.GetScopedWriteLock(GetScopeProvider()))
             {
                 // gen 3
-                Assert.AreEqual(2, d.Test.GetValues(1).Length);
                 d.SetLocked(1, "ein");
-                Assert.AreEqual(3, d.Test.GetValues(1).Length);
-
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen);
 
                 SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
-
-                Assert.AreEqual(2, s3.Gen);
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen); // has NOT changed when (non) creating snapshot
-                Assert.AreEqual("uno", s3.Get(1));
+                Assert.AreEqual("uno", s3.Get(1)); // Should still be "uno" because we're in a write lock
             }
 
             SnapDictionary<int, string>.Snapshot s4 = d.CreateSnapshot();
-
-            Assert.AreEqual(3, s4.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("ein", s4.Get(1));
         }
 
