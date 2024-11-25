@@ -11,6 +11,7 @@ using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Collections;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Persistence.Repositories;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 {
