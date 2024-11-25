@@ -72,7 +72,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             Assert.AreEqual(expected2, counter2);
         }
 
-        private ScopeProvider GetScopeProvider(NullLoggerFactory instance)
+        private IScopeProvider GetScopeProvider(NullLoggerFactory instance)
         {
             var fileSystems = new FileSystems(
                 instance,
