@@ -12,8 +12,16 @@ using Umbraco.Cms.Tests.Common.TestHelpers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
 {
+    // Interface to match the structure expected by PopulateAliases
+    public interface IPropertyTypeGroupDto
+    {
+        int Id { get; set; }
+        string Text { get; set; }
+        string Alias { get; set; }
+    }
+
     // Mock class for testing purposes
-    public class MockPropertyTypeGroupDto
+    public class MockPropertyTypeGroupDto : IPropertyTypeGroupDto
     {
         public int Id { get; set; }
         public string Text { get; set; }
