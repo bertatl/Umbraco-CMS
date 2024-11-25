@@ -69,20 +69,36 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             }
         }
 
-        private IScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
+        private ScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
         {
+            NullLoggerFactory loggerFactory = NullLoggerFactory.Instance;
+
+            var fileSystems = new FileSystems(
+                loggerFactory,
+                Mock.Of<IIOHelper>(),
+                Options.Create(new GlobalSettings()),
+                Mock.Of<IHostingEnvironment>());
+
+            var mediaFileManager = new MediaFileManager(
+                Mock.Of<IFileSystem>(),
+                Mock.Of<IMediaPathScheme>(),
+                loggerFactory.CreateLogger<MediaFileManager>(),
+                Mock.Of<IShortStringHelper>(),
+                Mock.Of<IServiceProvider>(),
+                Options.Create(new ContentSettings()));
+
             eventAggregatorMock = new Mock<IEventAggregator>();
-            var scopeProviderMock = new Mock<IScopeProvider>();
 
-            scopeProviderMock.Setup(x => x.CreateScope(It.IsAny<IScopedNotificationPublisher>()))
-                .Returns((IScopedNotificationPublisher notificationPublisher) =>
-                {
-                    var scopeMock = new Mock<IScope>();
-                    scopeMock.Setup(s => s.Notifications).Returns(notificationPublisher);
-                    return scopeMock.Object;
-                });
-
-            return scopeProviderMock.Object;
+            return new ScopeProvider(
+                Mock.Of<IUmbracoDatabaseFactory>(),
+                fileSystems,
+                Options.Create(new CoreDebugSettings()),
+                mediaFileManager,
+                loggerFactory.CreateLogger<ScopeProvider>(),
+                loggerFactory,
+                Mock.Of<IRequestCache>(),
+                eventAggregatorMock.Object
+            );
         }
     }
 }
