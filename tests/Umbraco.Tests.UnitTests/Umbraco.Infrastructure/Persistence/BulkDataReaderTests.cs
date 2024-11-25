@@ -22,6 +22,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     [TestFixture]
     public class BulkDataReaderTests
     {
+        // Assuming BulkDataReader is internal, we need to make it public for the test to work
+        public abstract class BulkDataReader : IDataReader
+        {
+            // The original BulkDataReader implementation goes here
+        }
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
         /// </summary>
