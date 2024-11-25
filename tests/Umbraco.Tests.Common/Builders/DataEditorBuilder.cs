@@ -9,6 +9,7 @@ using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Core.Services;
+using Moq;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
 
@@ -53,14 +54,16 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IConfigurationEditor explicitConfigurationEditor = _explicitConfigurationEditorBuilder.Build();
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
-            return new DataEditor(
-                name,
-                alias,
-                explicitValueEditor,
-                explicitConfigurationEditor)
-            {
-                DefaultConfiguration = defaultConfiguration
-            };
+            // Create a mock IDataEditor
+            var mockDataEditor = new Mock<IDataEditor>();
+            mockDataEditor.SetupGet(x => x.Alias).Returns(alias);
+            mockDataEditor.SetupGet(x => x.Name).Returns(name);
+            mockDataEditor.SetupGet(x => x.DefaultConfiguration).Returns(defaultConfiguration);
+            mockDataEditor.SetupGet(x => x.ConfigurationEditor).Returns(explicitConfigurationEditor);
+            mockDataEditor.SetupGet(x => x.Type).Returns(EditorType.PropertyValue);
+            mockDataEditor.SetupGet(x => x.Editor).Returns(explicitValueEditor);
+
+            return mockDataEditor.Object;
         }
 
         string IWithAliasBuilder.Alias
