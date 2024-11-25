@@ -2191,13 +2191,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// </remarks>
         protected string TableName => BulkDataReaderTests.TestTableName;
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
-            /// </summary>
-            /// <remarks>
-            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-            /// </remarks>
-            protected override void AddSchemaTableRows()
+        /// <summary>
+        /// Adds schema table rows for the various <see cref="SqlDbType"/> values.
+        /// </summary>
+        /// <remarks>
+        /// Creates a schema row for the various <see cref="SqlDbType"/> values.
+        /// </remarks>
+        protected void AddSchemaTableRows()
             {
                 AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
                 AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
@@ -2411,13 +2411,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// </remarks>
         protected string TableName => BulkDataReaderTests.TestTableName;
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
-            /// </summary>
-            /// <remarks>
-            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-            /// </remarks>
-            protected override void AddSchemaTableRows() =>
+        /// <summary>
+        /// Adds schema table rows for the various <see cref="SqlDbType"/> values.
+        /// </summary>
+        /// <remarks>
+        /// Creates a schema row for the various <see cref="SqlDbType"/> values.
+        /// </remarks>
+        protected void AddSchemaTableRows() =>
                 AddSchemaTableRow(
                     ColumnName,
                     ColumnSize,
