@@ -8,6 +8,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
+using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
 using Moq;
@@ -55,13 +56,15 @@ namespace Umbraco.Cms.Tests.Common.Builders
 
             var ioHelper = new Mock<IIOHelper>().Object;
             var jsonSerializer = new Mock<IJsonSerializer>().Object;
+            var propertyEditorCollection = Mock.Of<IPropertyEditorCollection>();
             return new DataEditor(
+                ioHelper,
+                jsonSerializer,
+                propertyEditorCollection,
                 name,
                 alias,
                 explicitValueEditor,
-                explicitConfigurationEditor,
-                ioHelper,
-                jsonSerializer)
+                explicitConfigurationEditor)
             {
                 DefaultConfiguration = defaultConfiguration
             };
