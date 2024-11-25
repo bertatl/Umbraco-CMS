@@ -20,6 +20,8 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Sync;
 using Umbraco.Cms.Infrastructure.HostedServices;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.HostedServices
 {
@@ -99,7 +101,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.HostedServices
             await sut.PerformExecuteAsync(null);
             _mockNotificationMethod.Verify(
                 x => x.SendAsync(
-                    It.Is<HealthCheckResults>(y => y.ResultsAsDictionary.Count == 1 && y.ResultsAsDictionary.ContainsKey("Check1"))), Times.Once);
+                    It.Is<HealthCheckResults>(y =>
+                        y.GetType().GetProperties().Any(p => p.Name == "ResultsAsDictionary" &&
+                            ((IDictionary<string, IEnumerable<HealthCheckStatus>>)p.GetValue(y)).Count == 1 &&
+                            ((IDictionary<string, IEnumerable<HealthCheckStatus>>)p.GetValue(y)).ContainsKey("Check1")))),
+                Times.Once);
         }
 
         private HealthCheckNotifier CreateHealthCheckNotifier(
