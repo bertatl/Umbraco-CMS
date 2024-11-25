@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
         [SetUp]
         public void SetUp()
         {
-            _generator = ImageSharpImageUrlGenerator.Create(new List<string>());
+            _generator = new ImageSharpImageUrlGenerator(new List<string>());
         }
 
         [Test]
