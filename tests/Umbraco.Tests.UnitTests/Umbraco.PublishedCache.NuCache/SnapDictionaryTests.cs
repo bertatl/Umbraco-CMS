@@ -679,7 +679,7 @@ using (d.GetScopedWriteLock(scopeProvider))
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
             Assert.AreEqual("uno", s2.Get(1));
 
-            var scopeContext = new ScopeContext();
+            var scopeContext = Mock.Of<IScopeContext>();
             IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
 using (d.GetScopedWriteLock(scopeProvider))
             {
