@@ -72,7 +72,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             Assert.AreEqual(expected2, counter2);
         }
 
-        private ScopeProvider GetScopeProvider(NullLoggerFactory instance)
+        private IScopeProvider GetScopeProvider(NullLoggerFactory instance)
         {
             var fileSystems = new FileSystems(
                 instance,
@@ -88,16 +88,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
                 Mock.Of<IServiceProvider>(),
                 Options.Create(new ContentSettings()));
 
-            return new ScopeProvider(
-                Mock.Of<IUmbracoDatabaseFactory>(),
-                fileSystems,
-                Options.Create(new CoreDebugSettings()),
-                mediaFileManager,
-                Mock.Of<ILogger<ScopeProvider>>(),
-                instance,
-                Mock.Of<IRequestCache>(),
-                Mock.Of<IEventAggregator>()
-                );
+            return Mock.Of<IScopeProvider>();
         }
 
         [Test]
