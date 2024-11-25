@@ -23,21 +23,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     public class BulkDataReaderTests
     {
         // Add this line to make BulkDataReader accessible for testing
-public abstract class BulkDataReader : DbDataReader
+public class BulkDataReader
 {
-    public override object GetValue(int i)
+    public virtual object GetValue(int i)
     {
         throw new NotImplementedException();
     }
 
-    public override bool Read()
+    public virtual bool Read()
     {
         throw new NotImplementedException();
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
     }
 }
         /// <summary>
