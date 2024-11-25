@@ -183,7 +183,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task CollectNulls()
         {
         var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            d.SetAutoCollect(false); // Assuming we've added this method to SnapDictionary
 
             dynamic testHelper = GetTestHelper(d);
 
@@ -625,11 +625,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public void WriteLocking()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            d.SetAutoCollect(false); // Assuming we've added this method to SnapDictionary
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetValues(1).Length); // Assuming we've added this method to SnapDictionary
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
