@@ -12,55 +12,9 @@ using System.Data.SqlClient;
 using System.Collections.ObjectModel;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
-using System.Data.SqlClient;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
-    // This is a mock implementation of BulkDataReader for testing purposes
-    public abstract class MockBulkDataReader : IDataReader
-    {
-        public abstract void Close();
-        public abstract int Depth { get; }
-        public abstract DataTable GetSchemaTable();
-        public abstract bool IsClosed { get; }
-        public abstract bool NextResult();
-        public abstract bool Read();
-        public abstract int RecordsAffected { get; }
-        public abstract void Dispose();
-        public abstract int FieldCount { get; }
-        public abstract bool GetBoolean(int i);
-        public abstract byte GetByte(int i);
-        public abstract long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length);
-        public abstract char GetChar(int i);
-        public abstract long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length);
-        public abstract IDataReader GetData(int i);
-        public abstract string GetDataTypeName(int i);
-        public abstract DateTime GetDateTime(int i);
-        public abstract decimal GetDecimal(int i);
-        public abstract double GetDouble(int i);
-        public abstract Type GetFieldType(int i);
-        public abstract float GetFloat(int i);
-        public abstract Guid GetGuid(int i);
-        public abstract short GetInt16(int i);
-        public abstract int GetInt32(int i);
-        public abstract long GetInt64(int i);
-        public abstract string GetName(int i);
-        public abstract int GetOrdinal(string name);
-        public abstract string GetString(int i);
-        public abstract object GetValue(int i);
-        public abstract int GetValues(object[] values);
-        public abstract bool IsDBNull(int i);
-        public abstract object this[int i] { get; }
-        public abstract object this[string name] { get; }
-
-        public abstract ReadOnlyCollection<SqlBulkCopyColumnMapping> ColumnMappings { get; }
-
-        protected virtual void AddSchemaTableRow(string columnName, int? columnSize, short? numericPrecision, short? numericScale, bool isUnique, bool isKey, bool allowDBNull, SqlDbType providerType, string udtSchema, string udtType, string xmlSchemaCollectionDatabase, string xmlSchemaCollectionOwningSchema, string xmlSchemaCollectionName)
-        {
-            // Implementation details would depend on how you want to handle schema information in your tests
-        }
-    }
-
     /// <summary>
     ///  Unit tests for BulkDataReader functionality.
     /// </summary>
@@ -71,7 +25,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     [TestFixture]
     public class BulkDataReaderTests
     {
-    private class MockDataReader : MockBulkDataReader
+        private class MockDataReader : IDataReader
         {
             public void Close() { }
             public int Depth => 0;
@@ -2405,7 +2359,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             public override bool Read() => _readCount++ < 1;
         }
 
-    private class BulkDataReaderSchemaTest : MockBulkDataReader
+        private class BulkDataReaderSchemaTest : BulkDataReader
         {
             /// <summary>
             /// Gets or sets a value indicating whether the column is nullable (i.e. optional).
