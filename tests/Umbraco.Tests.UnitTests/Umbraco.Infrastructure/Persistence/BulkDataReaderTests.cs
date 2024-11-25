@@ -2218,7 +2218,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
             /// </remarks>
-            protected string SchemaName => BulkDataReaderTests.TestSchemaName;
+            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.TableName"/>.
@@ -2226,7 +2226,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
-            protected string TableName => BulkDataReaderTests.TestTableName;
+            protected override string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
@@ -2358,7 +2358,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             public override bool Read() => _readCount++ < 1;
         }
 
-        private class BulkDataReaderSchemaTest : IDataReader
+        private class BulkDataReaderSchemaTest : BulkDataReader
         {
             /// <summary>
             /// Gets or sets a value indicating whether the column is nullable (i.e. optional).
@@ -2438,7 +2438,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
             /// </remarks>
-            protected string SchemaName => BulkDataReaderTests.TestSchemaName;
+            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.TableName"/>.
@@ -2446,7 +2446,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
-            protected string TableName => BulkDataReaderTests.TestTableName;
+            protected override string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
@@ -2454,7 +2454,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Creates a schema row for the various <see cref="SqlDbType"/> values.
             /// </remarks>
-            protected void AddSchemaTableRows() =>
+            protected override void AddSchemaTableRows() =>
                 AddSchemaTableRow(
                     ColumnName,
                     ColumnSize,
@@ -2483,7 +2483,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// Never returns.
             /// </returns>
             /// <seealso cref="BulkDataReader.GetValue(int)"/>
-            public object GetValue(int i) => throw new InvalidOperationException("No data.");
+            public override object GetValue(int i) => throw new InvalidOperationException("No data.");
 
             /// <summary>
             /// See <see cref="BulkDataReader.Read()"/>
@@ -2492,7 +2492,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// False.
             /// </returns>
             /// <seealso cref="BulkDataReader.Read()"/>
-            public bool Read() => false;
+            public override bool Read() => false;
         }
     }
 }
