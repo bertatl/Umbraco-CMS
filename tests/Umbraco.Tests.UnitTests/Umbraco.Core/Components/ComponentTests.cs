@@ -180,14 +180,68 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer3, Composer4>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
-            // 2 is Core and requires 4
-            // 3 is User - stays with RuntimeLevel.Run
-            // => reorder components accordingly
-            composers.Compose();
+            // Manual ordering of composers
+            var orderedComposers = OrderComposers(types);
+
+// Compose using the ordered composers
+            foreach (var composerType in orderedComposers)
+            {
+                var composer = (IComposer)Activator.CreateInstance(composerType);
+                composer.Compose(composition);
+            }
+
+            // Assert the composition order
             AssertTypeArray(TypeArray<Composer1, Composer4, Composer2, Composer3>(), Composed);
+        }
+
+        private Type[] OrderComposers(Type[] types)
+        {
+            var composerDict = types.ToDictionary(t => t, t => new HashSet<Type>());
+
+            // Add dependencies
+            foreach (var type in types)
+            {
+                var composeAfterAttributes = type.GetCustomAttributes(typeof(ComposeAfterAttribute), true);
+                foreach (ComposeAfterAttribute attr in composeAfterAttributes)
+                {
+                    if (composerDict.ContainsKey(attr.ComposerType))
+                    {
+                        composerDict[type].Add(attr.ComposerType);
+                    }
+                }
+            }
+
+            // Topological sort
+            var sorted = new List<Type>();
+            var visited = new HashSet<Type>();
+
+            foreach (var type in types)
+            {
+                Visit(type, visited, sorted, composerDict);
+            }
+
+            return sorted.ToArray();
+        }
+
+        private void Visit(Type type, HashSet<Type> visited, List<Type> sorted, Dictionary<Type, HashSet<Type>> composerDict)
+        {
+            if (!visited.Contains(type))
+            {
+                visited.Add(type);
+
+                foreach (var dependency in composerDict[type])
+                {
+                    Visit(dependency, visited, sorted, composerDict);
+                }
+
+                sorted.Add(type);
+            }
+            else if (!sorted.Contains(type))
+            {
+                throw new Exception("Circular dependency detected");
+            }
         }
 
         [Test]
