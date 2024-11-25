@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Cache;
@@ -36,15 +35,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 .Callback((string cacheKey, Func<object> o, TimeSpan? t, bool b, string[] s) => cached.Add(cacheKey));
             cache.Setup(x => x.SearchByKey(It.IsAny<string>())).Returns(new AuditItem[] { });
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.GetAll(It.IsAny<object[]>(), It.IsAny<Func<object[], IEnumerable<AuditItem>>>()))
-                .Returns((object[] ids, Func<object[], IEnumerable<AuditItem>> getAll) => getAll(ids));
+            var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
 
-            AuditItem[] unused = defaultPolicy.Object.GetAll(new object[] { }, ids => new[]
+            AuditItem[] unused = defaultPolicy.GetAll(new object[] { }, ids => new[]
                     {
                         new AuditItem(1, AuditType.Copy, 123, "test", "blah"),
                         new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
-                    }).ToArray();
+                    });
 
             Assert.AreEqual(0, cached.Count);
         }
@@ -57,15 +54,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Insert(It.IsAny<string>(), It.IsAny<Func<object>>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Callback(() => isCached = true);
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<object[], IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getById, Func<object[], IEnumerable<AuditItem>> getAll) =>
-                {
-                    isCached = true;
-                    return getById(id);
-                });
+            var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
 
-            AuditItem unused = defaultPolicy.Object.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => null);
+            AuditItem unused = defaultPolicy.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => null);
             Assert.IsTrue(isCached);
         }
     }
