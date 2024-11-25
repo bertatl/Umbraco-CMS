@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -55,7 +56,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
+
+            // Use reflection to invoke the private method
+            MethodInfo addDomainWarningsMethod = typeof(ContentController).GetMethod("AddDomainWarnings", BindingFlags.NonPublic | BindingFlags.Instance);
+            addDomainWarningsMethod.Invoke(contentController, new object[] { rootNode, culturesPublished, notifications });
 
             Assert.IsEmpty(notifications.Notifications);
         }
