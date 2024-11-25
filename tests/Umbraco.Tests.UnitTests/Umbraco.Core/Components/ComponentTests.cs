@@ -413,19 +413,19 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         }
 
         [Test]
-        public void Requires1()
-        {
-            IServiceCollection register = MockRegister();
-            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
+    public void Requires1()
+    {
+        IServiceCollection register = MockRegister();
+        var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
-            Type[] types = new[] { typeof(Composer6), typeof(Composer7), typeof(Composer8) };
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
-            Composed.Clear();
-            composers.Compose();
-            Assert.AreEqual(2, Composed.Count);
-            Assert.AreEqual(typeof(Composer6), Composed[0]);
-            Assert.AreEqual(typeof(Composer8), Composed[1]);
-        }
+        Type[] types = new[] { typeof(Composer6), typeof(Composer7), typeof(Composer8) };
+        var composers = new TestComposerGraph(composition, types);
+        Composed.Clear();
+        composers.Compose();
+        Assert.AreEqual(2, Composed.Count);
+        Assert.AreEqual(typeof(Composer6), Composed[0]);
+        Assert.AreEqual(typeof(Composer8), Composed[1]);
+    }
 
         [Test]
         public void Requires2A()
