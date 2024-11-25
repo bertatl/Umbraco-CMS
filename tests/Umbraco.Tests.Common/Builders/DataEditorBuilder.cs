@@ -10,6 +10,7 @@ using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
+using Moq;
 
 namespace Umbraco.Cms.Tests.Common.Builders
 {
@@ -52,7 +53,11 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IConfigurationEditor explicitConfigurationEditor = _explicitConfigurationEditorBuilder.Build();
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
+            var ioHelper = new Mock<IIOHelper>().Object;
+            var jsonSerializer = new Mock<IJsonSerializer>().Object;
             return new DataEditor(
+                ioHelper,
+                jsonSerializer,
                 name,
                 alias,
                 EditorType.PropertyValue,
