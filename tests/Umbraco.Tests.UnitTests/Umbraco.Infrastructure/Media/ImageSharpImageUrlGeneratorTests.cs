@@ -4,6 +4,8 @@
 using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Infrastructure.Media;
+using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Core.DependencyInjection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
 {
@@ -14,12 +16,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
         private static readonly ImageUrlGenerationOptions.CropCoordinates s_crop = new ImageUrlGenerationOptions.CropCoordinates(0.58729977382575338m, 0.055768992440203169m, 0m, 0.32457553600198386m);
         private static readonly ImageUrlGenerationOptions.FocalPointPosition s_focus1 = new ImageUrlGenerationOptions.FocalPointPosition(0.96m, 0.80827067669172936m);
         private static readonly ImageUrlGenerationOptions.FocalPointPosition s_focus2 = new ImageUrlGenerationOptions.FocalPointPosition(0.4275m, 0.41m);
-        private static readonly ImageSharpImageUrlGenerator s_generator = new ImageSharpImageUrlGenerator(new string[0]);
+        private ImageSharpImageUrlGenerator _generator;
+
+        [SetUp]
+        public void SetUp()
+        {
+            var services = new ServiceCollection();
+            services.AddUnique<IImageUrlGenerator, ImageSharpImageUrlGenerator>();
+            var provider = services.BuildServiceProvider();
+            _generator = (ImageSharpImageUrlGenerator)provider.GetRequiredService<IImageUrlGenerator>();
+        }
 
         [Test]
         public void GetCropUrl_CropAliasTest()
         {
-            var urlString = s_generator.GetImageUrl(new ImageUrlGenerationOptions(MediaPath) { Crop = s_crop, Width = 100, Height = 100 });
+            var urlString = _generator.GetImageUrl(new ImageUrlGenerationOptions(MediaPath) { Crop = s_crop, Width = 100, Height = 100 });
             Assert.AreEqual(MediaPath + "?cc=0.58729977382575338,0.055768992440203169,0,0.32457553600198386&width=100&height=100", urlString);
         }
 
