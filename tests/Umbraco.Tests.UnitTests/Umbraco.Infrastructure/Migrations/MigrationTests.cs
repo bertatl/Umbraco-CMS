@@ -64,7 +64,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations
             {
             }
         }
-        private MigrationContext GetMigrationContext() => new MigrationContext(new TestPlan(), Mock.Of<IUmbracoDatabase>(), Mock.Of<ILogger<MigrationContext>>());
+        private IMigrationContext GetMigrationContext() => Mock.Of<IMigrationContext>(ctx =>
+            ctx.Plan == new TestPlan() &&
+            ctx.Database == Mock.Of<IUmbracoDatabase>() &&
+            ctx.Logger == Mock.Of<ILogger<IMigrationContext>>());
 
         [Test]
         public void RunGoodMigration()
