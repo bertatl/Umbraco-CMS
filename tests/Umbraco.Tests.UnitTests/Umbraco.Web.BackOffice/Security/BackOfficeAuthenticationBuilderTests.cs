@@ -48,7 +48,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
         }
 
         [Test]
-        public void EnsureBackOfficeScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
+        public void AddScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
         {
             var scheme = "test";
             var options = new RemoteAuthenticationOptions
@@ -56,10 +56,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            var builder = new BackOfficeAuthenticationBuilder(null);
+            builder.AddScheme<RemoteAuthenticationOptions, TestAuthHandler>(scheme, opt =>
+            {
+                opt.SignInScheme = options.SignInScheme;
+            });
 
-            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
+            Assert.AreEqual("my_cookie", options.SignInScheme);
+            Assert.AreNotEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
         }
     }
 }
