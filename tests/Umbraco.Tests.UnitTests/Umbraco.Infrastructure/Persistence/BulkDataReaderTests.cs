@@ -2208,7 +2208,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <summary>
             /// Constructor.
             /// </summary>
-            public BulkDataReaderSubclass()
+            public MockBulkDataReader()
             {
             }
 
