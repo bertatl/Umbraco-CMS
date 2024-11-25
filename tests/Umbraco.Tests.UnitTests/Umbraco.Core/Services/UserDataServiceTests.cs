@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -120,7 +120,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
             Assert.AreEqual(isDebug.ToString(), actual.Data);
         }
 
-        private SystemInformationTelemetryProvider CreateUserDataService(string culture = "", ModelsMode modelsMode = ModelsMode.InMemoryAuto, bool isDebug = true)
+        private IUserDataService CreateUserDataService(string culture = "", ModelsMode modelsMode = ModelsMode.InMemoryAuto, bool isDebug = true)
         {
             var localizationService = CreateILocalizationService(culture);
 
