@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
