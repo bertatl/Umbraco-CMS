@@ -30,8 +30,18 @@ namespace Umbraco.Cms.Tests.Common.TestHelpers
             IFileSystem partialViewsFileSystem,
             IFileSystem stylesheetFileSystem,
             IFileSystem scriptsFileSystem,
-            IFileSystem mvcViewFileSystem) =>
-            new FileSystems(loggerFactory, ioHelper, globalSettings, hostingEnvironment, macroPartialFileSystem,
-                partialViewsFileSystem, stylesheetFileSystem, scriptsFileSystem, mvcViewFileSystem);
+            IFileSystem mvcViewFileSystem)
+        {
+            var fileSystems = new FileSystems(loggerFactory, ioHelper, globalSettings, hostingEnvironment);
+
+// Set the file systems using reflection
+            typeof(FileSystems).GetProperty("MacroPartialsFileSystem").SetValue(fileSystems, macroPartialFileSystem);
+            typeof(FileSystems).GetProperty("PartialViewsFileSystem").SetValue(fileSystems, partialViewsFileSystem);
+            typeof(FileSystems).GetProperty("StylesheetsFileSystem").SetValue(fileSystems, stylesheetFileSystem);
+            typeof(FileSystems).GetProperty("ScriptsFileSystem").SetValue(fileSystems, scriptsFileSystem);
+            typeof(FileSystems).GetProperty("MvcViewsFileSystem").SetValue(fileSystems, mvcViewFileSystem);
+
+            return fileSystems;
+        }
     }
 }
