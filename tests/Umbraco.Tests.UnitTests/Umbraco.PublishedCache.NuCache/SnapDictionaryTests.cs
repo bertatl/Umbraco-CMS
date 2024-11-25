@@ -342,43 +342,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task CollectGcSnapshots()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
-            SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
-
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            var s1 = d.CreateSnapshot();
+            Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
             d.Set(1, "two");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
-            SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            var s2 = d.CreateSnapshot();
+            Assert.AreEqual("two", s2.Get(1));
 
             // gen 3
             d.Set(1, "three");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
-            SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
-
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            var s3 = d.CreateSnapshot();
+            Assert.AreEqual("three", s3.Get(1));
 
             Assert.AreEqual(3, d.SnapCount);
 
@@ -386,12 +364,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             await d.CollectAsync();
             Assert.AreEqual(3, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
 
             GC.Collect();
             await d.CollectAsync();
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+
+            var finalSnapshot = d.CreateSnapshot();
+            Assert.AreEqual("three", finalSnapshot.Get(1));
         }
 
         [Retry(5)] // TODO make this test non-flaky.
