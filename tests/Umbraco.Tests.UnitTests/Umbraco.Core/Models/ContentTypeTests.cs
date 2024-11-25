@@ -29,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Models
                 .Build();
 
             Assert.Throws<InvalidOperationException>(() =>
-                contentType.PropertyTypeCollection.Add(additionalPropertyType));
+                contentType.AddPropertyType(additionalPropertyType));
         }
 
         [Test]
