@@ -15,23 +15,6 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
-    public static class EmailMessageExtensions
-    {
-        public static NotificationEmailModel ToNotificationEmail(this EmailMessage emailMessage, string configuredSender)
-        {
-            var from = string.IsNullOrEmpty(emailMessage.From) ? configuredSender : emailMessage.From;
-            return new NotificationEmailModel
-            {
-                From = new EmailPerson { Address = from, DisplayName = "" },
-                To = emailMessage.To.Select(t => new EmailPerson { Address = t, DisplayName = "" }).ToList(),
-                Subject = emailMessage.Subject,
-                Body = emailMessage.Body,
-                IsBodyHtml = emailMessage.IsBodyHtml,
-                Attachments = emailMessage.Attachments?.ToList() ?? new List<EmailMessageAttachment>()
-            };
-        }
-    }
-
     [TestFixture]
     public class EmailMessageExtensionsTests
     {
@@ -136,7 +119,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = emailMessage.ToNotificationEmail(ConfiguredSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
 
             Assert.AreEqual(from, result.From.Address);
             Assert.AreEqual("", result.From.DisplayName);
@@ -158,7 +141,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = emailMessage.ToNotificationEmail(ConfiguredSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
 
             Assert.AreEqual(ConfiguredSender, result.From.Address);
             Assert.AreEqual("", result.From.DisplayName);
@@ -181,7 +164,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = emailMessage.ToNotificationEmail(ConfiguredSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
 
             Assert.AreEqual("from@from.com", result.From.Address);
             Assert.AreEqual("From Email", result.From.DisplayName);
