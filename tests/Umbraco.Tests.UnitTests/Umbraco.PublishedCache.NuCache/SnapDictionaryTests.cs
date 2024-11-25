@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Scoping;
 using System.Reflection;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 
@@ -555,7 +556,7 @@ using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
             // scope context: writers enlist
-            var scopeContext = new ScopeContext();
+            var scopeContext = new ScopeContextBase();
             IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
 
             using (IDisposable w1 = d.GetScopedWriteLock(scopeProvider))
