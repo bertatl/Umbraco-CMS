@@ -29,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
         public void CanConvertImageCropperDataSetSrcToString()
         {
             // cropperJson3 - has no crops
-            ImageCropperValue cropperValue = CropperJson3.DeserializeImageCropperValue();
+            ImageCropperValue cropperValue = JsonConvert.DeserializeObject<ImageCropperValue>(CropperJson3);
             Attempt<string> serialized = cropperValue.TryConvertTo<string>();
             Assert.IsTrue(serialized.Success);
             Assert.AreEqual("/media/1005/img_0672.jpg", serialized.Result);
