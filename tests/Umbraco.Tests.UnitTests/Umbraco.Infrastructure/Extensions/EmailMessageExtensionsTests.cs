@@ -119,7 +119,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = new NotificationEmailModel(emailMessage);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
 
             Assert.AreEqual(from, result.From.Address);
             Assert.AreEqual("", result.From.DisplayName);
@@ -141,7 +141,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = new NotificationEmailModel(emailMessage, ConfiguredSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
 
             Assert.AreEqual(ConfiguredSender, result.From.Address);
             Assert.AreEqual("", result.From.DisplayName);
@@ -164,7 +164,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = new NotificationEmailModel(emailMessage);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
 
             Assert.AreEqual("from@from.com", result.From.Address);
             Assert.AreEqual("From Email", result.From.DisplayName);
@@ -197,7 +197,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
                 };
             var emailMessage = new EmailMessage(from, to, cc, bcc, replyTo, subject, body, isBodyHtml, attachments);
 
-            var result = new NotificationEmailModel(emailMessage, ConfiguredSender);
+            var result = emailMessage.ToNotificationEmail(ConfiguredSender);
 
             Assert.AreEqual("from@from.com", result.From.Address);
             Assert.AreEqual("From Email", result.From.DisplayName);
