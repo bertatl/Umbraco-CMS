@@ -57,11 +57,11 @@ namespace Umbraco.Cms.Tests.Common.Builders
                 Mock.Of<IJsonSerializer>(),
                 name,
                 alias,
-                EditorType.PropertyValue)
+                EditorType.PropertyValue,
+                explicitValueEditor,
+                explicitConfigurationEditor)
             {
-                DefaultConfiguration = defaultConfiguration,
-                ExplicitConfigurationEditor = explicitConfigurationEditor,
-                ExplicitValueEditor = explicitValueEditor
+                DefaultConfiguration = defaultConfiguration
             };
         }
 
