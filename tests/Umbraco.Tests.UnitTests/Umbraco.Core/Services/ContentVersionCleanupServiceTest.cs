@@ -24,9 +24,9 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IScopedNotificationPublisher> eventAggregator,
             [Frozen] Mock<IContentVersionCleanupPolicy> policy,
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
+            [Frozen] Mock<IContentVersionService> contentVersionService,
             List<ContentVersionMeta> someHistoricVersions,
-            DateTime aDateTime,
-            ContentVersionService sut)
+            DateTime aDateTime)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
@@ -37,8 +37,11 @@ namespace Umbraco.Tests.Services
             policy.Setup(x => x.Apply(aDateTime, someHistoricVersions))
                 .Returns(someHistoricVersions);
 
+            contentVersionService.Setup(x => x.PerformContentVersionCleanup(aDateTime))
+                .Returns(new List<ContentVersionMeta>());
+
             // # Act
-            IReadOnlyCollection<ContentVersionMeta> report = sut.PerformContentVersionCleanup(aDateTime);
+            IReadOnlyCollection<ContentVersionMeta> report = contentVersionService.Object.PerformContentVersionCleanup(aDateTime);
 
             Assert.Multiple(() =>
             {
