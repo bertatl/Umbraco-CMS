@@ -297,27 +297,28 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task EventuallyCollectNulls()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            SetCollectAuto(d, false);
 
-            Assert.AreEqual(0, d.Test.GetValues(1).Length);
+            dynamic testHelper = GetTestHelper(d);
+            Assert.AreEqual(0, testHelper.GetValues(1).Length);
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, testHelper.LiveGen);
+            Assert.IsTrue(testHelper.NextGen);
 
             await d.CollectAsync();
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
+            dynamic[] tv = testHelper.GetValues(1);
             Assert.AreEqual(1, tv.Length);
             Assert.AreEqual(1, tv[0].Gen);
 
             SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
             Assert.AreEqual("one", s.Get(1));
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(1, testHelper.LiveGen);
+            Assert.IsFalse(testHelper.NextGen);
 
             Assert.AreEqual(1, d.Count);
             Assert.AreEqual(1, d.SnapCount);
@@ -325,12 +326,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 2
             d.Clear(1);
-            tv = d.Test.GetValues(1);
+            tv = testHelper.GetValues(1);
             Assert.AreEqual(2, tv.Length);
             Assert.AreEqual(2, tv[0].Gen);
 
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(2, testHelper.LiveGen);
+            Assert.IsTrue(testHelper.NextGen);
 
             Assert.AreEqual(1, d.Count);
             Assert.AreEqual(1, d.SnapCount);
