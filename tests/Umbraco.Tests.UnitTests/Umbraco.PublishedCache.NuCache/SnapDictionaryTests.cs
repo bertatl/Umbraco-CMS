@@ -1138,11 +1138,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsFalse(d.Test.NextGen);
         }
 
-        private IScopeProvider GetScopeProvider(ScopeContext scopeContext = null)
+        private IScopeProvider GetScopeProvider(IScopeContext scopeContext = null)
         {
             IScopeProvider scopeProvider = Mock.Of<IScopeProvider>();
             Mock.Get(scopeProvider)
-                .Setup(x => x.Context).Returns(scopeContext);
+                .Setup(x => x.Context).Returns(scopeContext ?? Mock.Of<IScopeContext>());
             return scopeProvider;
         }
     }
