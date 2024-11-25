@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
+using MimeKit;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
@@ -29,13 +30,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 
             var result = emailMessage.ToMimeMessage(ConfiguredSender);
 
-            Assert.AreEqual(1, result.From.Count());
+            Assert.AreEqual(1, result.From.Count);
             Assert.AreEqual(from, result.From.First().ToString());
-            Assert.AreEqual(1, result.To.Count());
+            Assert.AreEqual(1, result.To.Count);
             Assert.AreEqual(to, result.To.First().ToString());
             Assert.AreEqual(subject, result.Subject);
             Assert.IsNull(result.TextBody);
-            Assert.AreEqual(body, result.HtmlBody.ToString());
+            Assert.AreEqual(body, result.HtmlBody);
         }
 
         [Test]
