@@ -17,12 +17,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
     [TestFixture]
     public class ValidationFilterAttributeTests
     {
+        private class TestValidationFilterAttribute : ValidationFilterAttribute
+        {
+            // This is a test implementation to make the class accessible
+        }
+
         [Test]
         public void Does_Not_Set_Result_When_No_Errors_In_Model_State()
         {
             // Arrange
             ActionExecutingContext context = CreateContext();
-            var attribute = new ValidationFilterAttribute();
+            var attribute = new TestValidationFilterAttribute();
 
             // Act
             attribute.OnActionExecuting(context);
@@ -36,7 +41,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             // Arrange
             ActionExecutingContext context = CreateContext(withError: true);
-            var attribute = new ValidationFilterAttribute();
+            var attribute = new TestValidationFilterAttribute();
 
             // Act
             attribute.OnActionExecuting(context);
