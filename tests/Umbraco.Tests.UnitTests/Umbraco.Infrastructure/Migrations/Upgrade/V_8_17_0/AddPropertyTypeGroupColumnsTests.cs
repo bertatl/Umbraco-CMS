@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -20,6 +21,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         public string Alias { get; set; }
     }
 
+    // Testable version of AddPropertyTypeGroupColumns
+    public class TestableAddPropertyTypeGroupColumns : AddPropertyTypeGroupColumns
+    {
+        public TestableAddPropertyTypeGroupColumns(IMigrationContext context, IShortStringHelper shortStringHelper)
+            : base(context, shortStringHelper)
+        {
+        }
+
+        public new IEnumerable<MockPropertyTypeGroupDto> PopulateAliases(IEnumerable<MockPropertyTypeGroupDto> dtos)
+        {
+            return base.PopulateAliases(dtos.Cast<PropertyTypeGroupDto>()).Cast<MockPropertyTypeGroupDto>();
+        }
+    }
+
     [TestFixture]
     public class AddPropertyTypeGroupColumnsTests
     {
@@ -34,7 +49,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
             var mockContext = new Mock<IMigrationContext>();
             mockContext.Setup(x => x.Plan).Returns(migrationPlan);
             mockContext.Setup(x => x.Database).Returns(database);
-            var migration = new AddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
+            var migration = new TestableAddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
 
             var dtos = new[]
             {
