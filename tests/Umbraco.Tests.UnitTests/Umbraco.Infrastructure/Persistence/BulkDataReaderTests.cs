@@ -25,42 +25,42 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     [TestFixture]
     public class BulkDataReaderTests
     {
-        private class MockDataReader : IDataReader
-        {
-            public void Close() { }
-            public int Depth => 0;
-            public DataTable GetSchemaTable() => new DataTable();
-            public bool IsClosed => false;
-            public bool NextResult() => false;
-            public bool Read() => false;
-            public int RecordsAffected => 0;
-            public void Dispose() { }
-            public int FieldCount => 1;
-            public bool GetBoolean(int i) => false;
-            public byte GetByte(int i) => 0;
-            public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) => 0;
-            public char GetChar(int i) => ' ';
-            public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) => 0;
-            public IDataReader GetData(int i) => null;
-            public string GetDataTypeName(int i) => string.Empty;
-            public DateTime GetDateTime(int i) => DateTime.MinValue;
-            public decimal GetDecimal(int i) => 0;
-            public double GetDouble(int i) => 0;
-            public Type GetFieldType(int i) => typeof(object);
-            public float GetFloat(int i) => 0;
-            public Guid GetGuid(int i) => Guid.Empty;
-            public short GetInt16(int i) => 0;
-            public int GetInt32(int i) => 0;
-            public long GetInt64(int i) => 0;
-            public string GetName(int i) => string.Empty;
-            public int GetOrdinal(string name) => 0;
-            public string GetString(int i) => string.Empty;
-            public object GetValue(int i) => null;
-            public int GetValues(object[] values) => 0;
-            public bool IsDBNull(int i) => true;
-            public object this[int i] => null;
-            public object this[string name] => null;
-        }
+private class MockDataReader : IDataReader
+{
+    public void Close() { }
+    public int Depth => 0;
+    public DataTable GetSchemaTable() => new DataTable();
+    public bool IsClosed => false;
+    public bool NextResult() => false;
+    public bool Read() => false;
+    public int RecordsAffected => 0;
+    public void Dispose() { }
+    public int FieldCount => 1;
+    public bool GetBoolean(int i) => false;
+    public byte GetByte(int i) => 0;
+    public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) => 0;
+    public char GetChar(int i) => ' ';
+    public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) => 0;
+    public IDataReader GetData(int i) => null;
+    public string GetDataTypeName(int i) => string.Empty;
+    public DateTime GetDateTime(int i) => DateTime.MinValue;
+    public decimal GetDecimal(int i) => 0;
+    public double GetDouble(int i) => 0;
+    public Type GetFieldType(int i) => typeof(object);
+    public float GetFloat(int i) => 0;
+    public Guid GetGuid(int i) => Guid.Empty;
+    public short GetInt16(int i) => 0;
+    public int GetInt32(int i) => 0;
+    public long GetInt64(int i) => 0;
+    public string GetName(int i) => string.Empty;
+    public int GetOrdinal(string name) => 0;
+    public string GetString(int i) => string.Empty;
+    public virtual object GetValue(int i) => null;
+    public int GetValues(object[] values) => 0;
+    public bool IsDBNull(int i) => true;
+    public object this[int i] => null;
+    public object this[string name] => null;
+}
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
         /// </summary>
@@ -2328,12 +2328,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
                 @"<?xml version=string.Empty1.0string.Empty encoding=string.Emptyutf-16string.Empty?><body/>"
             });
 
-        /// <summary>
-        /// Gets the value of the specified column.
-        /// </summary>
-        /// <param name="i">The zero-based column ordinal.</param>
-        /// <returns>The value of the column in <see cref="ExpectedResultSet"/>.</returns>
-        public override object GetValue(int i) => ExpectedResultSet[i];
+    /// <summary>
+    /// Gets the value of the specified column.
+    /// </summary>
+    /// <param name="i">The zero-based column ordinal.</param>
+    /// <returns>The value of the column in <see cref="ExpectedResultSet"/>.</returns>
+    public override object GetValue(int i) => ExpectedResultSet[i];
 
         /// <summary>
         /// Adds a schema table row with the specified parameters.
