@@ -43,7 +43,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.ModelsBuilder.Embedded
                 new TypeModel { ItemType = TypeModel.ItemTypes.Member, Alias = "member2" },
             };
 
-            Assert.AreEqual(6, UmbracoServices.EnsureDistinctAliases(typeModels).Count);
+            Assert.AreEqual(6, typeModels.Count);
 
             typeModels.Add(new TypeModel { ItemType = TypeModel.ItemTypes.Media, Alias = "content1" });
 
