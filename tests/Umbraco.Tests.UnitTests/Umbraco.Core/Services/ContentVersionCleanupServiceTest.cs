@@ -18,8 +18,6 @@ namespace Umbraco.Tests.Services
     [TestFixture]
     internal class ContentVersionCleanupServiceTest
     {
-        // Ensure ContentVersionService is accessible
-        private ContentVersionService _contentVersionService;
         [Test]
         [AutoMoqData]
         public void PerformContentVersionCleanup_Always_RespectsDeleteRevisionsCancellation(
@@ -28,7 +26,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            [Frozen] ContentVersionService sut)
+            ContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
