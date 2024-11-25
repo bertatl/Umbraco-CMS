@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using MimeKit;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
@@ -18,28 +17,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
     {
         private const string ConfiguredSender = "noreply@umbraco.com";
 
-        private static MimeMessage CreateMimeMessage(EmailMessage emailMessage, string configuredSender)
-        {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(emailMessage.From ?? configuredSender, emailMessage.From ?? configuredSender));
-            message.To.Add(new MailboxAddress(emailMessage.To, emailMessage.To));
-            message.Subject = emailMessage.Subject;
-
-            var builder = new BodyBuilder();
-            if (emailMessage.IsBodyHtml)
-            {
-                builder.HtmlBody = emailMessage.Body;
-            }
-            else
-            {
-                builder.TextBody = emailMessage.Body;
-            }
-
-            message.Body = builder.ToMessageBody();
-
-            return message;
-        }
-
         [Test]
         public void Can_Construct_MimeMessage_From_Simple_EmailMessage()
         {
@@ -50,7 +27,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = CreateMimeMessage(emailMessage, ConfiguredSender);
+            var result = emailMessage.ToMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -80,7 +57,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
                 };
             var emailMessage = new EmailMessage(from, to, cc, bcc, replyTo, subject, body, isBodyHtml, attachments);
 
-            var result = CreateMimeMessage(emailMessage, ConfiguredSender);
+            var result = emailMessage.ToMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -111,7 +88,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            var result = CreateMimeMessage(emailMessage, ConfiguredSender);
+            var result = emailMessage.ToMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(ConfiguredSender, result.From.First().ToString());
