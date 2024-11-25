@@ -3,11 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Actions;
@@ -29,11 +25,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
     public class FilterAllowedOutgoingContentAttributeTests
     {
         [Test]
-        public void FilterAllowedOutgoingContent_Already_EnumerableContent()
+        public void GetValueFromResponse_Already_EnumerableContent()
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -42,23 +38,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            var context = new ActionExecutingContext(
-                new ActionContext(new DefaultHttpContext(), new RouteData(), new ActionDescriptor()),
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                new Mock<Controller>().Object);
+            dynamic result = att.GetValueFromResponse(new ObjectResult(expected));
 
-            var result = new ObjectResult(expected);
-            var executedContext = new ActionExecutedContext(context, new List<IFilterMetadata>(), new Mock<Controller>().Object)
-            {
-                Result = result
-            };
-
-            filter.OnActionExecuted(executedContext);
-
-            Assert.IsInstanceOf<ObjectResult>(executedContext.Result);
-            var objectResult = (ObjectResult)executedContext.Result;
-            Assert.AreEqual(expected, objectResult.Value);
+            Assert.AreEqual(expected, result);
         }
 
         [Test]
