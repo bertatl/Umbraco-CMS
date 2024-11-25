@@ -204,9 +204,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             d.Set(1, "one");
             Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, testHelper.LiveGen);
             Assert.IsTrue(testHelper.NextGen);
