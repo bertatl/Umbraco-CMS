@@ -14,6 +14,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Cms.Infrastructure.Persistence;
 
@@ -69,7 +70,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             }
         }
 
-        private ScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
+        private IScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
         {
             NullLoggerFactory loggerFactory = NullLoggerFactory.Instance;
 
