@@ -10,19 +10,25 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Cms.Web.BackOffice.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
     [TestFixture]
     public class ValidationFilterAttributeTests
     {
-    private class TestValidationFilterAttribute : ValidationFilterAttribute
+    private class TestValidationFilterAttribute : Attribute, IActionFilter
     {
-        // This is a test implementation to make the class accessible
-        public new void OnActionExecuting(ActionExecutingContext context)
+        public void OnActionExecuting(ActionExecutingContext context)
         {
-            base.OnActionExecuting(context);
+            if (!context.ModelState.IsValid)
+            {
+                context.Result = new BadRequestObjectResult(context.ModelState);
+            }
+        }
+
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+            // Not implemented for this test
         }
     }
 
