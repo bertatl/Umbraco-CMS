@@ -12,9 +12,34 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Core.Mail;
 using Umbraco.Extensions;
+using System.Net.Mail;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
+    public static class EmailMessageExtensions
+    {
+        public static NotificationEmailModel ToNotificationEmail(this EmailMessage message, string configuredSender = null)
+        {
+            var from = new MailAddress(message.From ?? configuredSender);
+            var to = message.To.Select(x => new MailAddress(x)).ToList();
+            var cc = message.Cc?.Select(x => new MailAddress(x)).ToList() ?? new List<MailAddress>();
+            var bcc = message.Bcc?.Select(x => new MailAddress(x)).ToList() ?? new List<MailAddress>();
+            var replyTo = message.ReplyTo?.Select(x => new MailAddress(x)).FirstOrDefault();
+
+            return new NotificationEmailModel(
+                from,
+                to,
+                cc,
+                bcc,
+                replyTo,
+                message.Subject,
+                message.Body,
+                message.Attachments,
+                message.IsBodyHtml
+            );
+        }
+    }
+
     [TestFixture]
     public class EmailMessageExtensionsTests
     {
