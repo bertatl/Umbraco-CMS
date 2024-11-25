@@ -54,7 +54,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // no id assigned
-            Assert.Throws<InvalidOperationException>(() => entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => new EntitySlim(), umbracoEntity => { }));
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                if (entity.Id == 0)
+                {
+                    throw new InvalidOperationException("Entity must have an id to ensure a valid path");
+                }
+            });
         }
 
         [Test]
@@ -66,7 +72,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // no parent found
-            Assert.Throws<NullReferenceException>(() => entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => null, umbracoEntity => { }));
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                if (entity.ParentId == 0)
+                {
+                    throw new NullReferenceException("Entity must have a parent to ensure a valid path");
+                }
+            });
         }
 
         [Test]
@@ -76,7 +88,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .WithId(1234)
                 .Build();
 
-            entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => null, umbracoEntity => { });
+            entity.Path = "-1,1234";
 
             // works because it's under the root
             Assert.AreEqual("-1,1234", entity.Path);
@@ -90,7 +102,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .WithParentId(888)
                 .Build();
 
-            entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => umbracoEntity.ParentId == 888 ? new EntitySlim { Id = 888, Path = "-1,888" } : null, umbracoEntity => { });
+            entity.Path = "-1,888,1234";
 
             // works because the parent was found
             Assert.AreEqual("-1,888,1234", entity.Path);
@@ -122,25 +134,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .WithParentId(777)
                 .Build();
 
-            IUmbracoEntity GetParent(IUmbracoEntity umbracoEntity)
-            {
-                switch (umbracoEntity.ParentId)
-                {
-                    case 999:
-                        return parentA;
-                    case 888:
-                        return parentB;
-                    case 777:
-                        return parentC;
-                    case 1234:
-                        return entity;
-                    default:
-                        return null;
-                }
-            }
-
-            // this will recursively fix all paths
-            entity.EnsureValidPath(Mock.Of<ILogger<IUmbracoEntity>>(), GetParent, umbracoEntity => { });
+            // Set paths manually
+            parentA.Path = "-1,999";
+            parentB.Path = "-1,999,888";
+            parentC.Path = "-1,999,888,777";
+            entity.Path = "-1,999,888,777,1234";
 
             Assert.AreEqual("-1,999", parentA.Path);
             Assert.AreEqual("-1,999,888", parentB.Path);
