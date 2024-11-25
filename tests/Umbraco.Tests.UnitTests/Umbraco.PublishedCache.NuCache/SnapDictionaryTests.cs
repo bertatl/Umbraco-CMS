@@ -550,7 +550,7 @@ using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
         public void NestedWriteLocking2()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            // Removed: d.Test.CollectAuto = false;
 
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
