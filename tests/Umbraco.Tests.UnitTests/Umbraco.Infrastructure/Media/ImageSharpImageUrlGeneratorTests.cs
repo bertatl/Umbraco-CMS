@@ -5,6 +5,8 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Infrastructure.Media;
 using System.Collections.Generic;
+using Umbraco.Cms.Core.Routing;
+using Moq;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
 {
@@ -20,7 +22,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
         [SetUp]
         public void SetUp()
         {
-            _generator = new ImageSharpImageUrlGenerator(new List<string>());
+            var urlEncoder = Mock.Of<IMediaPathScheme>();
+            _generator = new ImageSharpImageUrlGenerator(urlEncoder);
         }
 
         [Test]
