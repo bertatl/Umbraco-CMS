@@ -8,7 +8,6 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
-using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
 
@@ -55,7 +54,6 @@ namespace Umbraco.Cms.Tests.Common.Builders
 
             return new DataEditor(
                 Mock.Of<IIOHelper>(),
-                Mock.Of<JsonConfigurationSerializer>(),
                 name,
                 alias,
                 EditorType.PropertyValue)
