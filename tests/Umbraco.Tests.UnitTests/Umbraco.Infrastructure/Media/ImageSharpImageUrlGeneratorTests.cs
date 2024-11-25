@@ -5,8 +5,6 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Infrastructure.Media;
 using System.Collections.Generic;
-using System;
-using Moq;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
 {
@@ -17,12 +15,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
         private static readonly ImageUrlGenerationOptions.CropCoordinates s_crop = new ImageUrlGenerationOptions.CropCoordinates(0.58729977382575338m, 0.055768992440203169m, 0m, 0.32457553600198386m);
         private static readonly ImageUrlGenerationOptions.FocalPointPosition s_focus1 = new ImageUrlGenerationOptions.FocalPointPosition(0.96m, 0.80827067669172936m);
         private static readonly ImageUrlGenerationOptions.FocalPointPosition s_focus2 = new ImageUrlGenerationOptions.FocalPointPosition(0.4275m, 0.41m);
-        private IImageUrlGenerator _generator;
+        private ImageSharpImageUrlGenerator _generator;
 
         [SetUp]
         public void SetUp()
         {
-            _generator = Mock.Of<IImageUrlGenerator>();
+            _generator = new ImageSharpImageUrlGenerator(new List<string>());
         }
 
         [Test]
