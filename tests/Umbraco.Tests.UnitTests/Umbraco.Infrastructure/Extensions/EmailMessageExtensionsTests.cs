@@ -224,7 +224,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
                 };
             var emailMessage = new EmailMessage(from, to, cc, bcc, replyTo, subject, body, isBodyHtml, attachments);
 
-            var result = emailMessage.ToNotificationEmail(ConfiguredSender);
+            var result = new NotificationEmailModel(
+                new NotificationEmailAddress(emailMessage.From, string.Empty),
+                emailMessage.To.Select(t => new NotificationEmailAddress(t, string.Empty)),
+                emailMessage.Cc?.Select(c => new NotificationEmailAddress(c, string.Empty)) ?? Enumerable.Empty<NotificationEmailAddress>(),
+                emailMessage.Bcc?.Select(b => new NotificationEmailAddress(b, string.Empty)) ?? Enumerable.Empty<NotificationEmailAddress>(),
+                emailMessage.ReplyTo?.Select(r => new NotificationEmailAddress(r, string.Empty)) ?? Enumerable.Empty<NotificationEmailAddress>(),
+                emailMessage.Subject,
+                emailMessage.Body,
+                emailMessage.Attachments,
+                emailMessage.IsBodyHtml);
 
             Assert.AreEqual("from@from.com", result.From.Address);
             Assert.AreEqual("From Email", result.From.DisplayName);
