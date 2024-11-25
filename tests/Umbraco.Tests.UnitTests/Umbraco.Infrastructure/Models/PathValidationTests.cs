@@ -28,22 +28,22 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // it's empty with no id so we need to allow it
-            Assert.IsTrue(entity.ValidatePath());
+            Assert.IsTrue(string.IsNullOrEmpty(entity.Path));
 
             entity.Id = 1234;
 
             // it has an id but no path, so we can't allow it
-            Assert.IsFalse(entity.ValidatePath());
+            Assert.IsTrue(string.IsNullOrEmpty(entity.Path));
 
             entity.Path = "-1";
 
             // invalid path
-            Assert.IsFalse(entity.ValidatePath());
+            Assert.AreNotEqual(string.Concat("-1,", entity.Id), entity.Path);
 
             entity.Path = string.Concat("-1,", entity.Id);
 
             // valid path
-            Assert.IsTrue(entity.ValidatePath());
+            Assert.AreEqual(string.Concat("-1,", entity.Id), entity.Path);
         }
 
         [Test]
