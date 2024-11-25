@@ -182,8 +182,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task CollectNulls()
         {
-            var d = new SnapDictionary<int, string>();
-            SetCollectAuto(d, false);
+        var d = new SnapDictionary<int, string>();
+            d.Test.CollectAuto = false;
 
             dynamic testHelper = GetTestHelper(d);
 
@@ -283,8 +283,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Retry(5)] // TODO make this test non-flaky.
         public async Task EventuallyCollectNulls()
         {
-            var d = new SnapDictionary<int, string>();
-            SetCollectAuto(d, false);
+        var d = new SnapDictionary<int, string>();
+            d.Test.CollectAuto = false;
 
             dynamic testHelper = GetTestHelper(d);
             Assert.AreEqual(0, testHelper.GetValues(1).Length);
