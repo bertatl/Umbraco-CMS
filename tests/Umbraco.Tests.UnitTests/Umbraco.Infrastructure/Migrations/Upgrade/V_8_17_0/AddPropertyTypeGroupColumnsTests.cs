@@ -9,15 +9,13 @@ using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_8_17_0;
 using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.Common.TestHelpers;
+using System.Collections.Generic;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
 {
     // Mock class for testing purposes
-    public class MockPropertyTypeGroupDto
+    public class MockPropertyTypeGroupDto : PropertyTypeGroupDto
     {
-        public int Id { get; set; }
-        public string Text { get; set; }
-        public string Alias { get; set; }
     }
 
     [TestFixture]
@@ -34,7 +32,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
             var mockContext = new Mock<IMigrationContext>();
             mockContext.Setup(x => x.Plan).Returns(migrationPlan);
             mockContext.Setup(x => x.Database).Returns(database);
-            var migration = new AddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
+            var migration = new TestableAddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
 
             var dtos = new[]
             {
@@ -46,7 +44,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
                 new MockPropertyTypeGroupDto() { Id = 5, Text = "Site defaults" }
             };
 
-            var populatedDtos = migration.PopulateAliases(dtos)
+            var populatedDtos = migration.PublicPopulateAliases(dtos)
                 .OrderBy(x => x.Id) // The populated DTOs can be returned in a different order
                 .ToArray();
 
