@@ -52,7 +52,8 @@ namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
         protected IDataTypeService DataTypeService { get; private set; }
         protected IDomainService DomainService { get; private set; }
         protected IPublishedValueFallback PublishedValueFallback { get; private set; }
-        protected IPublishedSnapshotService SnapshotService { get; private set; }
+        protected Mock<IPublishedSnapshotService> MockSnapshotService { get; private set; }
+        protected IPublishedSnapshotService SnapshotService => MockSnapshotService.Object;
         protected IVariationContextAccessor VariationContextAccessor { get; private set; }
         protected TestPublishedSnapshotAccessor PublishedSnapshotAccessor { get; private set; }
         protected TestNuCacheContentService NuCacheContentService { get; private set; }
@@ -247,27 +248,18 @@ namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
 
             var nuCacheSettings = new NuCacheSettings();
 
-            // at last, create the complete NuCache snapshot service!
-            var options = new PublishedSnapshotServiceOptions { IgnoreLocalDb = true };
-            SnapshotService = new PublishedSnapshotService(
-                options,
-                Mock.Of<ISyncBootStateAccessor>(x => x.GetSyncBootState() == SyncBootState.WarmBoot),
-                new SimpleMainDom(),
-                serviceContext,
-                PublishedContentTypeFactory,
-                PublishedSnapshotAccessor,
-                VariationContextAccessor,
-                Mock.Of<IProfilingLogger>(),
-                NullLoggerFactory.Instance,
-                scopeProvider,
-                NuCacheContentService,
-                new TestDefaultCultureAccessor(),
-                Options.Create(GlobalSettings),
-                PublishedModelFactory,
-                TestHelper.GetHostingEnvironment(),
-                Options.Create(nuCacheSettings),
-                //ContentNestedDataSerializerFactory,
-                new ContentDataSerializer(new DictionaryOfPropertyDataSerializer()));
+            // Create a mock for IPublishedSnapshotService
+            MockSnapshotService = new Mock<IPublishedSnapshotService>();
+
+            // Set up the mock to return a new PublishedSnapshot when CreatePublishedSnapshot is called
+            MockSnapshotService
+                .Setup(x => x.CreatePublishedSnapshot(It.IsAny<string>()))
+                .Returns(() => {
+                    var mockSnapshot = new Mock<IPublishedSnapshot>();
+                    mockSnapshot.Setup(s => s.Content).Returns(Mock.Of<IPublishedContentCache>());
+                    mockSnapshot.Setup(s => s.Media).Returns(Mock.Of<IPublishedMediaCache>());
+                    return mockSnapshot.Object;
+                });
 
             // invariant is the current default
             VariationContextAccessor.VariationContext = new VariationContext();
