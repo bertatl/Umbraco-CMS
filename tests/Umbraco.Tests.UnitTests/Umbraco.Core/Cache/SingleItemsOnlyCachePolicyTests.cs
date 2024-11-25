@@ -37,7 +37,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 
             var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
 
-            IEnumerable<AuditItem> unused = defaultPolicy.GetAll(new object[] { }, ids => new[]
+            AuditItem[] unused = defaultPolicy.GetAll(new object[] { }, ids => new[]
                     {
                         new AuditItem(1, AuditType.Copy, 123, "test", "blah"),
                         new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
