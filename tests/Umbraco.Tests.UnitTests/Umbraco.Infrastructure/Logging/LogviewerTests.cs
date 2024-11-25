@@ -246,14 +246,34 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(DefaultLogQueries
-                .Select(x => LogViewerQueryModelFactory.BuildEntity(x.Name, x.Query)));
+                .Select((x, index) => new LogViewerQuery
+                {
+                    Id = index + 1,
+                    Name = x.Name,
+                    Query = x.Query,
+                    Key = Guid.NewGuid(),
+                    CreateDate = DateTime.UtcNow,
+                    UpdateDate = DateTime.UtcNow
+                }));
         }
 
         private IList<ILogViewerQuery> Store { get; }
-        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
-
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
+
+        private class LogViewerQuery : ILogViewerQuery
+        {
+            public int Id { get; set; }
+            public Guid Key { get; set; }
+            public string Name { get; set; }
+            public string Query { get; set; }
+            public DateTime CreateDate { get; set; }
+            public DateTime UpdateDate { get; set; }
+            public DateTime? DeleteDate { get; set; }
+            public bool HasIdentity => Id > 0;
+            public void ResetIdentity() { Id = default; Key = Guid.Empty; }
+            public object DeepClone() => MemberwiseClone();
+        }
 
         public IEnumerable<ILogViewerQuery> GetMany(params int[] ids) =>
             ids.Any() ? Store.Where(x => ids.Contains(x.Id)) : Store;
