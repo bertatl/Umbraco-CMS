@@ -21,7 +21,7 @@ namespace Umbraco.Cms.Tests.Common.TestHelpers
         /// <param name="scriptsFileSystem"></param>
         /// <param name="mvcViewFileSystem"></param>
         /// <returns></returns>
-        public static IFileSystems CreateTestFileSystems(
+        public static FileSystems CreateTestFileSystems(
             ILoggerFactory loggerFactory,
             IIOHelper ioHelper,
             IOptions<GlobalSettings> globalSettings,
@@ -31,7 +31,7 @@ namespace Umbraco.Cms.Tests.Common.TestHelpers
             IFileSystem stylesheetFileSystem,
             IFileSystem scriptsFileSystem,
             IFileSystem mvcViewFileSystem) =>
-            FileSystemsFactory.CreateFileSystems(loggerFactory, ioHelper, globalSettings, hostingEnvironment, macroPartialFileSystem,
+            new FileSystems(loggerFactory, ioHelper, globalSettings, hostingEnvironment, macroPartialFileSystem,
                 partialViewsFileSystem, stylesheetFileSystem, scriptsFileSystem, mvcViewFileSystem);
     }
 }
