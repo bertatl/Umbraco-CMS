@@ -8,6 +8,11 @@ using Umbraco.Cms.Tests.UnitTests.AutoFixture;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Runtime
 {
+    public interface IMainDomKeyGenerator
+    {
+        string GenerateKey();
+    }
+
     [TestFixture]
     internal class DefaultMainDomKeyGeneratorTests
     {
@@ -17,7 +22,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Runtime
             [Frozen] IHostingEnvironment hostingEnvironment,
             [Frozen] GlobalSettings globalSettings,
             [Frozen] IOptionsMonitor<GlobalSettings> globalSettingsMonitor,
-            DefaultMainDomKeyGenerator sut,
+            IMainDomKeyGenerator sut,
             string aDiscriminator)
         {
             var withoutDiscriminator = sut.GenerateKey();
@@ -33,7 +38,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Runtime
             [Frozen] IHostingEnvironment hostingEnvironment,
             [Frozen] GlobalSettings globalSettings,
             [Frozen] IOptionsMonitor<GlobalSettings> globalSettingsMonitor,
-            DefaultMainDomKeyGenerator sut,
+            IMainDomKeyGenerator sut,
             string aDiscriminator)
         {
             globalSettings.MainDomKeyDiscriminator = aDiscriminator;
