@@ -8,9 +8,9 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
-using Moq;
 
 namespace Umbraco.Cms.Tests.Common.Builders
 {
@@ -55,13 +55,15 @@ namespace Umbraco.Cms.Tests.Common.Builders
 
             var ioHelper = new Mock<IIOHelper>().Object;
             var jsonSerializer = new Mock<IJsonSerializer>().Object;
+            var dataValueReferenceFactory = new Mock<IDataValueReferenceFactory>().Object;
             return new DataEditor(
+                ioHelper,
+                jsonSerializer,
+                dataValueReferenceFactory,
                 name,
                 alias,
                 explicitValueEditor,
-                explicitConfigurationEditor,
-                ioHelper,
-                jsonSerializer)
+                explicitConfigurationEditor)
             {
                 DefaultConfiguration = defaultConfiguration
             };
