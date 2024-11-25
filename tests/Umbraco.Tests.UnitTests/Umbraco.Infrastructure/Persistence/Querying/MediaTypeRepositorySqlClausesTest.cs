@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using NPoco;
 using NUnit.Framework;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
@@ -29,9 +30,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence.Queryin
 
             Sql<ISqlContext> sql = Sql();
             sql.SelectAll()
-                .From<ContentTypeDto>()
+                .From<IContentType>()
                 .InnerJoin<NodeDto>()
-                .On<ContentTypeDto, NodeDto>(left => left.NodeId, right => right.NodeId)
+                .On<IContentType, NodeDto>(left => left.Id, right => right.NodeId)
                 .Where<NodeDto>(x => x.NodeObjectType == nodeObjectTypeId);
 
             Assert.That(sql.SQL, Is.EqualTo(expected.SQL));
