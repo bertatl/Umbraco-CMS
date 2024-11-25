@@ -237,21 +237,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(ConvertToLogViewerQuery));
+                .Select(LogViewerQueryModelFactory.BuildEntity));
         }
 
         private IList<ILogViewerQuery> Store { get; }
+        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
 
-        private ILogViewerQuery ConvertToLogViewerQuery(LogViewerQueryDto dto)
-        {
-            // Assuming LogViewerQuery has a constructor that takes name and query
-            var query = new LogViewerQuery(dto.ToString(), dto.ToString());
-
-            // Set the Id if there's a way to access it
-            // If there's no way to access Id, we might need to generate a random Id or use a counter
-
-            return query;
-        }
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
 
