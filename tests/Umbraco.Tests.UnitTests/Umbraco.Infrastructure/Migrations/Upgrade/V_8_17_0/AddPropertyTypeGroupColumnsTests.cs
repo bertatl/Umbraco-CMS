@@ -18,10 +18,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         public int Id { get; set; }
         public string Text { get; set; }
         public string Alias { get; set; }
-        public int? ParentGroupId { get; set; }
-        public int SortOrder { get; set; }
-        public int PropertyTypeGroupId { get; set; }
-        public int ContentTypeId { get; set; }
     }
 
     [TestFixture]
