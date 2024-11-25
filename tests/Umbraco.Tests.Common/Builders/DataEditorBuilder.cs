@@ -56,13 +56,12 @@ namespace Umbraco.Cms.Tests.Common.Builders
             var ioHelper = new Mock<IIOHelper>().Object;
             var jsonSerializer = new Mock<IJsonSerializer>().Object;
             return new DataEditor(
-                ioHelper,
-                jsonSerializer,
                 name,
                 alias,
-                EditorType.PropertyValue,
                 explicitValueEditor,
-                explicitConfigurationEditor)
+                explicitConfigurationEditor,
+                ioHelper,
+                jsonSerializer)
             {
                 DefaultConfiguration = defaultConfiguration
             };
