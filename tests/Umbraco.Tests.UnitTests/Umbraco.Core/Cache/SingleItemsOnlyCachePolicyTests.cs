@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Cache;
@@ -42,7 +41,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                     {
                         new AuditItem(1, AuditType.Copy, 123, "test", "blah"),
                         new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
-                    }).ToArray();
+                    });
 
             Assert.AreEqual(0, cached.Count);
         }
