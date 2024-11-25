@@ -26,7 +26,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            ContentVersionService sut)
+            IContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
@@ -55,7 +55,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            ContentVersionService sut)
+            IContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
@@ -80,7 +80,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            ContentVersionService sut)
+            IContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
@@ -106,7 +106,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            ContentVersionService sut)
+            IContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
@@ -140,7 +140,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            ContentVersionService sut)
+            IContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
