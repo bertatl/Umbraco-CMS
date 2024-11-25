@@ -8,7 +8,6 @@ using System.Text;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
-using Umbraco.Cms.Core.Mail;
 using Umbraco.Cms.Infrastructure.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
@@ -28,7 +27,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = EmailMessageExtensions.ToMimeMessage(emailMessage, ConfiguredSender);
+            var result = emailMessage.ToMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -36,7 +35,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             Assert.AreEqual(to, result.To.First().ToString());
             Assert.AreEqual(subject, result.Subject);
             Assert.IsNull(result.TextBody);
-            Assert.AreEqual(body, result.HtmlBody);
+            Assert.AreEqual(body, result.HtmlBody.ToString());
         }
 
         [Test]
