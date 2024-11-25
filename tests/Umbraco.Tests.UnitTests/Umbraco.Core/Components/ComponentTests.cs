@@ -177,25 +177,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         public void Boot1B()
         {
             IServiceCollection register = MockRegister();
-            var typeLoader = TestHelper.GetMockedTypeLoader();
-            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), typeLoader);
+            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer3, Composer4>();
-            typeLoader.SetTypeList(types);
-
+            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
-// Compose using UmbracoBuilder
-            foreach (var type in types)
-            {
-                if (typeof(IComposer).IsAssignableFrom(type))
-                {
-                    var composer = (IComposer)Activator.CreateInstance(type);
-                    composer.Compose(composition);
-                }
-            }
-
-            // Assert the composition order
+            // 2 is Core and requires 4
+            // 3 is User - stays with RuntimeLevel.Run
+            // => reorder components accordingly
+            composers.Compose();
             AssertTypeArray(TypeArray<Composer1, Composer4, Composer2, Composer3>(), Composed);
         }
 
