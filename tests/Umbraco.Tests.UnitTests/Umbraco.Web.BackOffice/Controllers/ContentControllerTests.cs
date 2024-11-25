@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -52,12 +52,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
                 .Build();
 
             var culturesPublished = new []{ "en-us", "da-dk" };
-            var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
 
-            Assert.IsEmpty(notifications.Notifications);
+            var contentVariantSave = new ContentVariantSaveModel
+            {
+                Id = rootNode.Id,
+                Name = rootNode.Name,
+                PublishCultures = culturesPublished.ToDictionary(c => c, _ => true)
+            };
+
+            var result = contentController.PostSaveVariant(contentVariantSave);
+
+            Assert.IsTrue(result.Success);
+            Assert.IsEmpty(result.Notifications);
         }
 
         [Test]
