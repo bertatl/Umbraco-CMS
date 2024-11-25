@@ -9,9 +9,34 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
+using MimeKit;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
+    public static class EmailMessageExtensions
+    {
+        public static MimeMessage ToMimeMessage(this EmailMessage emailMessage, string configuredSender)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(string.Empty, emailMessage.From ?? configuredSender));
+            message.To.Add(new MailboxAddress(string.Empty, emailMessage.To));
+            message.Subject = emailMessage.Subject;
+
+            var builder = new BodyBuilder();
+            if (emailMessage.IsBodyHtml)
+            {
+                builder.HtmlBody = emailMessage.Body;
+            }
+            else
+            {
+                builder.TextBody = emailMessage.Body;
+            }
+
+            message.Body = builder.ToMessageBody();
+            return message;
+        }
+    }
+
     [TestFixture]
     public class EmailMessageExtensionsTests
     {
