@@ -28,8 +28,6 @@ using Umbraco.Cms.Infrastructure.Migrations.Install;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
-using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.DependencyInjection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
@@ -37,8 +35,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
     public class ComponentTests
     {
         private static readonly List<Type> Composed = new List<Type>();
-        private static TypeLoader _typeLoader;
-        private static IUmbracoBuilder _umbracoBuilder;
         private static readonly IIOHelper IOHelper = TestHelper.IOHelper;
         private static readonly List<Type> Initialized = new List<Type>();
         private static readonly List<Type> Terminated = new List<Type>();
@@ -93,26 +89,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         public void Boot1A()
         {
             IServiceCollection register = MockRegister();
-            _typeLoader = TestHelper.GetMockedTypeLoader();
-            _umbracoBuilder = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), _typeLoader);
+            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer4>();
-            _typeLoader.SetTypeList(types);
-
+            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
-            // Simulate composition process
-            foreach (var type in types)
-            {
-                if (typeof(IComposer).IsAssignableFrom(type))
-                {
-                    var composer = (IComposer)Activator.CreateInstance(type);
-                    composer.Compose(_umbracoBuilder);
-                }
-            }
-
-            // The actual composition order will be determined by the TypeLoader and UmbracoBuilder
-            // We can't directly control it in the test, but we can verify the results
+            // 2 is Core and requires 4
+            // 3 is User
+            // => reorder components accordingly
+            composers.Compose();
             AssertTypeArray(TypeArray<Composer1, Composer4, Composer2>(), Composed);
 
             IServiceProvider factory = MockFactory(m =>
