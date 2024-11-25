@@ -1,11 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Data.SqlClient;
-
 
 namespace Umbraco.Cms.Infrastructure.Persistence.FaultHandling
 {

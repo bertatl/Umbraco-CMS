@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Odbc;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
-using Microsoft.Data.SqlClient;
-
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Composing
 {
