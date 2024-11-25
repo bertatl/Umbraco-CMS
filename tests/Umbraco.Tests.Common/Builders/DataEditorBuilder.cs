@@ -9,7 +9,6 @@ using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
 
@@ -55,14 +54,11 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
             return new DataEditor(
-                Mock.Of<IDataValueEditorFactory>(),
-                EditorType.PropertyValue)
+                name,
+                alias,
+                explicitValueEditor,
+                explicitConfigurationEditor)
             {
-                Alias = alias,
-                Name = name,
-                View = "~/App_Plugins/MyCustomEditor/editor.html",
-                ValueEditor = explicitValueEditor,
-                ConfigurationEditor = explicitConfigurationEditor,
                 DefaultConfiguration = defaultConfiguration
             };
         }
