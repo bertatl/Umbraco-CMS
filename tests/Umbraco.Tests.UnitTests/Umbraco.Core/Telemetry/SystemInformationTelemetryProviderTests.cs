@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -96,7 +96,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             Assert.AreEqual(environment, actual.Data);
         }
 
-        private Umbraco.Cms.Infrastructure.Telemetry.Providers.SystemInformationTelemetryProvider CreateProvider(
+        private SystemInformationTelemetryProvider CreateProvider(
             ModelsMode modelsMode = ModelsMode.InMemoryAuto,
             bool isDebug = true,
             string umbracoPath = "",
