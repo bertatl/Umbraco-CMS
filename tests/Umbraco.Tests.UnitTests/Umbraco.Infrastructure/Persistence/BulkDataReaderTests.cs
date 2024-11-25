@@ -12,50 +12,9 @@ using System.Data.SqlClient;
 using System.Collections.ObjectModel;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
-using System.Data.SqlClient;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
-    // Mock BulkDataReader class for testing
-    public abstract class MockBulkDataReader : IDataReader
-    {
-        public abstract void Close();
-        public abstract int Depth { get; }
-        public abstract DataTable GetSchemaTable();
-        public abstract bool IsClosed { get; }
-        public abstract bool NextResult();
-        public abstract bool Read();
-        public abstract int RecordsAffected { get; }
-        public abstract void Dispose();
-        public abstract int FieldCount { get; }
-        public abstract bool GetBoolean(int i);
-        public abstract byte GetByte(int i);
-        public abstract long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length);
-        public abstract char GetChar(int i);
-        public abstract long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length);
-        public abstract IDataReader GetData(int i);
-        public abstract string GetDataTypeName(int i);
-        public abstract DateTime GetDateTime(int i);
-        public abstract decimal GetDecimal(int i);
-        public abstract double GetDouble(int i);
-        public abstract Type GetFieldType(int i);
-        public abstract float GetFloat(int i);
-        public abstract Guid GetGuid(int i);
-        public abstract short GetInt16(int i);
-        public abstract int GetInt32(int i);
-        public abstract long GetInt64(int i);
-        public abstract string GetName(int i);
-        public abstract int GetOrdinal(string name);
-        public abstract string GetString(int i);
-        public abstract object GetValue(int i);
-        public abstract int GetValues(object[] values);
-        public abstract bool IsDBNull(int i);
-        public abstract object this[int i] { get; }
-        public abstract object this[string name] { get; }
-
-        public abstract ReadOnlyCollection<SqlBulkCopyColumnMapping> ColumnMappings { get; }
-    }
-
     /// <summary>
     ///  Unit tests for BulkDataReader functionality.
     /// </summary>
@@ -2244,7 +2203,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     /// <summary>
     /// A mock class for testing BulkDataReader functionality.
     /// </summary>
-        private class MockBulkDataReader : MockBulkDataReader
+    private class MockBulkDataReader : MockDataReader
     {
         /// <summary>
         /// Constructor.
@@ -2259,7 +2218,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// <remarks>
         /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
         /// </remarks>
-            protected virtual string SchemaName => BulkDataReaderTests.TestSchemaName;
+        protected string SchemaName => BulkDataReaderTests.TestSchemaName;
 
         /// <summary>
         /// Gets the table name.
@@ -2267,7 +2226,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// <remarks>
         /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
         /// </remarks>
-            protected virtual string TableName => BulkDataReaderTests.TestTableName;
+        protected string TableName => BulkDataReaderTests.TestTableName;
 
         /// <summary>
         /// Creates schema rows for the various <see cref="SqlDbType"/> values.
@@ -2400,7 +2359,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             public override bool Read() => _readCount++ < 1;
         }
 
-    private class BulkDataReaderSchemaTest : MockBulkDataReader
+        private class BulkDataReaderSchemaTest : BulkDataReader
         {
             /// <summary>
             /// Gets or sets a value indicating whether the column is nullable (i.e. optional).
@@ -2496,7 +2455,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Creates a schema row for the various <see cref="SqlDbType"/> values.
             /// </remarks>
-            protected virtual void AddSchemaTableRows() =>
+            protected override void AddSchemaTableRows() =>
                 AddSchemaTableRow(
                     ColumnName,
                     ColumnSize,
