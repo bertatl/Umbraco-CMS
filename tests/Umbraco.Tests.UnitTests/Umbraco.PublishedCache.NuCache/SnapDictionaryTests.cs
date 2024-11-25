@@ -769,8 +769,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
             // scope context: writers enlist
-            var scopeContext = new ScopeContext();
-            IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
+            var scope = Mock.Of<IScope>();
+            IScopeProvider scopeProvider = GetScopeProvider(scope);
 
             using (IDisposable w1 = d.GetScopedWriteLock(scopeProvider))
             {
@@ -794,7 +794,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
-            var scopeContext = new ScopeContext();
+            var scope = Mock.Of<IScope>();
             IScopeProvider scopeProvider1 = GetScopeProvider();
             IScopeProvider scopeProvider2 = GetScopeProvider(scopeContext);
 
@@ -930,8 +930,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(2, s2.Gen);
             Assert.AreEqual("uno", s2.Get(1));
 
-            var scopeContext = new ScopeContext();
-            IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
+            var scope = Mock.Of<IScope>();
+            IScopeProvider scopeProvider = GetScopeProvider(scope);
             using (d.GetScopedWriteLock(scopeProvider))
             {
                 // creating a snapshot in a write-lock does NOT return the "current" content
@@ -951,7 +951,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(2, s4.Gen);
             Assert.AreEqual("uno", s4.Get(1));
 
-            scopeContext.ScopeExit(true);
+            Mock.Get(scope).Raise(x => x.Completed += null, new EventArgs());
 
             SnapDictionary<int, string>.Snapshot s5 = d.CreateSnapshot();
             Assert.AreEqual(3, s5.Gen);
@@ -979,8 +979,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(2, t.LiveGen);
             Assert.IsFalse(t.NextGen);
 
-            var scopeContext = new ScopeContext();
-            IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
+            var scope = Mock.Of<IScope>();
+            IScopeProvider scopeProvider = GetScopeProvider(scope);
             using (d.GetScopedWriteLock(scopeProvider))
             {
                 // creating a snapshot in a write-lock does NOT return the "current" content
@@ -1011,7 +1011,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(2, s4.Gen);
             Assert.AreEqual("uno", s4.Get(1));
 
-            scopeContext.ScopeExit(false);
+            Mock.Get(scope).Raise(x => x.Disposed += null, new EventArgs());
 
             // now things have changed
             Assert.AreEqual(2, t.LiveGen);
@@ -1086,8 +1086,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsNotNull(d.Test.GenObj);
             Assert.AreEqual(1, d.Test.GenObj.Gen);
 
-            var scopeContext = new ScopeContext();
-            IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
+            var scope = Mock.Of<IScope>();
+            IScopeProvider scopeProvider = GetScopeProvider(scope);
 
             // scopeProvider.Context == scopeContext -> writer is scoped
             // writer is scope contextual and scoped
@@ -1121,7 +1121,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsTrue(d.Test.NextGen);
 
             // release writer
-            scopeContext.ScopeExit(true);
+            Mock.Get(scope).Raise(x => x.Completed += null, new EventArgs());
 
             Assert.IsFalse(d.Test.IsLocked);
             Assert.IsNotNull(d.Test.GenObj);
@@ -1138,11 +1138,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsFalse(d.Test.NextGen);
         }
 
-        private IScopeProvider GetScopeProvider(ScopeContext scopeContext = null)
+        private IScopeProvider GetScopeProvider(IScope scope = null)
         {
             IScopeProvider scopeProvider = Mock.Of<IScopeProvider>();
             Mock.Get(scopeProvider)
-                .Setup(x => x.Context).Returns(scopeContext);
+                .Setup(x => x.CreateScope(It.IsAny<IScopeContext>())).Returns(scope ?? Mock.Of<IScope>());
             return scopeProvider;
         }
     }
