@@ -378,7 +378,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task RandomTest1()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            // Removed: d.Test.CollectAuto = false;
 
             d.Set(1, "one");
             d.Set(2, "two");
