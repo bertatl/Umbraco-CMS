@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Extensions;
 using Umbraco.Extensions;
+using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
 {
@@ -41,10 +42,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
             ms = new ModelStateDictionary();
             ms.AddModelError("_Properties.genericProperty.en-US.error", "generic culture error");
 
-            result = ms.GetVariantsWithPropertyErrors("en-US");
+            result = ms.GetVariantsWithErrors();
 
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual("en-US", result[0].culture);
+            Assert.AreEqual("en-US", result[0].Culture);
         }
 
         [Test]
