@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -14,7 +14,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Telemetry.Providers;
 
-namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
+namespace Umbraco.Tests.UnitTests.Umbraco.Core.Telemetry
 {
     [TestFixture]
     public class SystemInformationTelemetryProviderTests
