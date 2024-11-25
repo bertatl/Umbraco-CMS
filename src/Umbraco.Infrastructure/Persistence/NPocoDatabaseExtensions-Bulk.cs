@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
 using System.Linq;
 using NPoco;
 using Umbraco.Cms.Core;
@@ -29,11 +29,11 @@ namespace Umbraco.Extensions
         ///     BulkInsertRecords methods
         ///     do not handle this scenario.
         /// </remarks>
-public static void ConfigureNPocoBulkExtensions()
-{
-    Database.SqlBulkCopyHelper.SqlConnectionResolver = dbConn => GetTypedConnection<SqlConnection>(dbConn);
-    Database.SqlBulkCopyHelper.SqlTransactionResolver = dbTran => GetTypedTransaction<SqlTransaction>(dbTran);
-}
+        public static void ConfigureNPocoBulkExtensions()
+        {
+            SqlBulkCopyHelper.SqlConnectionResolver = dbConn => GetTypedConnection<SqlConnection>(dbConn);
+            SqlBulkCopyHelper.SqlTransactionResolver = dbTran => GetTypedTransaction<SqlTransaction>(dbTran);
+        }
 
 
         /// <summary>
