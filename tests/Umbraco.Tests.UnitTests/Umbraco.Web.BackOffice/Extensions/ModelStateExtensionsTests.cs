@@ -9,7 +9,6 @@ using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Extensions;
-using Umbraco.Cms.Web.Common.ModelStateExtensions;
 using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
