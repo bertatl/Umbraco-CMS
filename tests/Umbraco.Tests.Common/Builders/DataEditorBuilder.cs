@@ -51,10 +51,10 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
             return new DataEditor(
-                Mock.Of<IDataValueEditorFactory>())
+                Mock.Of<IDataValueEditorFactory>(),
+                name)
             {
                 Alias = alias,
-                Name = name,
                 DefaultConfiguration = defaultConfiguration,
                 ExplicitConfigurationEditor = explicitConfigurationEditor,
                 ExplicitValueEditor = explicitValueEditor
