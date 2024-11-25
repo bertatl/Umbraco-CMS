@@ -13,52 +13,34 @@ using MimeKit;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
-public static class EmailMessageExtensions
-{
-    public static MimeMessage ToMimeMessage(this EmailMessage emailMessage, string configuredSender)
+    public static class EmailMessageExtensions
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(string.Empty, emailMessage.From ?? configuredSender));
-
-        foreach (var to in emailMessage.To)
+        public static MimeMessage ToMimeMessage(this EmailMessage emailMessage, string configuredSender)
         {
-            message.To.Add(new MailboxAddress(string.Empty, to));
-        }
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(string.Empty, emailMessage.From ?? configuredSender));
 
-        message.Subject = emailMessage.Subject;
+            foreach (var to in emailMessage.To)
+            {
+                message.To.Add(new MailboxAddress(string.Empty, to));
+            }
 
-        var builder = new BodyBuilder();
-        if (emailMessage.IsBodyHtml)
-        {
-            builder.HtmlBody = emailMessage.Body;
-        }
-        else
-        {
-            builder.TextBody = emailMessage.Body;
-        }
+            message.Subject = emailMessage.Subject;
 
-        message.Body = builder.ToMessageBody();
-        return message;
+            var builder = new BodyBuilder();
+            if (emailMessage.IsBodyHtml)
+            {
+                builder.HtmlBody = emailMessage.Body;
+            }
+            else
+            {
+                builder.TextBody = emailMessage.Body;
+            }
+
+            message.Body = builder.ToMessageBody();
+            return message;
+        }
     }
-
-    public static NotificationEmailModel ToNotificationEmail(this EmailMessage emailMessage, string configuredSender)
-    {
-        var model = new NotificationEmailModel
-        {
-            Subject = emailMessage.Subject,
-            Body = emailMessage.Body,
-            IsBodyHtml = emailMessage.IsBodyHtml,
-            From = new EmailAddress(emailMessage.From ?? configuredSender),
-            To = emailMessage.To.Select(to => new EmailAddress(to)).ToList(),
-            Cc = emailMessage.Cc?.Select(cc => new EmailAddress(cc)).ToList(),
-            Bcc = emailMessage.Bcc?.Select(bcc => new EmailAddress(bcc)).ToList(),
-            ReplyTo = emailMessage.ReplyTo?.Select(replyTo => new EmailAddress(replyTo)).ToList(),
-            Attachments = emailMessage.Attachments?.Select(att => new AttachmentModel { FileName = att.FileName, Stream = att.Content }).ToList()
-        };
-
-        return model;
-    }
-}
 
     [TestFixture]
     public class EmailMessageExtensionsTests
