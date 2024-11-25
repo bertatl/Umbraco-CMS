@@ -11,6 +11,26 @@ using Umbraco.Cms.Web.BackOffice.PropertyEditors.Validation;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
  {
+     internal class ValidationResultConverter : JsonConverter
+     {
+         public override bool CanConvert(Type objectType)
+         {
+             return typeof(ComplexEditorValidationResult).IsAssignableFrom(objectType);
+         }
+
+         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+         {
+             throw new NotImplementedException();
+         }
+
+         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+         {
+             // Implement a basic version of the converter
+             writer.WriteStartObject();
+             writer.WriteEndObject();
+         }
+     }
+
      [TestFixture]
      public class ContentModelValidatorTests
      {
