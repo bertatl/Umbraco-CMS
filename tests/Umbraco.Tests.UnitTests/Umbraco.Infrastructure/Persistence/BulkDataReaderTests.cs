@@ -12,7 +12,6 @@ using System.Data.SqlClient;
 using System.Collections.ObjectModel;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Cms.Infrastructure.Persistence.BulkLoading;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
