@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Examine;
 using Umbraco.Extensions;
@@ -60,15 +60,15 @@ namespace Umbraco.Cms.Infrastructure.Examine
         public virtual ValueSetValidationResult Validate(ValueSet valueSet)
         {
             if (ValidIndexCategories != null && !ValidIndexCategories.InvariantContains(valueSet.Category))
-                return ValueSetValidationResult.Failed;
+                return ValueSetValidationResult.Error;
 
             //check if this document is of a correct type of node type alias
             if (IncludeItemTypes != null && !IncludeItemTypes.InvariantContains(valueSet.ItemType))
-                return ValueSetValidationResult.Failed;
+                return ValueSetValidationResult.Error;
 
             //if this node type is part of our exclusion list
             if (ExcludeItemTypes != null && ExcludeItemTypes.InvariantContains(valueSet.ItemType))
-                return ValueSetValidationResult.Failed;
+                return ValueSetValidationResult.Error;
 
             var isFiltered = false;
 
