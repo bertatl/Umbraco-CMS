@@ -12,6 +12,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Core.Mail;
 using Umbraco.Extensions;
+using Umbraco.Cms.Core.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
