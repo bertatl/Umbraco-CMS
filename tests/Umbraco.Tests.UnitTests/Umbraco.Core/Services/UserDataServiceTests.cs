@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -17,11 +17,6 @@ using Umbraco.Cms.Infrastructure.Telemetry.Providers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
 {
-    public interface IUserDataProvider
-    {
-        IEnumerable<UserData> GetUserData();
-    }
-
     [TestFixture]
     public class UserDataServiceTests
     {
@@ -125,28 +120,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
             Assert.AreEqual(isDebug.ToString(), actual.Data);
         }
 
-        private IUserDataProvider CreateUserDataService(string culture = "", ModelsMode modelsMode = ModelsMode.InMemoryAuto, bool isDebug = true)
+        private SystemInformationTelemetryProvider CreateUserDataService(string culture = "", ModelsMode modelsMode = ModelsMode.InMemoryAuto, bool isDebug = true)
         {
             var localizationService = CreateILocalizationService(culture);
 
             var databaseMock = new Mock<IUmbracoDatabase>();
             databaseMock.Setup(x => x.DatabaseType.GetProviderName()).Returns("SQL");
 
-            var mock = new Mock<IUserDataProvider>();
-            mock.Setup(x => x.GetUserData()).Returns(() =>
-            {
-                var userData = new List<UserData>
-                {
-                    new UserData { Name = "Default Language", Data = culture },
-                    new UserData { Name = "Current Culture", Data = Thread.CurrentThread.CurrentCulture.Name },
-                    new UserData { Name = "Current UI Culture", Data = Thread.CurrentThread.CurrentUICulture.Name },
-                    new UserData { Name = "Models Builder Mode", Data = modelsMode.ToString() },
-                    new UserData { Name = "Debug Mode", Data = isDebug.ToString() }
-                };
-                return userData;
-            });
-
-            return mock.Object;
+            return new SystemInformationTelemetryProvider(
+                _umbracoVersion,
+                localizationService,
+                Mock.Of<IOptions<ModelsBuilderSettings>>(x => x.Value == new ModelsBuilderSettings { ModelsMode = modelsMode }),
+                Mock.Of<IOptions<HostingSettings>>(x => x.Value == new HostingSettings { Debug = isDebug }),
+                Mock.Of<IOptions<GlobalSettings>>(x => x.Value == new GlobalSettings()),
+                Mock.Of<IHostEnvironment>(),
+                new Lazy<IUmbracoDatabase>(databaseMock.Object));
         }
 
         private ILocalizationService CreateILocalizationService(string culture)
