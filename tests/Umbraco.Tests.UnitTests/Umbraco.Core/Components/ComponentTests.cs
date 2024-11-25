@@ -413,43 +413,19 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         }
 
         [Test]
-    public void Requires1()
-    {
-        IServiceCollection register = MockRegister();
-        var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
-
-        Type[] types = new[] { typeof(Composer6), typeof(Composer7), typeof(Composer8) };
-        var composers = new TestComposerGraph(composition, types);
-        Composed.Clear();
-        composers.Compose();
-        Assert.AreEqual(2, Composed.Count);
-        Assert.AreEqual(typeof(Composer6), Composed[0]);
-        Assert.AreEqual(typeof(Composer8), Composed[1]);
-    }
-
-    private class TestComposerGraph
-    {
-        private readonly IUmbracoBuilder _builder;
-        private readonly IEnumerable<Type> _types;
-
-        public TestComposerGraph(IUmbracoBuilder builder, IEnumerable<Type> types)
+        public void Requires1()
         {
-            _builder = builder;
-            _types = types;
-        }
+            IServiceCollection register = MockRegister();
+            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
-        public void Compose()
-        {
-            foreach (var type in _types)
-            {
-                if (typeof(IComposer).IsAssignableFrom(type))
-                {
-                    var composer = (IComposer)Activator.CreateInstance(type);
-                    composer.Compose(_builder);
-                }
-            }
+            Type[] types = new[] { typeof(Composer6), typeof(Composer7), typeof(Composer8) };
+            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            Composed.Clear();
+            composers.Compose();
+            Assert.AreEqual(2, Composed.Count);
+            Assert.AreEqual(typeof(Composer6), Composed[0]);
+            Assert.AreEqual(typeof(Composer8), Composed[1]);
         }
-    }
 
         [Test]
         public void Requires2A()
