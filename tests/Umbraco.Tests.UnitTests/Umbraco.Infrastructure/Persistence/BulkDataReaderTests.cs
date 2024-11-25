@@ -2204,42 +2204,39 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     /// A mock class for testing BulkDataReader functionality.
     /// </summary>
     private class MockBulkDataReader : MockDataReader
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MockBulkDataReader()
         {
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            public MockBulkDataReader()
-            {
-            }
+        }
 
-    /// <summary>
-    /// Gets the schema name.
-    /// </summary>
-    /// <remarks>
-    /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
-    /// </remarks>
-    protected string SchemaName => BulkDataReaderTests.TestSchemaName;
+        /// <summary>
+        /// Gets the schema name.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
+        /// </remarks>
+        protected string SchemaName => BulkDataReaderTests.TestSchemaName;
 
-    /// <summary>
-    /// Gets the table name.
-    /// </summary>
-    /// <remarks>
-    /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
-    /// </remarks>
-    protected string TableName => BulkDataReaderTests.TestTableName;
+        /// <summary>
+        /// Gets the table name.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
+        /// </remarks>
+        protected string TableName => BulkDataReaderTests.TestTableName;
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
-            /// </summary>
-            /// <remarks>
-            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-            /// </remarks>
-            protected override void AddSchemaTableRows()
-            {
-                AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
-                AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
-                AddSchemaTableRow("Bit", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
-                AddSchemaTableRow("Bit_null", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
+        /// <summary>
+        /// Creates schema rows for the various <see cref="SqlDbType"/> values.
+        /// </summary>
+        protected void CreateSchemaTableRows()
+        {
+            AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
+            AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
+            AddSchemaTableRow("Bit", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
+            AddSchemaTableRow("Bit_null", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
                 AddSchemaTableRow("Char_Char", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
                 AddSchemaTableRow("Char_Char_Array", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
                 AddSchemaTableRow("Char_String", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
@@ -2331,17 +2328,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
                 @"<?xml version=string.Empty1.0string.Empty encoding=string.Emptyutf-16string.Empty?><body/>"
             });
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.GetValue(int)"/>
-            /// </summary>
-            /// <param name="i">
-            /// The zero-based column ordinal.
-            /// </param>
-            /// <returns>
-            /// The value of the column in <see cref="ExpectedResultSet"/>.
-            /// </returns>
-            /// <seealso cref="BulkDataReader.GetValue(int)"/>
-            public override object GetValue(int i) => BulkDataReaderSubclass.ExpectedResultSet[i];
+        /// <summary>
+        /// Gets the value of the specified column.
+        /// </summary>
+        /// <param name="i">The zero-based column ordinal.</param>
+        /// <returns>The value of the column in <see cref="ExpectedResultSet"/>.</returns>
+        public override object GetValue(int i) => ExpectedResultSet[i];
+
+        /// <summary>
+        /// Adds a schema table row with the specified parameters.
+        /// </summary>
+        private void AddSchemaTableRow(string columnName, int? columnSize, short? numericPrecision, short? numericScale, bool isUnique, bool isKey, bool allowDBNull, SqlDbType providerType, string udtSchema, string udtType, string xmlSchemaCollectionDatabase, string xmlSchemaCollectionOwningSchema, string xmlSchemaCollectionName)
+        {
+            // Implementation details would depend on how the base MockDataReader class handles schema information.
+            // For now, we'll leave this as a placeholder.
+        }
 
             /// <summary>
             /// The number of rows read.
