@@ -2191,18 +2191,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// </remarks>
         protected string TableName => BulkDataReaderTests.TestTableName;
 
-        /// <summary>
-        /// Initializes the schema for the BulkDataReader.
-        /// </summary>
-        /// <remarks>
-        /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-        /// </remarks>
-        protected override void InitializeSchema()
-        {
-            AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
-            AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
-            AddSchemaTableRow("Bit", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
-            AddSchemaTableRow("Bit_null", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
+            /// <summary>
+            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
+            /// </summary>
+            /// <remarks>
+            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
+            /// </remarks>
+            protected override void AddSchemaTableRows()
+            {
+                AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
+                AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
+                AddSchemaTableRow("Bit", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
+                AddSchemaTableRow("Bit_null", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
                 AddSchemaTableRow("Char_Char", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
                 AddSchemaTableRow("Char_Char_Array", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
                 AddSchemaTableRow("Char_String", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
