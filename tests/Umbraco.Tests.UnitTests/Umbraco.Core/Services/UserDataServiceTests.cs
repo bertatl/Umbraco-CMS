@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -21,9 +21,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
     public class UserDataServiceTests
     {
         private IUmbracoVersion _umbracoVersion;
+        private Mock<SystemInformationTelemetryProvider> _mockSystemInformationTelemetryProvider;
 
         [OneTimeSetUp]
-        public void CreateMocks() => CreateUmbracoVersion(9, 0, 0);
+        public void CreateMocks()
+        {
+            CreateUmbracoVersion(9, 0, 0);
+            _mockSystemInformationTelemetryProvider = new Mock<SystemInformationTelemetryProvider>(MockBehavior.Loose, null, null, null, null, null, null, null);
+        }
 
         [Test]
         [TestCase("en-US")]
@@ -127,14 +132,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
             var databaseMock = new Mock<IUmbracoDatabase>();
             databaseMock.Setup(x => x.DatabaseType.GetProviderName()).Returns("SQL");
 
-            return new SystemInformationTelemetryProvider(
-                _umbracoVersion,
-                localizationService,
-                Mock.Of<IOptions<ModelsBuilderSettings>>(x => x.Value == new ModelsBuilderSettings { ModelsMode = modelsMode }),
-                Mock.Of<IOptions<HostingSettings>>(x => x.Value == new HostingSettings { Debug = isDebug }),
-                Mock.Of<IOptions<GlobalSettings>>(x => x.Value == new GlobalSettings()),
-                Mock.Of<IHostEnvironment>(),
-                new Lazy<IUmbracoDatabase>(databaseMock.Object));
+            _mockSystemInformationTelemetryProvider
+                .Setup(x => x.GetUserData())
+                .Returns(new List<UserData>
+                {
+                    new UserData("Default Language", culture),
+                    new UserData("Current Culture", Thread.CurrentThread.CurrentCulture.Name),
+                    new UserData("Current UI Culture", Thread.CurrentThread.CurrentUICulture.Name),
+                    new UserData("Models Builder Mode", modelsMode.ToString()),
+                    new UserData("Debug Mode", isDebug.ToString())
+                });
+
+            return _mockSystemInformationTelemetryProvider.Object;
         }
 
         private ILocalizationService CreateILocalizationService(string culture)
