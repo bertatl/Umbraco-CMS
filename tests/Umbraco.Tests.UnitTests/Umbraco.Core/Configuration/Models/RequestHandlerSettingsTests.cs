@@ -84,8 +84,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Configuration.Models
             var settings = new RequestHandlerSettings { UserDefinedCharCollection = userCollection };
             var actual = settings.GetCharReplacements().ToList();
 
-            // Add 1 to the length, because we're expecting to only add one new one
-            Assert.AreEqual(RequestHandlerSettings.DefaultCharCollection.Length + 1, actual.Count);
+            // Get the default char collection length
+            var defaultCollectionLength = new RequestHandlerSettings().GetCharReplacements().Count();
+
+            // Add 1 to the default length, because we're expecting to only add one new one
+            Assert.AreEqual(defaultCollectionLength + 1, actual.Count);
 
             Assert.That(actual, Has.Exactly(1).Matches<CharItem>(x => x.Char == "%" && x.Replacement == "percent"));
             Assert.That(actual, Has.Exactly(1).Matches<CharItem>(x => x.Char == "." && x.Replacement == "dot"));
