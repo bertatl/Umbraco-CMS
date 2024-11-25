@@ -8,7 +8,6 @@ using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
-using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
@@ -1141,11 +1140,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
         private IScopeProvider GetScopeProvider(ScopeContext scopeContext = null)
         {
-            var scopeProvider = new Mock<IScopeProvider>();
-            scopeProvider
-                .Setup(x => x.Context)
-                .Returns(scopeContext ?? new ScopeContext());
-            return scopeProvider.Object;
+            IScopeProvider scopeProvider = Mock.Of<IScopeProvider>();
+            Mock.Get(scopeProvider)
+                .Setup(x => x.Context).Returns(scopeContext);
+            return scopeProvider;
         }
     }
 
