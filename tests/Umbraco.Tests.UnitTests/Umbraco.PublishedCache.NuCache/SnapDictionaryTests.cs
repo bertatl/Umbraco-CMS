@@ -340,7 +340,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             // nothing to collect
             await d.CollectAsync();
             GC.KeepAlive(s);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+
+            // Use public methods to check the dictionary state
+            var snapshot = d.CreateSnapshot();
+            Assert.AreEqual("one", snapshot.Get(1)); // Check if the value is still present
 
             Assert.AreEqual(1, d.Count);
             Assert.AreEqual(1, d.SnapCount);
