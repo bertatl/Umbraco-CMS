@@ -12,6 +12,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Core.Mail;
 using Umbraco.Extensions;
+using Umbraco.Cms.Core.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
@@ -119,7 +120,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(ConfiguredSender);
 
             Assert.AreEqual(from, result.From.Address);
             Assert.AreEqual("", result.From.DisplayName);
@@ -141,7 +142,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(ConfiguredSender);
 
             Assert.AreEqual(ConfiguredSender, result.From.Address);
             Assert.AreEqual("", result.From.DisplayName);
@@ -164,7 +165,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            NotificationEmailModel result = emailMessage.ToNotificationEmail(_emailSender);
+            NotificationEmailModel result = emailMessage.ToNotificationEmail(ConfiguredSender);
 
             Assert.AreEqual("from@from.com", result.From.Address);
             Assert.AreEqual("From Email", result.From.DisplayName);
