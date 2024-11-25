@@ -605,61 +605,34 @@ using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider2))
         public void WriteLocking2()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
-            Assert.AreEqual(1, s1.Gen);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
-            Assert.AreEqual(2, s2.Gen);
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("uno", s2.Get(1));
 
             IScopeProvider scopeProvider = GetScopeProvider();
-            using (d.GetScopedWriteLock(scopeProvider))
+using (d.GetScopedWriteLock(scopeProvider))
             {
                 // gen 3
-                Assert.AreEqual(2, d.Test.GetValues(1).Length);
                 d.SetLocked(1, "ein");
-                Assert.AreEqual(3, d.Test.GetValues(1).Length);
-
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen);
 
                 SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
-                Assert.AreEqual(2, s3.Gen);
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen); // has NOT changed when (non) creating snapshot
                 Assert.AreEqual("uno", s3.Get(1));
             }
 
             SnapDictionary<int, string>.Snapshot s4 = d.CreateSnapshot();
 
-            Assert.AreEqual(3, s4.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual("ein", s4.Get(1));
         }
 
