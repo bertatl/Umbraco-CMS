@@ -11,19 +11,12 @@ using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Collections;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Scoping;
-using Umbraco.Cms.Core.Persistence.Repositories;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 {
     [TestFixture]
     public class FullDataSetCachePolicyTests
     {
-        private RepositoryCachePolicyOptions GetDefaultOptions() => new RepositoryCachePolicyOptions
-        {
-            GetAllCacheTimeout = TimeSpan.FromMinutes(5),
-            GetCacheTimeout = TimeSpan.FromMinutes(5)
-        };
-
         private IScopeAccessor DefaultAccessor
         {
             get
@@ -50,7 +43,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Insert(It.IsAny<string>(), It.IsAny<Func<object>>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Callback(() => isCached = true);
 
-            var policy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem unused = policy.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => getAll);
             Assert.IsTrue(isCached);
@@ -68,7 +61,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             var cache = new Mock<IAppPolicyCache>();
             cache.Setup(x => x.Get(It.IsAny<string>())).Returns(new AuditItem(1, AuditType.Copy, 123, "test", "blah"));
 
-            var defaultPolicy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem found = defaultPolicy.Get(1, id => null, ids => getAll);
             Assert.IsNotNull(found);
@@ -96,7 +89,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Get(It.IsAny<string>()))
                 .Returns(() => cached.Any() ? new DeepCloneableList<AuditItem>(ListCloneBehavior.CloneOnce) : null);
 
-            var policy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem[] found = policy.GetAll(new object[] { }, ids => getAll);
 
@@ -134,7 +127,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 });
             cache.Setup(x => x.Get(It.IsAny<string>())).Returns(new AuditItem[] { });
 
-            var defaultPolicy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem[] found = defaultPolicy.GetAll(new object[] { }, ids => getAll);
 
@@ -155,7 +148,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
             });
 
-            var defaultPolicy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem[] found = defaultPolicy.GetAll(new object[] { }, ids => getAll);
             Assert.AreEqual(2, found.Length);
@@ -175,7 +168,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Clear(It.IsAny<string>()))
                 .Callback(() => cacheCleared = true);
 
-            var defaultPolicy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
             try
             {
                 defaultPolicy.Update(new AuditItem(1, AuditType.Copy, 123, "test", "blah"), item => throw new Exception("blah!"));
@@ -204,7 +197,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Clear(It.IsAny<string>()))
                 .Callback(() => cacheCleared = true);
 
-            var defaultPolicy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, GetDefaultOptions());
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
             try
             {
                 defaultPolicy.Delete(new AuditItem(1, AuditType.Copy, 123, "test", "blah"), item => throw new Exception("blah!"));
