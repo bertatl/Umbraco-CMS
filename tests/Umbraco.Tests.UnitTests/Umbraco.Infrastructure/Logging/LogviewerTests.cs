@@ -237,11 +237,27 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(LogViewerQueryModelFactory.BuildEntity));
+                .Select(BuildEntity));
         }
 
         private IList<ILogViewerQuery> Store { get; }
-        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
+
+        private ILogViewerQuery BuildEntity(LogViewerQueryModel model)
+        {
+            return new LogViewerQuery
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Query = model.Query
+            };
+        }
+
+        private class LogViewerQuery : ILogViewerQuery
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string Query { get; set; }
+        }
 
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
