@@ -12,6 +12,16 @@ using Umbraco.Cms.Infrastructure.PublishedCache;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
+    public static class SnapDictionaryTestExtensions
+    {
+        public static SnapDictionary<TKey, TValue>.TestHelper GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+            where TValue : class
+        {
+            var testProperty = dictionary.GetType().GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (SnapDictionary<TKey, TValue>.TestHelper)testProperty.GetValue(dictionary);
+        }
+    }
+
     [TestFixture]
     public class SnapDictionaryTests
     {
@@ -189,11 +199,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task CollectNulls()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            d.GetTestHelper().CollectAuto = false;
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
             Assert.AreEqual(1, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
