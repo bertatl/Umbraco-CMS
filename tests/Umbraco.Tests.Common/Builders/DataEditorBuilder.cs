@@ -53,13 +53,7 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IConfigurationEditor explicitConfigurationEditor = _explicitConfigurationEditorBuilder.Build();
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
-            // Assuming we need to inject IIOHelper and IJsonSerializer
-            var ioHelper = new Mock<IIOHelper>().Object;
-            var jsonSerializer = new Mock<IJsonSerializer>().Object;
-
             return new DataEditor(
-                ioHelper,
-                jsonSerializer,
                 name,
                 alias,
                 explicitValueEditor,
