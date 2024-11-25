@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
+using BulkDataReader = Umbraco.Cms.Infrastructure.Persistence.BulkDataReader;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
@@ -2161,15 +2162,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             return result;
         }
 
+    /// <summary>
+    /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
+    /// </summary>
+    private class BulkDataReaderSubclass : Umbraco.Cms.Infrastructure.Persistence.BulkDataReader
+    {
         /// <summary>
-        /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
+        /// Constructor.
         /// </summary>
-        private class BulkDataReaderSubclass : BulkDataReader
-        {
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            public BulkDataReaderSubclass()
+        public BulkDataReaderSubclass()
             {
             }
 
