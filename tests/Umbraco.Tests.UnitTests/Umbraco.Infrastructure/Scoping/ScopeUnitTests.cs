@@ -1,13 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data;
-using Moq;
-using NUnit.Framework;
-using Umbraco.Cms.Core.Cache;
-using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Core.Scoping;
-using Umbraco.Cms.Infrastructure.Persistence;
 using CSharpTest.Net.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -36,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Scoping
         /// </summary>
         /// <param name="syntaxProviderMock">The mock of the ISqlSyntaxProvider2, used to count method calls.</param>
         /// <returns></returns>
-        private IScopeProvider GetScopeProvider(out Mock<ISqlSyntaxProvider> syntaxProviderMock)
+        private ScopeProvider GetScopeProvider(out Mock<ISqlSyntaxProvider> syntaxProviderMock)
         {
             var loggerFactory = NullLoggerFactory.Instance;
             var fileSystems = new FileSystems(loggerFactory,
@@ -63,16 +56,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Scoping
             // Setup mock of ISqlContext to return syntaxProviderMock
             sqlContext.Setup(x => x.SqlSyntax).Returns(syntaxProviderMock.Object);
 
-            var scopeProvider = new Mock<IScopeProvider>();
-            scopeProvider.Setup(x => x.CreateScope(It.IsAny<IsolationLevel>(), It.IsAny<RepositoryCacheMode>(), It.IsAny<IEventDispatcher>(), It.IsAny<bool?>(), It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns((IsolationLevel isolation, RepositoryCacheMode cacheMode, IEventDispatcher eventDispatcher, bool? scopeFileSystems, bool callContext, bool autoComplete) =>
-                {
-                    var scope = new Mock<IScope>();
-                    scope.Setup(s => s.Database).Returns(database.Object);
-                    return scope.Object;
-                });
-
-            return scopeProvider.Object;
+            return new ScopeProvider(
+                databaseFactory.Object,
+                fileSystems,
+                Options.Create(new CoreDebugSettings()),
+                mediaFileManager,
+                loggerFactory.CreateLogger<ScopeProvider>(),
+                loggerFactory,
+                Mock.Of<IRequestCache>(),
+                Mock.Of<IEventAggregator>());
         }
 
         [Test]
