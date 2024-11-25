@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
-using System.Data;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
@@ -14,7 +13,7 @@ using Umbraco.Cms.Infrastructure.Persistence;
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
     /// <summary>
-    ///  Unit tests for BulkDataReader.
+    ///  Unit tests for <see cref="BulkDataReader"/>.
     /// </summary>
     /// <remarks>
     /// Borrowed from Microsoft:
@@ -23,45 +22,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     [TestFixture]
     public class BulkDataReaderTests
     {
-        // Mock BulkDataReader for testing purposes
-        private abstract class MockBulkDataReader : IDataReader
-        {
-            public abstract void Close();
-            public abstract bool Read();
-            public abstract int Depth { get; }
-            public abstract bool IsClosed { get; }
-            public abstract bool NextResult();
-            public abstract DataTable GetSchemaTable();
-            public abstract int RecordsAffected { get; }
-            public abstract void Dispose();
-
-            public abstract bool GetBoolean(int i);
-            public abstract byte GetByte(int i);
-            public abstract long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length);
-            public abstract char GetChar(int i);
-            public abstract long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length);
-            public abstract IDataReader GetData(int i);
-            public abstract string GetDataTypeName(int i);
-            public abstract DateTime GetDateTime(int i);
-            public abstract decimal GetDecimal(int i);
-            public abstract double GetDouble(int i);
-            public abstract Type GetFieldType(int i);
-            public abstract float GetFloat(int i);
-            public abstract Guid GetGuid(int i);
-            public abstract short GetInt16(int i);
-            public abstract int GetInt32(int i);
-            public abstract long GetInt64(int i);
-            public abstract string GetName(int i);
-            public abstract int GetOrdinal(string name);
-            public abstract string GetString(int i);
-            public abstract object GetValue(int i);
-            public abstract int GetValues(object[] values);
-            public abstract bool IsDBNull(int i);
-            public abstract int FieldCount { get; }
-            public abstract object this[int i] { get; }
-            public abstract object this[string name] { get; }
-        }
-
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
         /// </summary>
@@ -2201,10 +2161,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             return result;
         }
 
-    /// <summary>
-    /// A subclass of MockBulkDataReader used for testing its utility functions.
-    /// </summary>
-    private class BulkDataReaderSubclass : MockBulkDataReader
+        /// <summary>
+        /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
+        /// </summary>
+        private class BulkDataReaderSubclass : BulkDataReader
         {
             /// <summary>
             /// Constructor.
