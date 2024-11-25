@@ -14,6 +14,7 @@ using Umbraco.Cms.Core.Media;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors.ValueConverters;
 using Umbraco.Extensions;
+using Umbraco.Cms.Core.Serialization;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
 {
@@ -25,11 +26,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
         private const string CropperJson3 = "{\"focalPoint\": {\"left\": 0.5,\"top\": 0.5},\"src\": \"/media/1005/img_0672.jpg\",\"crops\": []}";
         private const string MediaPath = "/media/1005/img_0671.jpg";
 
+        private readonly IJsonSerializer _jsonSerializer;
+
+        public ImageCropperTest()
+        {
+            _jsonSerializer = new JsonNetSerializer();
+        }
+
         [Test]
         public void CanConvertImageCropperDataSetSrcToString()
         {
             // cropperJson3 - has no crops
-            ImageCropperValue cropperValue = CropperJson3.DeserializeImageCropperValue();
+            ImageCropperValue cropperValue = _jsonSerializer.Deserialize<ImageCropperValue>(CropperJson3);
             Attempt<string> serialized = cropperValue.TryConvertTo<string>();
             Assert.IsTrue(serialized.Success);
             Assert.AreEqual("/media/1005/img_0672.jpg", serialized.Result);
