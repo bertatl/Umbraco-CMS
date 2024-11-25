@@ -237,10 +237,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(x => new TestLogViewerQuery { Name = x.Name, Query = x.Query }));
+                .Select(LogViewerQueryModelFactory.BuildEntity));
         }
 
         private IList<ILogViewerQuery> Store { get; }
+        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
+
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
 
@@ -279,19 +281,5 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public int Count(IQuery<ILogViewerQuery> query) => throw new NotImplementedException();
 
         public ILogViewerQuery GetByName(string name) => Store.FirstOrDefault(x => x.Name == name);
-
-        private class TestLogViewerQuery : ILogViewerQuery
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public string Query { get; set; }
-            public Guid Key { get; set; }
-            public DateTime CreateDate { get; set; }
-            public DateTime UpdateDate { get; set; }
-            public DateTime? DeleteDate { get; set; }
-            public bool HasIdentity => Id > 0;
-            public void ResetIdentity() => Id = 0;
-            public object DeepClone() => MemberwiseClone();
-        }
     }
 }
