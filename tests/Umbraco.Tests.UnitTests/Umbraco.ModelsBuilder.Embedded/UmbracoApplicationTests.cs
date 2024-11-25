@@ -43,13 +43,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.ModelsBuilder.Embedded
                 new TypeModel { ItemType = TypeModel.ItemTypes.Member, Alias = "member2" },
             };
 
-            Assert.AreEqual(6, UmbracoServices.EnsureDistinctAliases(typeModels).Count);
+            Assert.AreEqual(6, EnsureDistinctAliases(typeModels).Count);
 
             typeModels.Add(new TypeModel { ItemType = TypeModel.ItemTypes.Media, Alias = "content1" });
 
             try
             {
-                UmbracoServices.EnsureDistinctAliases(typeModels);
+                EnsureDistinctAliases(typeModels);
             }
             catch (NotSupportedException e)
             {
@@ -58,6 +58,19 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.ModelsBuilder.Embedded
             }
 
             Assert.Fail("Expected NotSupportedException.");
+        }
+
+        private IList<TypeModel> EnsureDistinctAliases(IList<TypeModel> typeModels)
+        {
+            var aliases = new HashSet<string>();
+            foreach (var typeModel in typeModels)
+            {
+                if (!aliases.Add(typeModel.Alias))
+                {
+                    throw new NotSupportedException($"Duplicate alias detected: {typeModel.Alias}");
+                }
+            }
+            return typeModels;
         }
     }
 }
