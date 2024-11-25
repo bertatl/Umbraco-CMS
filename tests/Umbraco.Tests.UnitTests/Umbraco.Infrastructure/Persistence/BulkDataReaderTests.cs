@@ -2175,21 +2175,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             {
             }
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.SchemaName"/>.
-            /// </summary>
-            /// <remarks>
-            /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
-            /// </remarks>
-            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
+        /// <summary>
+        /// Gets the schema name.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
+        /// </remarks>
+        protected string SchemaName => BulkDataReaderTests.TestSchemaName;
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.TableName"/>.
-            /// </summary>
-            /// <remarks>
-            /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
-            /// </remarks>
-            protected override string TableName => BulkDataReaderTests.TestTableName;
+        /// <summary>
+        /// Gets the table name.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
+        /// </remarks>
+        protected string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
@@ -2395,21 +2395,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             {
             }
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.SchemaName"/>.
-            /// </summary>
-            /// <remarks>
-            /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
-            /// </remarks>
-            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
+        /// <summary>
+        /// Gets the schema name.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
+        /// </remarks>
+        protected string SchemaName => BulkDataReaderTests.TestSchemaName;
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.TableName"/>.
-            /// </summary>
-            /// <remarks>
-            /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
-            /// </remarks>
-            protected override string TableName => BulkDataReaderTests.TestTableName;
+        /// <summary>
+        /// Gets the table name.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
+        /// </remarks>
+        protected string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
