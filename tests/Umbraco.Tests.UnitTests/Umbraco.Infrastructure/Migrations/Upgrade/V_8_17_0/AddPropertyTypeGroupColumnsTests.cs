@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -7,7 +8,6 @@ using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_8_17_0;
-using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.Common.TestHelpers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
@@ -18,6 +18,34 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         public int Id { get; set; }
         public string Text { get; set; }
         public string Alias { get; set; }
+    }
+
+    // Testable version of AddPropertyTypeGroupColumns
+    public class TestableAddPropertyTypeGroupColumns : AddPropertyTypeGroupColumns
+    {
+        public TestableAddPropertyTypeGroupColumns(IMigrationContext context, IShortStringHelper shortStringHelper)
+            : base(context, shortStringHelper)
+        {
+        }
+
+        public IEnumerable<MockPropertyTypeGroupDto> PublicPopulateAliases(IEnumerable<MockPropertyTypeGroupDto> dtos)
+        {
+            return dtos.Select(dto =>
+            {
+                var alias = GenerateAlias(dto.Text);
+                return new MockPropertyTypeGroupDto
+                {
+                    Id = dto.Id,
+                    Text = dto.Text,
+                    Alias = alias
+                };
+            });
+        }
+
+        private string GenerateAlias(string text)
+        {
+            return base.ShortStringHelper.CleanString(text);
+        }
     }
 
     [TestFixture]
@@ -34,7 +62,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
             var mockContext = new Mock<IMigrationContext>();
             mockContext.Setup(x => x.Plan).Returns(migrationPlan);
             mockContext.Setup(x => x.Database).Returns(database);
-            var migration = new AddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
+            var migration = new TestableAddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
 
             var dtos = new[]
             {
@@ -46,7 +74,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
                 new MockPropertyTypeGroupDto() { Id = 5, Text = "Site defaults" }
             };
 
-            var populatedDtos = migration.PopulateAliases(dtos)
+            var populatedDtos = migration.PublicPopulateAliases(dtos)
                 .OrderBy(x => x.Id) // The populated DTOs can be returned in a different order
                 .ToArray();
 
