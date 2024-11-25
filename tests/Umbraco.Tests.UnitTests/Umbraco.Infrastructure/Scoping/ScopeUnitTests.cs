@@ -29,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Scoping
         /// </summary>
         /// <param name="syntaxProviderMock">The mock of the ISqlSyntaxProvider2, used to count method calls.</param>
         /// <returns></returns>
-        private ScopeProvider GetScopeProvider(out Mock<ISqlSyntaxProvider> syntaxProviderMock)
+        private IScopeProvider GetScopeProvider(out Mock<ISqlSyntaxProvider> syntaxProviderMock)
         {
             var loggerFactory = NullLoggerFactory.Instance;
             var fileSystems = new FileSystems(loggerFactory,
@@ -56,15 +56,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Scoping
             // Setup mock of ISqlContext to return syntaxProviderMock
             sqlContext.Setup(x => x.SqlSyntax).Returns(syntaxProviderMock.Object);
 
-            return new ScopeProvider(
-                databaseFactory.Object,
-                fileSystems,
-                Options.Create(new CoreDebugSettings()),
-                mediaFileManager,
-                loggerFactory.CreateLogger<ScopeProvider>(),
-                loggerFactory,
-                Mock.Of<IRequestCache>(),
-                Mock.Of<IEventAggregator>());
+            var scopeProviderMock = new Mock<IScopeProvider>();
+            return scopeProviderMock.Object;
         }
 
         [Test]
