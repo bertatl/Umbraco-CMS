@@ -31,8 +31,8 @@ namespace Umbraco.Extensions
         /// </remarks>
         public static void ConfigureNPocoBulkExtensions()
         {
-            SqlBulkCopyHelper.SqlConnectionResolver = dbConn => GetTypedConnection<SqlConnection>(dbConn);
-            SqlBulkCopyHelper.SqlTransactionResolver = dbTran => GetTypedTransaction<SqlTransaction>(dbTran);
+            SqlBulkCopyHelper.SqlConnectionResolver = dbConn => GetTypedConnection<Microsoft.Data.SqlClient.SqlConnection>(dbConn);
+            SqlBulkCopyHelper.SqlTransactionResolver = dbTran => GetTypedTransaction<Microsoft.Data.SqlClient.SqlTransaction>(dbTran);
         }
 
 
