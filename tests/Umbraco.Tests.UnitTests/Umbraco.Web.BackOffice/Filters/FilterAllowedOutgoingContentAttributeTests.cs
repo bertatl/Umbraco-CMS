@@ -29,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var filter = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -38,7 +38,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            dynamic result = att.GetValueFromResponse(new ObjectResult(expected));
+            var objectResult = new ObjectResult(expected);
+            var result = filter.GetValueFromResponse(objectResult);
 
             Assert.AreEqual(expected, result);
         }
