@@ -19,24 +19,11 @@ using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.BackOffice.Filters;
 using Umbraco.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using Umbraco.Cms.Core.Actions;
-using Umbraco.Cms.Core.Cache;
-using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Models.ContentEditing;
-using Umbraco.Cms.Core.Models.Membership;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Security;
-using Umbraco.Cms.Tests.Common.Builders;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
     [TestFixture]
-    public class FilterAllowedOutgoingContentFilterTests
+    public class FilterAllowedOutgoingContentAttributeTests
     {
         [Test]
         public void GetValueFromResponse_Already_EnumerableContent()
@@ -67,7 +54,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 nameof(MyTestClass.MyList),
                 ActionBrowse.ActionLetter,
@@ -76,9 +63,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            // Use reflection to access the private method
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var result = methodInfo.Invoke(filter, new object[] { new ObjectResult(container) });
+            dynamic result = att.GetValueFromResponse(new ObjectResult(container));
 
             Assert.AreEqual(expected, result);
         }
@@ -89,7 +74,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 "DontFind",
                 ActionBrowse.ActionLetter,
@@ -98,11 +83,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            // Use reflection to access the private method
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var result = methodInfo.Invoke(filter, new object[] { new ObjectResult(container) });
+            dynamic actual = att.GetValueFromResponse(new ObjectResult(container));
 
-            Assert.IsNull(result);
+            Assert.IsNull(actual);
         }
 
         [Test]
@@ -113,11 +96,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             IUserService userService = userServiceMock.Object;
             var entityServiceMock = new Mock<IEntityService>();
             entityServiceMock.Setup(x => x.GetAllPaths(It.IsAny<UmbracoObjectTypes>(), It.IsAny<int[]>()))
-                .Returns(new[] { Mock.Of<IEntitySlim>(entity => entity.Id == 5 && entity.Path == "-1,5") });
+                .Returns(new[] { Mock.Of<TreeEntityPath>(entity => entity.Id == 5 && entity.Path == "-1,5") });
             IEntityService entityService = entityServiceMock.Object;
 
             var list = new List<ContentItemBasic>();
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -138,12 +121,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 list.Add(new ContentItemBasic { Id = i, Name = "Test" + i, ParentId = i, Path = path });
             }
 
-            // Use reflection to access the private method
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("FilterBasedOnStartNode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            methodInfo.Invoke(filter, new object[] { list, user });
+            att.FilterBasedOnStartNode(list, user);
 
             Assert.AreEqual(5, list.Count);
-        }
+       }
 
         [Test]
         public void Filter_On_Permissions()
@@ -171,7 +152,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             userServiceMock.Setup(x => x.GetPermissions(user, ids)).Returns(permissions);
             IUserService userService = userServiceMock.Object;
 
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -179,10 +160,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 Mock.Of<IEntityService>(),
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
-
-            // Use reflection to access the private method
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("FilterBasedOnPermissions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            methodInfo.Invoke(filter, new object[] { list, user });
+            att.FilterBasedOnPermissions(list, user);
 
             Assert.AreEqual(3, list.Count);
             Assert.AreEqual(1, list.ElementAt(0).Id);
