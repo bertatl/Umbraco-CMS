@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Web.BackOffice.Filters;
+using Umbraco.Cms.Web.Common.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
