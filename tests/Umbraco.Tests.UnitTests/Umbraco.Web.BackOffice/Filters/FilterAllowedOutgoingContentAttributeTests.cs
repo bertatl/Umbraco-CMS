@@ -3,11 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Actions;
@@ -29,11 +25,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
     public class FilterAllowedOutgoingContentAttributeTests
     {
         [Test]
-        public void FilterAllowedOutgoingContent_Already_EnumerableContent()
+        public void GetValueFromResponse_Already_EnumerableContent()
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -42,31 +38,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            var actionContext = new ActionContext(
-                new DefaultHttpContext(),
-                new RouteData(),
-                new ActionDescriptor());
+            dynamic result = att.GetValueFromResponse(new ObjectResult(expected));
 
-            var actionExecutingContext = new ActionExecutingContext(
-                actionContext,
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                new Mock<Controller>().Object);
-
-            var actionExecutedContext = new ActionExecutedContext(
-                actionExecutingContext,
-                new List<IFilterMetadata>(),
-                new Mock<Controller>().Object)
-            {
-                Result = new ObjectResult(expected)
-            };
-
-            filter.OnActionExecuted(actionExecutedContext);
-
-            Assert.IsInstanceOf<ObjectResult>(actionExecutedContext.Result);
-            var objectResult = actionExecutedContext.Result as ObjectResult;
-            Assert.IsNotNull(objectResult);
-            Assert.AreEqual(expected, objectResult.Value);
+            Assert.AreEqual(expected, result);
         }
 
         [Test]
