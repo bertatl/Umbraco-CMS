@@ -14,16 +14,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
     [TestFixture]
     public class SnapDictionaryTests
     {
-        // Add this extension method for testing purposes
-        private static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, bool value)
-            where TValue : class
-        {
-            // Use reflection to set the internal CollectAuto property
-            var testProperty = dictionary.GetType().GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var testValue = testProperty.GetValue(dictionary);
-            var collectAutoProperty = testValue.GetType().GetProperty("CollectAuto");
-            collectAutoProperty.SetValue(testValue, value);
-        }
         [Test]
         public void LiveGenUpdate()
         {
@@ -149,7 +139,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task ProperlyCollects()
         {
             var d = new SnapDictionary<int, string>();
-            d.SetCollectAuto(false);
+            d.Test.CollectAuto = false;
 
             for (int i = 0; i < 32; i++)
             {
