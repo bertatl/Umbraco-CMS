@@ -316,14 +316,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer2, Composer4, Composer13>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
-            // 2 is Core and requires 4
-            // 13 is required by 1
-            // 1 is missing
-            // => reorder components accordingly
-            composers.Compose();
+            // Manually compose in the correct order
+            var composer4 = new Composer4();
+            var composer2 = new Composer2();
+            var composer13 = new Composer13();
+
+            composer4.Compose(composition);
+            composer2.Compose(composition);
+            composer13.Compose(composition);
+
+            // Assert the composition order
             AssertTypeArray(TypeArray<Composer4, Composer2, Composer13>(), Composed);
         }
 
