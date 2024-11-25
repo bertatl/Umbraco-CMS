@@ -9,6 +9,8 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Entities;
 using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
+using Umbraco.Cms.Core.Extensions;
+using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
 {
@@ -54,7 +56,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // no id assigned
-            Assert.Throws<InvalidOperationException>(() => entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => new EntitySlim(), umbracoEntity => { }));
+            Assert.Throws<InvalidOperationException>(() => entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => new EntitySlim(), umbracoEntity => { }, true));
         }
 
         [Test]
