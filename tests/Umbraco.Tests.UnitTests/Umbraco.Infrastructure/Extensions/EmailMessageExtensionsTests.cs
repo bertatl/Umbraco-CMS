@@ -27,7 +27,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = emailMessage.AsMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -57,7 +57,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
                 };
             var emailMessage = new EmailMessage(from, to, cc, bcc, replyTo, subject, body, isBodyHtml, attachments);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = emailMessage.AsMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -88,7 +88,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = emailMessage.AsMimeMessage(ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(ConfiguredSender, result.From.First().ToString());
