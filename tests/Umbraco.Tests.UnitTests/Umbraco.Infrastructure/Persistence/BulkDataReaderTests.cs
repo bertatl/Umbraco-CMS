@@ -2203,43 +2203,48 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     /// <summary>
     /// A mock class for testing BulkDataReader functionality.
     /// </summary>
-    private class MockBulkDataReader : MockDataReader
+    private class MockBulkDataReader : BulkDataReader
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MockBulkDataReader() : base()
         {
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            public MockBulkDataReader()
-            {
-            }
+        }
 
-    /// <summary>
-    /// Gets the schema name.
-    /// </summary>
-    /// <remarks>
-    /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
-    /// </remarks>
-    protected string SchemaName => BulkDataReaderTests.TestSchemaName;
+        /// <summary>
+        /// Gets the schema name.
+        /// </summary>
+        protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
 
-    /// <summary>
-    /// Gets the table name.
-    /// </summary>
-    /// <remarks>
-    /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
-    /// </remarks>
-    protected string TableName => BulkDataReaderTests.TestTableName;
+        /// <summary>
+        /// Gets the table name.
+        /// </summary>
+        protected override string TableName => BulkDataReaderTests.TestTableName;
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
-            /// </summary>
-            /// <remarks>
-            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-            /// </remarks>
-            protected override void AddSchemaTableRows()
-            {
-                AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
-                AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
-                AddSchemaTableRow("Bit", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
-                AddSchemaTableRow("Bit_null", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
+        /// <summary>
+        /// See <see cref="BulkDataReader.GetSchemaTable()"/>
+        /// </summary>
+        /// <remarks>
+        /// Creates a schema table for the various <see cref="SqlDbType"/> values.
+        /// </remarks>
+        public override DataTable GetSchemaTable()
+        {
+            var schemaTable = base.GetSchemaTable();
+            AddSchemaTableRows(schemaTable);
+            return schemaTable;
+        }
+
+        /// <summary>
+        /// Adds schema table rows for the various <see cref="SqlDbType"/> values.
+        /// </summary>
+        /// <param name="schemaTable">The schema table to add rows to.</param>
+        protected virtual void AddSchemaTableRows(DataTable schemaTable)
+        {
+            AddSchemaTableRow(schemaTable, "BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
+            AddSchemaTableRow(schemaTable, "Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
+            AddSchemaTableRow(schemaTable, "Bit", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
+            AddSchemaTableRow(schemaTable, "Bit_null", null, null, null, false, false, true, SqlDbType.Bit, null, null, null, null, null);
                 AddSchemaTableRow("Char_Char", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
                 AddSchemaTableRow("Char_Char_Array", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
                 AddSchemaTableRow("Char_String", 1, null, null, false, false, false, SqlDbType.Char, null, null, null, null, null);
@@ -2331,17 +2336,39 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
                 @"<?xml version=string.Empty1.0string.Empty encoding=string.Emptyutf-16string.Empty?><body/>"
             });
 
-            /// <summary>
-            /// See <see cref="BulkDataReader.GetValue(int)"/>
-            /// </summary>
-            /// <param name="i">
-            /// The zero-based column ordinal.
-            /// </param>
-            /// <returns>
-            /// The value of the column in <see cref="ExpectedResultSet"/>.
-            /// </returns>
-            /// <seealso cref="BulkDataReader.GetValue(int)"/>
-            public override object GetValue(int i) => BulkDataReaderSubclass.ExpectedResultSet[i];
+        /// <summary>
+        /// See <see cref="BulkDataReader.GetValue(int)"/>
+        /// </summary>
+        /// <param name="i">
+        /// The zero-based column ordinal.
+        /// </param>
+        /// <returns>
+        /// The value of the column in <see cref="ExpectedResultSet"/>.
+        /// </returns>
+        /// <seealso cref="BulkDataReader.GetValue(int)"/>
+        public override object GetValue(int i) => ExpectedResultSet[i];
+
+        /// <summary>
+        /// Adds a schema table row with the specified parameters.
+        /// </summary>
+        private void AddSchemaTableRow(DataTable schemaTable, string columnName, int? columnSize, short? numericPrecision, short? numericScale, bool isUnique, bool isKey, bool allowDBNull, SqlDbType providerType, string udtSchema, string udtType, string xmlSchemaCollectionDatabase, string xmlSchemaCollectionOwningSchema, string xmlSchemaCollectionName)
+        {
+            var row = schemaTable.NewRow();
+            row["ColumnName"] = columnName;
+            row["ColumnSize"] = (object)columnSize ?? DBNull.Value;
+            row["NumericPrecision"] = (object)numericPrecision ?? DBNull.Value;
+            row["NumericScale"] = (object)numericScale ?? DBNull.Value;
+            row["IsUnique"] = isUnique;
+            row["IsKey"] = isKey;
+            row["AllowDBNull"] = allowDBNull;
+            row["ProviderType"] = providerType;
+            row["UdtSchema"] = udtSchema ?? (object)DBNull.Value;
+            row["UdtType"] = udtType ?? (object)DBNull.Value;
+            row["XmlSchemaCollectionDatabase"] = xmlSchemaCollectionDatabase ?? (object)DBNull.Value;
+            row["XmlSchemaCollectionOwningSchema"] = xmlSchemaCollectionOwningSchema ?? (object)DBNull.Value;
+            row["XmlSchemaCollectionName"] = xmlSchemaCollectionName ?? (object)DBNull.Value;
+            schemaTable.Rows.Add(row);
+        }
 
             /// <summary>
             /// The number of rows read.
