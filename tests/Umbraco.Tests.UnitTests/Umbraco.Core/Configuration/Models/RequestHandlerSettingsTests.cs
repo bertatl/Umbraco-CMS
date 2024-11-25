@@ -21,7 +21,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Configuration.Models
             var settings = new RequestHandlerSettings { UserDefinedCharCollection = userCollection };
             var actual = settings.GetCharReplacements().ToList();
 
-            var expectedCollection = settings.GetDefaultCharReplacements().ToList();
+            var expectedCollection = RequestHandlerSettings.DefaultCharCollection.ToList();
             expectedCollection.AddRange(userCollection);
 
             Assert.AreEqual(expectedCollection.Count, actual.Count);
