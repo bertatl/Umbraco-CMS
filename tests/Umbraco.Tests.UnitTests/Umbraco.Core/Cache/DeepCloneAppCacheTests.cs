@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Caching;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Collections;

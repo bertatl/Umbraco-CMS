@@ -25,6 +25,7 @@
     <None Remove="umbraco\Data\TEMP\TypesCache\umbraco-types.DESKTOP-EU212M2.hash" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
     <PackageReference Include="NPoco" Version="5.7.1" />
     <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
