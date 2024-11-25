@@ -1,6 +1,7 @@
 // Copyright (c) Umbraco.
 // See LICENSE for more details.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
+using MimeKit;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
@@ -16,6 +18,37 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
     public class EmailMessageExtensionsTests
     {
         private const string ConfiguredSender = "noreply@umbraco.com";
+
+        private static MailboxAddress ParseEmailAddress(string email)
+        {
+            var parts = email.Split(new[] { '<', '>' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length > 1)
+            {
+                return new MailboxAddress(parts[0].Trim(), parts[1].Trim());
+            }
+            return new MailboxAddress("", email.Trim());
+        }
+
+        private static MimeMessage ConvertToMimeMessage(EmailMessage emailMessage, string configuredSender)
+        {
+            var message = new MimeMessage();
+            message.From.Add(ParseEmailAddress(emailMessage.From ?? configuredSender));
+            message.To.Add(ParseEmailAddress(emailMessage.To));
+            message.Subject = emailMessage.Subject;
+
+            var builder = new BodyBuilder();
+            if (emailMessage.IsBodyHtml)
+            {
+                builder.HtmlBody = emailMessage.Body;
+            }
+            else
+            {
+                builder.TextBody = emailMessage.Body;
+            }
+
+            message.Body = builder.ToMessageBody();
+            return message;
+        }
 
         [Test]
         public void Can_Construct_MimeMessage_From_Simple_EmailMessage()
@@ -27,15 +60,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = ConvertToMimeMessage(emailMessage, ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
-            Assert.AreEqual(from, result.From.First().ToString());
+            Assert.AreEqual(from, result.From.First().Address);
             Assert.AreEqual(1, result.To.Count());
-            Assert.AreEqual(to, result.To.First().ToString());
+            Assert.AreEqual(to, result.To.First().Address);
             Assert.AreEqual(subject, result.Subject);
             Assert.IsNull(result.TextBody);
-            Assert.AreEqual(body, result.HtmlBody.ToString());
+            Assert.AreEqual(body, result.HtmlBody);
         }
 
         [Test]
