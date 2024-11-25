@@ -10,7 +10,6 @@ using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
 using Umbraco.Extensions;
 using Constants = Umbraco.Cms.Core.Constants;
-using Umbraco.Cms.Infrastructure.Persistence.Dtos.Interfaces;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence.Querying
 {
@@ -30,9 +29,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence.Queryin
 
             Sql<ISqlContext> sql = Sql();
             sql.SelectAll()
-                .From<IContentTypeDto>()
+                .From<ContentTypeDto>()
                 .InnerJoin<NodeDto>()
-                .On<IContentTypeDto, NodeDto>(left => left.NodeId, right => right.NodeId)
+                .On<ContentTypeDto, NodeDto>(left => left.NodeId, right => right.NodeId)
                 .Where<NodeDto>(x => x.NodeObjectType == nodeObjectTypeId);
 
             Assert.That(sql.SQL, Is.EqualTo(expected.SQL));
