@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
-using Umbraco.Cms.Infrastructure.Extensions;
+using Umbraco.Cms.Core.Mail;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
@@ -16,9 +18,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
     public class EmailMessageExtensionsTests
     {
         private const string ConfiguredSender = "noreply@umbraco.com";
+        private Mock<IEmailSender> _mockEmailSender;
+
+        [SetUp]
+        public void Setup()
+        {
+            _mockEmailSender = new Mock<IEmailSender>();
+        }
 
         [Test]
-        public void Can_Construct_MimeMessage_From_Simple_EmailMessage()
+        public async Task Can_Construct_EmailMessage_From_Simple_EmailMessage()
         {
             const string from = "from@email.com";
             const string to = "to@email.com";
@@ -27,15 +36,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            await _mockEmailSender.Object.SendAsync(emailMessage, ConfiguredSender);
 
-            Assert.AreEqual(1, result.From.Count());
-            Assert.AreEqual(from, result.From.First().ToString());
-            Assert.AreEqual(1, result.To.Count());
-            Assert.AreEqual(to, result.To.First().ToString());
-            Assert.AreEqual(subject, result.Subject);
-            Assert.IsNull(result.TextBody);
-            Assert.AreEqual(body, result.HtmlBody.ToString());
+            _mockEmailSender.Verify(sender => sender.SendAsync(
+                It.Is<EmailMessage>(message =>
+                    message.From == from &&
+                    message.To.Single() == to &&
+                    message.Subject == subject &&
+                    message.Body == body &&
+                    message.IsBodyHtml == isBodyHtml
+                ),
+                ConfiguredSender
+            ), Times.Once);
         }
 
         [Test]
