@@ -724,7 +724,7 @@ using (d.GetScopedWriteLock(scopeProvider))
             // Assert.AreEqual(2, t.LiveGen);
             // Assert.IsFalse(t.NextGen);
 
-            var scopeContext = new ScopeContext();
+            var scopeContext = Mock.Of<IScopeContext>();
             IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
             using (d.GetScopedWriteLock(scopeProvider))
             {
