@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -65,10 +65,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
         }
 
         [Test]
-        [TestCase(GlobalSettings.StaticUmbracoPath, false)]
+        [TestCase("/umbraco", false)]
         [TestCase("mycustompath", true)]
         [TestCase("~/notUmbraco", true)]
-        [TestCase("/umbraco", true)]
+        [TestCase("/umbraco", false)]
         [TestCase("umbraco", true)]
         public void ReportsCustomUmbracoPathCorrectly(string path, bool isCustom)
         {
