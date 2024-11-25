@@ -17,20 +17,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations
     [TestFixture]
     public class AlterMigrationTests
     {
-        private readonly ILogger<IMigrationContext> _logger = Mock.Of<ILogger<IMigrationContext>>();
+        private readonly ILogger<MigrationContext> _logger = Mock.Of<ILogger<MigrationContext>>();        
         private class TestPlan : MigrationPlan
         {
             public TestPlan() : base("Test")
             {
             }
         }
-        private IMigrationContext GetMigrationContext(out TestDatabase db)
+        private MigrationContext GetMigrationContext(out TestDatabase db)
         {
             db = new TestDatabase();
-            return Mock.Of<IMigrationContext>(ctx =>
-                ctx.Plan == new TestPlan() &&
-                ctx.Database == db &&
-                ctx.Logger == _logger);
+            return new MigrationContext(new TestPlan(), db, _logger);
         }
 
         [Test]
