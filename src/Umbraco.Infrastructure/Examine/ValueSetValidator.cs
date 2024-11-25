@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Examine;
 using Umbraco.Extensions;
@@ -92,7 +92,7 @@ namespace Umbraco.Cms.Infrastructure.Examine
                 }
             }
 
-            return isFiltered ? ValueSetValidationResult.Invalid : ValueSetValidationResult.Valid;
+            return isFiltered ? ValueSetValidationResult.Filtered : ValueSetValidationResult.Valid;
         }
     }
 }
