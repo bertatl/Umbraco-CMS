@@ -28,6 +28,8 @@ using Umbraco.Cms.Infrastructure.Migrations.Install;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
@@ -38,6 +40,31 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         private static readonly IIOHelper IOHelper = TestHelper.IOHelper;
         private static readonly List<Type> Initialized = new List<Type>();
         private static readonly List<Type> Terminated = new List<Type>();
+
+        private class TestComposerGraph
+        {
+            private readonly IUmbracoBuilder _builder;
+            private readonly IEnumerable<Type> _types;
+
+            public TestComposerGraph(IUmbracoBuilder builder, IEnumerable<Type> types)
+            {
+                _builder = builder;
+                _types = types;
+            }
+
+            public void Compose()
+            {
+                foreach (var type in _types)
+                {
+                    if (typeof(IComposer).IsAssignableFrom(type))
+                    {
+                        var composer = (IComposer)Activator.CreateInstance(type);
+                        composer.Compose(_builder);
+                        Composed.Add(type);
+                    }
+                }
+            }
+        }
 
         private static IServiceProvider MockFactory(Action<Mock<IServiceProvider>> setup = null)
         {
@@ -92,7 +119,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer4>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new TestComposerGraph(composition, types);
             Composed.Clear();
 
             // 2 is Core and requires 4
