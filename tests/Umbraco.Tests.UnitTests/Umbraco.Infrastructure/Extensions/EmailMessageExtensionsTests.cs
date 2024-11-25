@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
+using MimeKit;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
