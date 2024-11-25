@@ -26,6 +26,13 @@ using File = System.IO.File;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
 {
+    public class LogViewerQuery : ILogViewerQuery
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Query { get; set; }
+    }
+
     [TestFixture]
     public class LogviewerTests
     {
@@ -237,11 +244,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(LogViewerQueryModelFactory.BuildEntity));
+                .Select(BuildEntity));
         }
 
         private IList<ILogViewerQuery> Store { get; }
-        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
+
+        private static ILogViewerQuery BuildEntity(string name, string query)
+        {
+            return new LogViewerQuery { Name = name, Query = query };
+        }
 
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
