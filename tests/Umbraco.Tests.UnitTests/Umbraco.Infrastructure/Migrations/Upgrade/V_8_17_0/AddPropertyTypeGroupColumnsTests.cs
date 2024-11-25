@@ -22,8 +22,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         public void CreateColumn()
         {
             var database = new TestDatabase();
-            var context = new MigrationContext(new MigrationPlan("test"), database, _contextLogger);
-            var migration = new AddPropertyTypeGroupColumns(context, _shortStringHelper);
+            var migrationPlan = new MigrationPlan("test");
+            var mockContext = new Mock<IMigrationContext>();
+            mockContext.Setup(x => x.Plan).Returns(migrationPlan);
+            mockContext.Setup(x => x.Database).Returns(database);
+            var migration = new AddPropertyTypeGroupColumns(mockContext.Object, _shortStringHelper);
 
             var dtos = new[]
             {
