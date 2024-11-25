@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Cms.Core.Configuration;
-using Umbraco.Cms.Core.Manifest;
-using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Semver;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Telemetry;
+using Umbraco.Core.Configuration;
+using Umbraco.Core.Manifest;
+using Umbraco.Core.Models;
+using Umbraco.Core.Semver;
+using Umbraco.Core.Services;
+using Umbraco.Core.Telemetry;
 
-namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
+namespace Umbraco.Tests.UnitTests.Umbraco.Core.Telemetry
 {
     [TestFixture]
     public class TelemetryServiceTests
