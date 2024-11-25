@@ -11,10 +11,7 @@ namespace Umbraco.Cms.Tests.Common.TestHelpers
         /// <summary>
         /// Create an instance FileSystems where you can set the individual filesystems.
         /// </summary>
-        /// <param name="loggerFactory"></param>
-        /// <param name="ioHelper"></param>
-        /// <param name="globalSettings"></param>
-        /// <param name="hostingEnvironment"></param>
+        /// <param name="fileSystems"></param>
         /// <param name="macroPartialFileSystem"></param>
         /// <param name="partialViewsFileSystem"></param>
         /// <param name="stylesheetFileSystem"></param>
@@ -22,16 +19,20 @@ namespace Umbraco.Cms.Tests.Common.TestHelpers
         /// <param name="mvcViewFileSystem"></param>
         /// <returns></returns>
         public static FileSystems CreateTestFileSystems(
-            ILoggerFactory loggerFactory,
-            IIOHelper ioHelper,
-            IOptions<GlobalSettings> globalSettings,
-            IHostingEnvironment hostingEnvironment,
+            FileSystems fileSystems,
             IFileSystem macroPartialFileSystem,
             IFileSystem partialViewsFileSystem,
             IFileSystem stylesheetFileSystem,
             IFileSystem scriptsFileSystem,
-            IFileSystem mvcViewFileSystem) =>
-            new FileSystems(loggerFactory, ioHelper, globalSettings, hostingEnvironment, macroPartialFileSystem,
-                partialViewsFileSystem, stylesheetFileSystem, scriptsFileSystem, mvcViewFileSystem);
+            IFileSystem mvcViewFileSystem)
+        {
+            fileSystems.MacroPartialsFileSystem = macroPartialFileSystem;
+            fileSystems.PartialViewsFileSystem = partialViewsFileSystem;
+            fileSystems.StylesheetsFileSystem = stylesheetFileSystem;
+            fileSystems.ScriptsFileSystem = scriptsFileSystem;
+            fileSystems.MvcViewsFileSystem = mvcViewFileSystem;
+
+            return fileSystems;
+        }
     }
 }
