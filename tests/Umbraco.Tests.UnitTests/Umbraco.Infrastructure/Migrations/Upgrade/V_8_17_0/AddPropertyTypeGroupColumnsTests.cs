@@ -3,14 +3,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Core.Configuration.Models;
-using Umbraco.Core.Strings;
-using Umbraco.Core.Migrations;
-using Umbraco.Core.Migrations.Upgrade.V_8_17_0;
-using Umbraco.Core.Persistence.Dtos;
-using Umbraco.Tests.TestHelpers;
+using Umbraco.Cms.Core.Configuration.Models;
+using Umbraco.Cms.Core.Strings;
+using Umbraco.Cms.Infrastructure.Migrations;
+using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_8_17_0;
+using Umbraco.Cms.Infrastructure.Persistence.Dtos;
+using Umbraco.Cms.Tests.Common.TestHelpers;
 
-namespace Umbraco.Tests.UnitTests.Umbraco.Core.Migrations.Upgrade.V_8_17_0
+namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
 {
     [TestFixture]
     public class AddPropertyTypeGroupColumnsTests
