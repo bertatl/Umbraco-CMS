@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
     private class TestValidationFilterAttribute : ValidationFilterAttribute
     {
         // This is a test implementation to make the class accessible
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public new void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
         }
