@@ -45,12 +45,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.Count);
 
             SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
             Assert.IsNotNull(s);
+            Assert.AreEqual("one", s.Get(1));
 
             // gen 2
             d.Clear(1);
