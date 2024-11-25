@@ -26,7 +26,7 @@ namespace Umbraco.Tests.Services
             [Frozen] Mock<IDocumentVersionRepository> documentVersionRepository,
             List<ContentVersionMeta> someHistoricVersions,
             DateTime aDateTime,
-            Umbraco.Cms.Core.Services.Implement.ContentVersionService sut)
+            ContentVersionService sut)
         {
             documentVersionRepository.Setup(x => x.GetDocumentVersionsEligibleForCleanup())
                 .Returns(someHistoricVersions);
