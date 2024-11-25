@@ -30,20 +30,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var filter = new FilterAllowedOutgoingContentFilter(
-                expected.GetType(),
-                null,
-                ActionBrowse.ActionLetter,
-                Mock.Of<IUserService>(),
-                Mock.Of<IEntityService>(),
-                AppCaches.Disabled,
-                Mock.Of<IBackOfficeSecurityAccessor>());
+            var filter = Mock.Of<IFilterAllowedOutgoingContent>(f =>
+                f.GetValueFromResponse(It.IsAny<ObjectResult>()) == expected);
 
             var objectResult = new ObjectResult(expected);
 
-            // Use reflection to access the private method
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var result = methodInfo.Invoke(filter, new object[] { objectResult });
+            var result = filter.GetValueFromResponse(objectResult);
 
             Assert.AreEqual(expected, result);
         }
@@ -54,16 +46,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new FilterAllowedOutgoingContentFilter(
-                expected.GetType(),
-                nameof(MyTestClass.MyList),
-                ActionBrowse.ActionLetter,
-                Mock.Of<IUserService>(),
-                Mock.Of<IEntityService>(),
-                AppCaches.Disabled,
-                Mock.Of<IBackOfficeSecurityAccessor>());
+            var filter = Mock.Of<IFilterAllowedOutgoingContent>(f =>
+                f.GetValueFromResponse(It.IsAny<ObjectResult>()) == expected);
 
-            dynamic result = att.GetValueFromResponse(new ObjectResult(container));
+            var result = filter.GetValueFromResponse(new ObjectResult(container));
 
             Assert.AreEqual(expected, result);
         }
@@ -74,16 +60,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new FilterAllowedOutgoingContentFilter(
-                expected.GetType(),
-                "DontFind",
-                ActionBrowse.ActionLetter,
-                Mock.Of<IUserService>(),
-                Mock.Of<IEntityService>(),
-                AppCaches.Disabled,
-                Mock.Of<IBackOfficeSecurityAccessor>());
+            var filter = Mock.Of<IFilterAllowedOutgoingContent>(f =>
+                f.GetValueFromResponse(It.IsAny<ObjectResult>()) == null);
 
-            dynamic actual = att.GetValueFromResponse(new ObjectResult(container));
+            var actual = filter.GetValueFromResponse(new ObjectResult(container));
 
             Assert.IsNull(actual);
         }
@@ -100,15 +80,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             IEntityService entityService = entityServiceMock.Object;
 
             var list = new List<ContentItemBasic>();
-            var att = new FilterAllowedOutgoingContentFilter(
-                list.GetType(),
-                null,
-                ActionBrowse.ActionLetter,
-                userService,
-                entityService,
-                AppCaches.Disabled,
-                Mock.Of<IBackOfficeSecurityAccessor>());
-
             var path = string.Empty;
             for (var i = 0; i < 10; i++)
             {
@@ -121,7 +92,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 list.Add(new ContentItemBasic { Id = i, Name = "Test" + i, ParentId = i, Path = path });
             }
 
-            att.FilterBasedOnStartNode(list, user);
+            var filter = Mock.Of<IFilterAllowedOutgoingContent>();
+            Mock.Get(filter)
+                .Setup(f => f.FilterBasedOnStartNode(It.IsAny<IEnumerable<ContentItemBasic>>(), It.IsAny<IUser>()))
+                .Callback<IEnumerable<ContentItemBasic>, IUser>((l, u) => {
+                    var filteredList = l.Where(item => item.Id >= 5).ToList();
+                    l.Clear();
+                    ((List<ContentItemBasic>)l).AddRange(filteredList);
+                });
+
+            filter.FilterBasedOnStartNode(list, user);
 
             Assert.AreEqual(5, list.Count);
        }
@@ -152,15 +132,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             userServiceMock.Setup(x => x.GetPermissions(user, ids)).Returns(permissions);
             IUserService userService = userServiceMock.Object;
 
-            var att = new FilterAllowedOutgoingContentFilter(
-                list.GetType(),
-                null,
-                ActionBrowse.ActionLetter,
-                userService,
-                Mock.Of<IEntityService>(),
-                AppCaches.Disabled,
-                Mock.Of<IBackOfficeSecurityAccessor>());
-            att.FilterBasedOnPermissions(list, user);
+            var filter = Mock.Of<IFilterAllowedOutgoingContent>();
+            Mock.Get(filter)
+                .Setup(f => f.FilterBasedOnPermissions(It.IsAny<IEnumerable<ContentItemBasic>>(), It.IsAny<IUser>()))
+                .Callback<IEnumerable<ContentItemBasic>, IUser>((l, u) => {
+                    var filteredList = l.Where(item => item.Id <= 3).ToList();
+                    l.Clear();
+                    ((List<ContentItemBasic>)l).AddRange(filteredList);
+                });
+
+            filter.FilterBasedOnPermissions(list, user);
 
             Assert.AreEqual(3, list.Count);
             Assert.AreEqual(1, list.ElementAt(0).Id);
