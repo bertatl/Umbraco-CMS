@@ -36,7 +36,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence.Queryin
             };
             Expression<Func<PropertyType, bool>> predicate = p => p.DataTypeId == dataType.Id;
             var modelToSqlExpressionHelper = new ModelToSqlExpressionVisitor<PropertyType>(SqlContext.SqlSyntax, Mappers);
-            var result = modelToSqlExpressionHelper.Visit(predicate);
+            var result = modelToSqlExpressionHelper.Translate(predicate);
 
             Debug.Print("Model to Sql ExpressionHelper: \n" + result);
 
