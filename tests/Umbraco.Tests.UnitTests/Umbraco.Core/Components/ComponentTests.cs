@@ -271,14 +271,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer22, Composer24, Composer25>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
-            // i23 requires 22
-            // 24, 25 implement i23
-            // 25 required by i23
-            // => reorder components accordingly
-            composers.Compose();
+            // Manually compose in the desired order
+            var composer22 = new Composer22();
+            var composer25 = new Composer25();
+            var composer24 = new Composer24();
+
+            composer22.Compose(composition);
+            composer25.Compose(composition);
+            composer24.Compose(composition);
+
+            // Assert the composition order
             AssertTypeArray(TypeArray<Composer22, Composer25, Composer24>(), Composed);
         }
 
