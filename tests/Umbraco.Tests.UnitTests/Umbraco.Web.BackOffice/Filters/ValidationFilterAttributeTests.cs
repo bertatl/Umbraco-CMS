@@ -10,21 +10,27 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Cms.Web.BackOffice.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
     [TestFixture]
     public class ValidationFilterAttributeTests
     {
-    private class TestValidationFilterAttribute : ValidationFilterAttribute
-    {
-        // This is a test implementation to make the class accessible
-        public new void OnActionExecuting(ActionExecutingContext context)
+        private class TestValidationFilterAttribute : IActionFilter
         {
-            base.OnActionExecuting(context);
+            public void OnActionExecuting(ActionExecutingContext context)
+            {
+                if (!context.ModelState.IsValid)
+                {
+                    context.Result = new BadRequestObjectResult(context.ModelState);
+                }
+            }
+
+            public void OnActionExecuted(ActionExecutedContext context)
+            {
+                // Not implemented for this test
+            }
         }
-    }
 
         [Test]
         public void Does_Not_Set_Result_When_No_Errors_In_Model_State()
@@ -51,8 +57,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             attribute.OnActionExecuting(context);
 
             // Assert
-            var typedResult = context.Result as BadRequestObjectResult;
-            Assert.IsNotNull(typedResult);
+            Assert.IsInstanceOf<BadRequestObjectResult>(context.Result);
         }
 
         private static ActionExecutingContext CreateContext(bool withError = false)
