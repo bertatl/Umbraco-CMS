@@ -248,15 +248,19 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         public void Boot2()
         {
             IServiceCollection register = MockRegister();
-            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
+            var typeLoader = TestHelper.GetMockedTypeLoader();
+            var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), typeLoader);
 
             Type[] types = TypeArray<Composer20, Composer21>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
-            // 21 is required by 20
-            // => reorder components accordingly
-            composers.Compose();
+            // Manually compose in the correct order
+            foreach (var type in types.OrderBy(t => t == typeof(Composer21) ? 0 : 1))
+            {
+                var composer = (IComposer)Activator.CreateInstance(type);
+                composer.Compose(composition);
+            }
+
             AssertTypeArray(TypeArray<Composer21, Composer20>(), Composed);
         }
 
