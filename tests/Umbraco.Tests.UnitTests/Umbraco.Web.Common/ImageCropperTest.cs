@@ -39,7 +39,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
         public void CanConvertImageCropperDataSetJObject()
         {
             // cropperJson3 - has no crops
-            ImageCropperValue cropperValue = CropperJson3.DeserializeImageCropperValue();
+            ImageCropperValue cropperValue = JsonConvert.DeserializeObject<ImageCropperValue>(CropperJson3);
             Attempt<JObject> serialized = cropperValue.TryConvertTo<JObject>();
             Assert.IsTrue(serialized.Success);
             Assert.AreEqual(cropperValue, serialized.Result.ToObject<ImageCropperValue>());
@@ -48,7 +48,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
         [Test]
         public void CanConvertImageCropperDataSetJsonToString()
         {
-            ImageCropperValue cropperValue = CropperJson1.DeserializeImageCropperValue();
+            ImageCropperValue cropperValue = JsonConvert.DeserializeObject<ImageCropperValue>(CropperJson1);
             Attempt<string> serialized = cropperValue.TryConvertTo<string>();
             Assert.IsTrue(serialized.Success);
             Assert.IsTrue(serialized.Result.DetectIsJson());
@@ -165,7 +165,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
         [Test]
         public void GetBaseCropUrlFromModelTest()
         {
-            ImageCropperValue cropDataSet = CropperJson1.DeserializeImageCropperValue();
+            ImageCropperValue cropDataSet = JsonConvert.DeserializeObject<ImageCropperValue>(CropperJson1);
             var urlString = cropDataSet.GetCropUrl("thumb", new TestImageUrlGenerator());
             Assert.AreEqual("?c=0.58729977382575338,0.055768992440203169,0,0.32457553600198386&w=100&h=100", urlString);
         }
