@@ -9,6 +9,8 @@ using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Serialization;
 using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Core.Services;
+using System.Reflection;
+using Moq;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
 
@@ -53,14 +55,23 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IConfigurationEditor explicitConfigurationEditor = _explicitConfigurationEditorBuilder.Build();
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
-            return new DataEditor(
-                name,
-                alias,
-                explicitValueEditor,
-                explicitConfigurationEditor)
+            var dataEditor = new DataEditor(
+                Mock.Of<IDataValueEditorFactory>(),
+                EditorType.PropertyValue)
             {
+                Alias = alias,
                 DefaultConfiguration = defaultConfiguration
             };
+
+            // Use reflection to set the properties that might have protected setters
+            typeof(DataEditor).GetProperty("Name").SetValue(dataEditor, name);
+            typeof(DataEditor).GetProperty("View").SetValue(dataEditor, "~/App_Plugins/MyCustomEditor/editor.html");
+
+// Set the configuration editor and value editor using reflection
+            typeof(DataEditor).GetProperty("ConfigurationEditor").SetValue(dataEditor, explicitConfigurationEditor);
+            typeof(DataEditor).GetProperty("Editor").SetValue(dataEditor, explicitValueEditor);
+
+            return dataEditor;
         }
 
         string IWithAliasBuilder.Alias
