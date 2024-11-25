@@ -12,7 +12,7 @@ using Umbraco.Cms.Core.Scoping;
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 {
     [TestFixture]
-    public class SingleItemsOnlyCachePolicyTests
+    public class RepositoryCachePolicyTests
     {
         private IScopeAccessor DefaultAccessor
         {
@@ -35,7 +35,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 .Callback((string cacheKey, Func<object> o, TimeSpan? t, bool b, string[] s) => cached.Add(cacheKey));
             cache.Setup(x => x.SearchByKey(It.IsAny<string>())).Returns(new AuditItem[] { });
 
-            var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
+            var defaultPolicy = new RepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
 
             AuditItem[] unused = defaultPolicy.GetAll(new object[] { }, ids => new[]
                     {
@@ -54,7 +54,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Insert(It.IsAny<string>(), It.IsAny<Func<object>>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Callback(() => isCached = true);
 
-            var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
+            var defaultPolicy = new RepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
 
             AuditItem unused = defaultPolicy.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => null);
             Assert.IsTrue(isCached);
