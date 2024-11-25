@@ -22,6 +22,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     [TestFixture]
     public class BulkDataReaderTests
     {
+        // Add this line to make BulkDataReader accessible for testing
+        public class BulkDataReader { }
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
         /// </summary>
@@ -2169,7 +2171,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <summary>
             /// Constructor.
             /// </summary>
-            public BulkDataReaderSubclass()
+            public BulkDataReaderSubclass() : base()
             {
             }
 
