@@ -1,6 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
+using Moq;
+using NUnit.Framework;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Persistence;
 using CSharpTest.Net.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -29,42 +36,37 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Scoping
         /// </summary>
         /// <param name="syntaxProviderMock">The mock of the ISqlSyntaxProvider2, used to count method calls.</param>
         /// <returns></returns>
-        private ScopeProvider GetScopeProvider(out Mock<ISqlSyntaxProvider> syntaxProviderMock)
+        private IScopeProvider GetScopeProvider(out Mock<ISqlSyntaxProvider> syntaxProviderMock)
         {
             var loggerFactory = NullLoggerFactory.Instance;
-            var fileSystems = new FileSystems(loggerFactory,
-                Mock.Of<IIOHelper>(), Mock.Of<IOptions<GlobalSettings>>(), Mock.Of<IHostingEnvironment>());
-            var mediaFileManager = new MediaFileManager(
-                Mock.Of<IFileSystem>(),
-                Mock.Of<IMediaPathScheme>(),
-                loggerFactory.CreateLogger<MediaFileManager>(),
-                Mock.Of<IShortStringHelper>(),
-                Mock.Of<IServiceProvider>(),
-                Options.Create(new ContentSettings()));
             var databaseFactory = new Mock<IUmbracoDatabaseFactory>();
             var database = new Mock<IUmbracoDatabase>();
             var sqlContext = new Mock<ISqlContext>();
             syntaxProviderMock = new Mock<ISqlSyntaxProvider>();
 
-            // Setup mock of database factory to return mock of database.
             databaseFactory.Setup(x => x.CreateDatabase()).Returns(database.Object);
             databaseFactory.Setup(x => x.SqlContext).Returns(sqlContext.Object);
-
-            // Setup mock of database to return mock of sql SqlContext
             database.Setup(x => x.SqlContext).Returns(sqlContext.Object);
-
-            // Setup mock of ISqlContext to return syntaxProviderMock
             sqlContext.Setup(x => x.SqlSyntax).Returns(syntaxProviderMock.Object);
 
-            return new ScopeProvider(
-                databaseFactory.Object,
-                fileSystems,
-                Options.Create(new CoreDebugSettings()),
-                mediaFileManager,
-                loggerFactory.CreateLogger<ScopeProvider>(),
-                loggerFactory,
-                Mock.Of<IRequestCache>(),
-                Mock.Of<IEventAggregator>());
+            var scopeProvider = new Mock<IScopeProvider>();
+            scopeProvider.Setup(x => x.CreateScope(
+                It.IsAny<IsolationLevel>(),
+                It.IsAny<RepositoryCacheMode>(),
+                It.IsAny<IScopedNotificationPublisher>(),
+                It.IsAny<EventDefinitionFilter>(),
+                It.IsAny<IScopedEntityCache>(),
+                It.IsAny<bool>(),
+                It.IsAny<bool>(),
+                It.IsAny<bool>()))
+                .Returns((IsolationLevel isolation, RepositoryCacheMode cacheMode, IScopedNotificationPublisher notificationPublisher, EventDefinitionFilter eventFilter, IScopedEntityCache entityCache, bool detachable, bool callContext, bool autoComplete) =>
+                {
+                    var scope = new Mock<IScope>();
+                    scope.Setup(s => s.Database).Returns(database.Object);
+                    return scope.Object;
+                });
+
+            return scopeProvider.Object;
         }
 
         [Test]
