@@ -12,14 +12,6 @@ using Umbraco.Cms.Tests.Common.TestHelpers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
 {
-    // Mock class for testing purposes
-    public class MockPropertyTypeGroupDto
-    {
-        public int Id { get; set; }
-        public string Text { get; set; }
-        public string Alias { get; set; }
-    }
-
     [TestFixture]
     public class AddPropertyTypeGroupColumnsTests
     {
@@ -38,12 +30,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
 
             var dtos = new[]
             {
-                new MockPropertyTypeGroupDto() { Id = 0, Text = "Content" },
-                new MockPropertyTypeGroupDto() { Id = 1, Text = "Content" },
-                new MockPropertyTypeGroupDto() { Id = 2, Text = "Settings" },
-                new MockPropertyTypeGroupDto() { Id = 3, Text = "Content " }, // The trailing space is intentional
-                new MockPropertyTypeGroupDto() { Id = 4, Text = "SEO/OpenGraph" },
-                new MockPropertyTypeGroupDto() { Id = 5, Text = "Site defaults" }
+                new PropertyTypeGroupDto() { Id = 0, Text = "Content" },
+                new PropertyTypeGroupDto() { Id = 1, Text = "Content" },
+                new PropertyTypeGroupDto() { Id = 2, Text = "Settings" },
+                new PropertyTypeGroupDto() { Id = 3, Text = "Content " }, // The trailing space is intentional
+                new PropertyTypeGroupDto() { Id = 4, Text = "SEO/OpenGraph" },
+                new PropertyTypeGroupDto() { Id = 5, Text = "Site defaults" }
             };
 
             var populatedDtos = migration.PopulateAliases(dtos)
