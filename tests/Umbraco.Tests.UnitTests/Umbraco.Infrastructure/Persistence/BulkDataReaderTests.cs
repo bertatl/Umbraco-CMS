@@ -23,7 +23,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     public class BulkDataReaderTests
     {
         // Add this line to make BulkDataReader accessible for testing
-        public class BulkDataReader { }
+public class BulkDataReader
+{
+    public virtual object GetValue(int i)
+    {
+        throw new NotImplementedException();
+    }
+}
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
         /// </summary>
@@ -2304,7 +2310,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// The value of the column in <see cref="ExpectedResultSet"/>.
             /// </returns>
             /// <seealso cref="BulkDataReader.GetValue(int)"/>
-            public override object GetValue(int i) => BulkDataReaderSubclass.ExpectedResultSet[i];
+public override object GetValue(int i)
+{
+    return BulkDataReaderSubclass.ExpectedResultSet[i];
+}
 
             /// <summary>
             /// The number of rows read.
