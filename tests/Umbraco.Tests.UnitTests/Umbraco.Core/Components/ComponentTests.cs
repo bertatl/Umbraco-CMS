@@ -385,18 +385,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             });
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
-            // Add composers directly to the builder
-            composition.Composers.Add<Composer1>();
-            composition.Composers.Add<Composer5>();
-            composition.Composers.Add<Composer5a>();
+            Type[] types = new[] { typeof(Composer1), typeof(Composer5), typeof(Composer5a) };
+            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
 
             Assert.IsEmpty(Composed);
-
-            // Manually call Compose on each composer
-            new Composer1().Compose(composition);
-            new Composer5().Compose(composition);
-            new Composer5a().Compose(composition);
-
+            composers.Compose();
             AssertTypeArray(TypeArray<Composer1, Composer5, Composer5a>(), Composed);
 
             ComponentCollectionBuilder builder = composition.WithCollectionBuilder<ComponentCollectionBuilder>();
