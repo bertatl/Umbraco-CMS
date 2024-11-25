@@ -10,37 +10,60 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
 using MimeKit;
+using Umbraco.Cms.Core.Notifications;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
-    public static class EmailMessageExtensions
+public static class EmailMessageExtensions
+{
+    public static MimeMessage ToMimeMessage(this EmailMessage emailMessage, string configuredSender)
     {
-        public static MimeMessage ToMimeMessage(this EmailMessage emailMessage, string configuredSender)
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(string.Empty, emailMessage.From ?? configuredSender));
+
+        foreach (var to in emailMessage.To)
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(string.Empty, emailMessage.From ?? configuredSender));
-
-            foreach (var to in emailMessage.To)
-            {
-                message.To.Add(new MailboxAddress(string.Empty, to));
-            }
-
-            message.Subject = emailMessage.Subject;
-
-            var builder = new BodyBuilder();
-            if (emailMessage.IsBodyHtml)
-            {
-                builder.HtmlBody = emailMessage.Body;
-            }
-            else
-            {
-                builder.TextBody = emailMessage.Body;
-            }
-
-            message.Body = builder.ToMessageBody();
-            return message;
+            message.To.Add(new MailboxAddress(string.Empty, to));
         }
+
+        message.Subject = emailMessage.Subject;
+
+        var builder = new BodyBuilder();
+        if (emailMessage.IsBodyHtml)
+        {
+            builder.HtmlBody = emailMessage.Body;
+        }
+        else
+        {
+            builder.TextBody = emailMessage.Body;
+        }
+
+        message.Body = builder.ToMessageBody();
+        return message;
     }
+
+    public static NotificationEmailModel ToNotificationEmail(this EmailMessage emailMessage, string configuredSender)
+    {
+        var from = new EmailAddress(emailMessage.From ?? configuredSender);
+        var to = emailMessage.To.Select(address => new EmailAddress(address)).ToList();
+        var cc = emailMessage.Cc?.Select(address => new EmailAddress(address)).ToList() ?? new List<EmailAddress>();
+        var bcc = emailMessage.Bcc?.Select(address => new EmailAddress(address)).ToList() ?? new List<EmailAddress>();
+        var replyTo = emailMessage.ReplyTo?.Select(address => new EmailAddress(address)).ToList() ?? new List<EmailAddress>();
+
+        var attachments = emailMessage.Attachments?.Select(att => new EmailMessageAttachment(att.Content, att.FileName)).ToList() ?? new List<EmailMessageAttachment>();
+
+        return new NotificationEmailModel(
+            from,
+            to,
+            cc,
+            bcc,
+            replyTo,
+            emailMessage.Subject,
+            emailMessage.Body,
+            attachments,
+            emailMessage.IsBodyHtml);
+    }
+}
 
     [TestFixture]
     public class EmailMessageExtensionsTests
