@@ -23,6 +23,7 @@ using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_9_0_0;
 using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
 using File = System.IO.File;
+using Umbraco.Cms.Core.Models.Entities;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
 {
@@ -237,11 +238,26 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(LogViewerQueryModelFactory.BuildEntity));
+                .Select(ConvertToLogViewerQuery));
         }
 
         private IList<ILogViewerQuery> Store { get; }
-        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
+
+        private LogViewerQuery ConvertToLogViewerQuery(LogViewerQueryDto dto)
+        {
+            return new LogViewerQuery
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Query = dto.Query
+            };
+        }
+
+        private class LogViewerQuery : EntityBase, ILogViewerQuery
+        {
+            public string Name { get; set; }
+            public string Query { get; set; }
+        }
 
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
