@@ -24,47 +24,41 @@ using Umbraco.Extensions;
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
     // Wrapper class for FilterAllowedOutgoingContentFilter
-    public class PublicFilterAllowedOutgoingContentFilter
+public class PublicFilterAllowedOutgoingContentFilter
+{
+    private readonly dynamic _filter;
+
+    public PublicFilterAllowedOutgoingContentFilter(
+        Type type,
+        string propertyToFilterOn,
+        char actionToFilterBy,
+        IUserService userService,
+        IEntityService entityService,
+        AppCaches appCaches,
+        IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
     {
-        private readonly FilterAllowedOutgoingContentFilter _filter;
-
-        public PublicFilterAllowedOutgoingContentFilter(
-            Type type,
-            string propertyToFilterOn,
-            char actionToFilterBy,
-            IUserService userService,
-            IEntityService entityService,
-            AppCaches appCaches,
-            IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
-        {
-            _filter = new FilterAllowedOutgoingContentFilter(
-                type,
-                propertyToFilterOn,
-                actionToFilterBy,
-                userService,
-                entityService,
-                appCaches,
-                backOfficeSecurityAccessor);
-        }
-
-        public object GetValueFromResponse(ObjectResult result)
-        {
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", BindingFlags.NonPublic | BindingFlags.Instance);
-            return methodInfo.Invoke(_filter, new object[] { result });
-        }
-
-        public void FilterBasedOnStartNode(IEnumerable<ContentItemBasic> list, IUser user)
-        {
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("FilterBasedOnStartNode", BindingFlags.Public | BindingFlags.Instance);
-            methodInfo.Invoke(_filter, new object[] { list, user });
-        }
-
-        public void FilterBasedOnPermissions(IEnumerable<ContentItemBasic> list, IUser user)
-        {
-            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("FilterBasedOnPermissions", BindingFlags.Public | BindingFlags.Instance);
-            methodInfo.Invoke(_filter, new object[] { list, user });
-        }
+        var filterType = Type.GetType("Umbraco.Cms.Web.BackOffice.Filters.FilterAllowedOutgoingContentFilter, Umbraco.Web.BackOffice");
+        _filter = Activator.CreateInstance(filterType, type, propertyToFilterOn, actionToFilterBy, userService, entityService, appCaches, backOfficeSecurityAccessor);
     }
+
+    public object GetValueFromResponse(ObjectResult result)
+    {
+        var methodInfo = _filter.GetType().GetMethod("GetValueFromResponse", BindingFlags.NonPublic | BindingFlags.Instance);
+        return methodInfo.Invoke(_filter, new object[] { result });
+    }
+
+    public void FilterBasedOnStartNode(IEnumerable<ContentItemBasic> list, IUser user)
+    {
+        var methodInfo = _filter.GetType().GetMethod("FilterBasedOnStartNode", BindingFlags.Public | BindingFlags.Instance);
+        methodInfo.Invoke(_filter, new object[] { list, user });
+    }
+
+    public void FilterBasedOnPermissions(IEnumerable<ContentItemBasic> list, IUser user)
+    {
+        var methodInfo = _filter.GetType().GetMethod("FilterBasedOnPermissions", BindingFlags.Public | BindingFlags.Instance);
+        methodInfo.Invoke(_filter, new object[] { list, user });
+    }
+}
 
     [TestFixture]
     public class FilterAllowedOutgoingContentAttributeTests
