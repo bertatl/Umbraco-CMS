@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -30,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             var notificationPublisherMock = new Mock<IScopedNotificationPublisher>();
             ScopeProvider scopeProvider = GetScopeProvider(out var eventAggregatorMock);
 
-using (IScope scope = scopeProvider.CreateScope(IsolationLevel.Unspecified, RepositoryCacheMode.Unspecified, null, null, false, false))
+            using (IScope scope = scopeProvider.CreateScope(notificationPublisher: notificationPublisherMock.Object))
             {
                 scope.Notifications.Publish(Mock.Of<INotification>());
                 scope.Notifications.PublishCancelable(Mock.Of<ICancelableNotification>());
@@ -39,7 +38,7 @@ using (IScope scope = scopeProvider.CreateScope(IsolationLevel.Unspecified, Repo
                 notificationPublisherMock.Verify(x => x.PublishCancelable(It.IsAny<ICancelableNotification>()), Times.Once);
 
                 // Ensure that the custom scope provider is till used in inner scope.
-using (IScope innerScope = scopeProvider.CreateScope(IsolationLevel.Unspecified, RepositoryCacheMode.Unspecified, null, null, false, false))
+                using (IScope innerScope = scopeProvider.CreateScope())
                 {
                     innerScope.Notifications.Publish(Mock.Of<INotification>());
                     innerScope.Notifications.PublishCancelable(Mock.Of<ICancelableNotification>());
@@ -64,26 +63,42 @@ using (IScope innerScope = scopeProvider.CreateScope(IsolationLevel.Unspecified,
             var notificationPublisherMock = new Mock<IScopedNotificationPublisher>();
             ScopeProvider scopeProvider = GetScopeProvider(out var eventAggregatorMock);
 
-using (var scope = scopeProvider.CreateScope(IsolationLevel.Unspecified, RepositoryCacheMode.Unspecified, null, null, false, false))
+            using (var scope = scopeProvider.CreateScope())
             {
-                Assert.Throws<ArgumentException>(() => scopeProvider.CreateScope(IsolationLevel.Unspecified, RepositoryCacheMode.Unspecified, notificationPublisherMock.Object, null, false, false));
+                Assert.Throws<ArgumentException>(() => scopeProvider.CreateScope(notificationPublisher: notificationPublisherMock.Object));
             }
         }
 
-        private IScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
+        private ScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
         {
+            NullLoggerFactory loggerFactory = NullLoggerFactory.Instance;
+
+            var fileSystems = new FileSystems(
+                loggerFactory,
+                Mock.Of<IIOHelper>(),
+                Options.Create(new GlobalSettings()),
+                Mock.Of<IHostingEnvironment>());
+
+            var mediaFileManager = new MediaFileManager(
+                Mock.Of<IFileSystem>(),
+                Mock.Of<IMediaPathScheme>(),
+                loggerFactory.CreateLogger<MediaFileManager>(),
+                Mock.Of<IShortStringHelper>(),
+                Mock.Of<IServiceProvider>(),
+                Options.Create(new ContentSettings()));
+
             eventAggregatorMock = new Mock<IEventAggregator>();
-            var scopeProviderMock = new Mock<IScopeProvider>();
 
-            scopeProviderMock.Setup(x => x.CreateScope(It.IsAny<IsolationLevel>(), It.IsAny<RepositoryCacheMode>(), It.IsAny<IEventDispatcher>(), It.IsAny<bool?>(), It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns((IsolationLevel isolationLevel, RepositoryCacheMode repositoryCacheMode, IEventDispatcher eventDispatcher, bool? scopeFileSystems, bool callContext, bool autoComplete) =>
-                {
-                    var scopeMock = new Mock<IScope>();
-                    scopeMock.Setup(s => s.Notifications).Returns(Mock.Of<IScopedNotificationPublisher>());
-                    return scopeMock.Object;
-                });
-
-            return scopeProviderMock.Object;
+            return new ScopeProvider(
+                Mock.Of<IUmbracoDatabaseFactory>(),
+                fileSystems,
+                Options.Create(new CoreDebugSettings()),
+                mediaFileManager,
+                loggerFactory.CreateLogger<ScopeProvider>(),
+                loggerFactory,
+                Mock.Of<IRequestCache>(),
+                eventAggregatorMock.Object
+            );
         }
     }
 }
