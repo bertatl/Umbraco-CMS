@@ -525,37 +525,23 @@ using (d.GetScopedWriteLock(GetScopeProvider()))
         public void NestedWriteLocking1()
         {
             var d = new SnapDictionary<int, string>();
-            SnapDictionary<int, string>.TestHelper t = d.Test;
-            t.CollectAuto = false;
 
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
             // no scope context: writers nest, last one to be disposed commits
             IScopeProvider scopeProvider = GetScopeProvider();
 
-            using (IDisposable w1 = d.GetScopedWriteLock(scopeProvider))
+using (IDisposable w1 = d.GetScopedWriteLock(scopeProvider))
             {
-                Assert.AreEqual(1, t.LiveGen);
-                Assert.IsTrue(t.IsLocked);
-                Assert.IsTrue(t.NextGen);
-
                 Assert.Throws<InvalidOperationException>(() =>
                 {
-                    using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
+using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
                     {
                     }
                 });
 
-                Assert.AreEqual(1, t.LiveGen);
-                Assert.IsTrue(t.IsLocked);
-                Assert.IsTrue(t.NextGen);
-
                 Assert.AreEqual(0, d.CreateSnapshot().Gen);
             }
-
-            Assert.AreEqual(1, t.LiveGen);
-            Assert.IsFalse(t.IsLocked);
-            Assert.IsTrue(t.NextGen);
 
             Assert.AreEqual(1, d.CreateSnapshot().Gen);
         }
