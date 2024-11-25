@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -36,8 +37,6 @@ using Umbraco.Cms.Tests.Integration.DependencyInjection;
 using Umbraco.Cms.Tests.Integration.Extensions;
 using Umbraco.Cms.Tests.Integration.Implementations;
 using Umbraco.Extensions;
-using Microsoft.Data.SqlClient;
-
 
 namespace Umbraco.Cms.Tests.Integration.Testing
 {
