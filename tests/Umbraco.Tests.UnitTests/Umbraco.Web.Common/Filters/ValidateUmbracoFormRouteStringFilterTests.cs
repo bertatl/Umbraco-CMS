@@ -1,6 +1,8 @@
 // Copyright (c) Umbraco.
 // See LICENSE for more details.
 
+using System;
+using System.Reflection;
 using Microsoft.AspNetCore.DataProtection;
 using NUnit.Framework;
 using Umbraco.Cms.Web.Common.Exceptions;
@@ -17,9 +19,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         [Test]
         public void Validate_Route_String()
         {
-            var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
+            var attribute = new ValidateUmbracoFormRouteStringAttribute();
+            var filterType = typeof(ValidateUmbracoFormRouteStringAttribute).GetNestedType("ValidateUmbracoFormRouteStringFilter", BindingFlags.NonPublic);
+            var filterInstance = Activator.CreateInstance(filterType, DataProtectionProvider);
+            var validateRouteStringMethod = filterType.GetMethod("ValidateRouteString");
 
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(null, null, null, null));
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { null, null, null, null }));
 
             const string ControllerName = "Test";
             const string ControllerAction = "Index";
@@ -27,17 +32,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
             var validUfprt = EncryptionHelper.CreateEncryptedRouteString(DataProtectionProvider, ControllerName, ControllerAction, Area);
 
             var invalidUfprt = validUfprt + "z";
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(invalidUfprt, null, null, null));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { invalidUfprt, null, null, null }));
 
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, "doesntMatch"));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, null));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, "doesntMatch", Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, null, Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, "doesntMatch", ControllerAction, Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, null, ControllerAction, Area));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, ControllerName, ControllerAction, "doesntMatch" }));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, ControllerName, ControllerAction, null }));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, ControllerName, "doesntMatch", Area }));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, ControllerName, null, Area }));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, "doesntMatch", ControllerAction, Area }));
+            Assert.Throws<TargetInvocationException>(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, null, ControllerAction, Area }));
 
-            Assert.DoesNotThrow(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, Area));
-            Assert.DoesNotThrow(() => filter.ValidateRouteString(validUfprt, ControllerName.ToLowerInvariant(), ControllerAction.ToLowerInvariant(), Area.ToLowerInvariant()));
+            Assert.DoesNotThrow(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, ControllerName, ControllerAction, Area }));
+            Assert.DoesNotThrow(() => validateRouteStringMethod.Invoke(filterInstance, new object[] { validUfprt, ControllerName.ToLowerInvariant(), ControllerAction.ToLowerInvariant(), Area.ToLowerInvariant() }));
         }
     }
 }
