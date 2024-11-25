@@ -23,7 +23,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     public class BulkDataReaderTests
     {
         // Add this line to make BulkDataReader accessible for testing
-public abstract class BulkDataReader : IDataReader, IDisposable
+public class BulkDataReader
 {
     public virtual object GetValue(int i)
     {
@@ -34,23 +34,6 @@ public abstract class BulkDataReader : IDataReader, IDisposable
     {
         throw new NotImplementedException();
     }
-
-    public virtual void Dispose()
-    {
-        // Dispose logic here
-    }
-
-    // Implement other IDataReader members as needed
-    public virtual void Close()
-    {
-        // Close logic here
-    }
-
-    public virtual int FieldCount => throw new NotImplementedException();
-
-    public virtual bool IsClosed => throw new NotImplementedException();
-
-    // ... other IDataReader members ...
 }
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
