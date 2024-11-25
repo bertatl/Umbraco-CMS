@@ -16,7 +16,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
     public class AddPropertyTypeGroupColumnsTests
     {
         private readonly IShortStringHelper _shortStringHelper = new DefaultShortStringHelper(Options.Create(new RequestHandlerSettings()));
-        private readonly ILogger<MigrationContext> _contextLogger = Mock.Of<ILogger<MigrationContext>>();
+        private readonly ILogger<IMigrationContext> _contextLogger = Mock.Of<ILogger<IMigrationContext>>();
 
         [Test]
         public void CreateColumn()
