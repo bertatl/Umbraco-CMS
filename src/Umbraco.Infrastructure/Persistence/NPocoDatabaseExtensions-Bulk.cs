@@ -7,6 +7,7 @@ using System.Linq;
 using NPoco;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Infrastructure.Persistence;
+using System.Data.SqlClient;
 
 namespace Umbraco.Extensions
 {
@@ -31,8 +32,8 @@ namespace Umbraco.Extensions
         /// </remarks>
         public static void ConfigureNPocoBulkExtensions()
         {
-            SqlBulkCopyHelper.SqlConnectionResolver = dbConn => GetTypedConnection<SqlConnection>(dbConn);
-            SqlBulkCopyHelper.SqlTransactionResolver = dbTran => GetTypedTransaction<SqlTransaction>(dbTran);
+            SqlBulkCopyHelper.SqlConnectionResolver = dbConn => GetTypedConnection<System.Data.SqlClient.SqlConnection>(dbConn);
+            SqlBulkCopyHelper.SqlTransactionResolver = dbTran => GetTypedTransaction<System.Data.SqlClient.SqlTransaction>(dbTran);
         }
 
 
