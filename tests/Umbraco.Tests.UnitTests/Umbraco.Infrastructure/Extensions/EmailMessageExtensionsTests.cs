@@ -90,7 +90,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
         }
 
         [Test]
-        public void Can_Construct_MimeMessage_With_ConfiguredSender()
+        public void Can_Construct_EmailMessage_With_ConfiguredSender()
         {
             const string to = "to@email.com";
             const string subject = "Subject";
@@ -98,15 +98,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
-
-            Assert.AreEqual(1, result.From.Count());
-            Assert.AreEqual(ConfiguredSender, result.From.First().ToString());
-            Assert.AreEqual(1, result.To.Count());
-            Assert.AreEqual(to, result.To.First().ToString());
-            Assert.AreEqual(subject, result.Subject);
-            Assert.IsNull(result.TextBody);
-            Assert.AreEqual(body, result.HtmlBody.ToString());
+            Assert.AreEqual(ConfiguredSender, emailMessage.From);
+            Assert.AreEqual(1, emailMessage.To.Count());
+            Assert.AreEqual(to, emailMessage.To.First());
+            Assert.AreEqual(subject, emailMessage.Subject);
+            Assert.AreEqual(body, emailMessage.Body);
+            Assert.IsTrue(emailMessage.IsBodyHtml);
         }
 
         [Test]
