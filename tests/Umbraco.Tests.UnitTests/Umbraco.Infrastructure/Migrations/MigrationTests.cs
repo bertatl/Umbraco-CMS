@@ -13,7 +13,6 @@ using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Cms.Infrastructure.Migrations.Expressions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations
 {
@@ -65,11 +64,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations
             {
             }
         }
-        private IMigrationContext GetMigrationContext() => Mock.Of<IMigrationContext>(ctx =>
-            ctx.Plan == new TestPlan() &&
-            ctx.Database == Mock.Of<IUmbracoDatabase>() &&
-            ctx.Logger == Mock.Of<ILogger<IMigrationContext>>() &&
-            ctx.Expressions == Mock.Of<IMigrationExpressionBuilder>());
+        private MigrationContext GetMigrationContext() => new MigrationContext(new TestPlan(), Mock.Of<IUmbracoDatabase>(), Mock.Of<ILogger<MigrationContext>>());
 
         [Test]
         public void RunGoodMigration()
