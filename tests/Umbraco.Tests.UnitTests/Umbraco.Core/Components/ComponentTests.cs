@@ -30,7 +30,6 @@ using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Core.Composing.CompositionGraph;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
