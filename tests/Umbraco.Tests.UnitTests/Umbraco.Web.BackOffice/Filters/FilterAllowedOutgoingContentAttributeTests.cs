@@ -22,6 +22,49 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
+    // Wrapper class for FilterAllowedOutgoingContentFilter
+    public class PublicFilterAllowedOutgoingContentFilter
+    {
+        private readonly FilterAllowedOutgoingContentFilter _filter;
+
+        public PublicFilterAllowedOutgoingContentFilter(
+            Type type,
+            string propertyToFilterOn,
+            char actionToFilterBy,
+            IUserService userService,
+            IEntityService entityService,
+            AppCaches appCaches,
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
+        {
+            _filter = new FilterAllowedOutgoingContentFilter(
+                type,
+                propertyToFilterOn,
+                actionToFilterBy,
+                userService,
+                entityService,
+                appCaches,
+                backOfficeSecurityAccessor);
+        }
+
+        public object GetValueFromResponse(ObjectResult result)
+        {
+            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("GetValueFromResponse", BindingFlags.NonPublic | BindingFlags.Instance);
+            return methodInfo.Invoke(_filter, new object[] { result });
+        }
+
+        public void FilterBasedOnStartNode(IEnumerable<ContentItemBasic> list, IUser user)
+        {
+            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("FilterBasedOnStartNode", BindingFlags.Public | BindingFlags.Instance);
+            methodInfo.Invoke(_filter, new object[] { list, user });
+        }
+
+        public void FilterBasedOnPermissions(IEnumerable<ContentItemBasic> list, IUser user)
+        {
+            var methodInfo = typeof(FilterAllowedOutgoingContentFilter).GetMethod("FilterBasedOnPermissions", BindingFlags.Public | BindingFlags.Instance);
+            methodInfo.Invoke(_filter, new object[] { list, user });
+        }
+    }
+
     [TestFixture]
     public class FilterAllowedOutgoingContentAttributeTests
     {
@@ -30,7 +73,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var filter = new FilterAllowedOutgoingContentFilter(
+            var filter = new PublicFilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -54,7 +97,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var att = new PublicFilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 nameof(MyTestClass.MyList),
                 ActionBrowse.ActionLetter,
@@ -74,7 +117,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var att = new PublicFilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 "DontFind",
                 ActionBrowse.ActionLetter,
@@ -100,7 +143,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             IEntityService entityService = entityServiceMock.Object;
 
             var list = new List<ContentItemBasic>();
-            var att = new FilterAllowedOutgoingContentFilter(
+            var att = new PublicFilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -152,7 +195,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             userServiceMock.Setup(x => x.GetPermissions(user, ids)).Returns(permissions);
             IUserService userService = userServiceMock.Object;
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var att = new PublicFilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
