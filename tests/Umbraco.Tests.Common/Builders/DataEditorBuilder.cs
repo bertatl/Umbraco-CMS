@@ -54,6 +54,7 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
             return new DataEditor(
+                null, // Adding a null logger as the first parameter
                 name,
                 alias,
                 explicitValueEditor,
