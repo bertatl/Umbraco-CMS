@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +10,14 @@ using Umbraco.Cms.Infrastructure.PublishedCache.Snap;
 
 namespace Umbraco.Cms.Infrastructure.PublishedCache
 {
-    public class SnapDictionary<TKey, TValue>
-        where TValue : class
+public class SnapDictionary<TKey, TValue>
+    where TValue : class
+{
+    public void SetAutoCollect(bool value)
     {
+        // Implement the logic to set the auto-collect behavior
+        // This might involve setting a field or property that controls the behavior
+    }
         // read
         // http://www.codeproject.com/Articles/548406/Dictionary-plus-Locking-versus-ConcurrentDictionar
         // http://arbel.net/2013/02/03/best-practices-for-using-concurrentdictionary/

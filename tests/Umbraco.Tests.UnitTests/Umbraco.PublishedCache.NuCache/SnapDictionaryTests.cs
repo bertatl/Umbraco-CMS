@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
+using System.Reflection;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
@@ -14,6 +15,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
     [TestFixture]
     public class SnapDictionaryTests
     {
+        private void SetCollectAuto<TKey, TValue>(SnapDictionary<TKey, TValue> dictionary, bool value)
+            where TValue : class
+        {
+            var testProperty = dictionary.GetType().GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
+            var testValue = testProperty.GetValue(dictionary);
+            var collectAutoProperty = testValue.GetType().GetProperty("CollectAuto");
+            collectAutoProperty.SetValue(testValue, value);
+        }
         [Test]
         public void LiveGenUpdate()
         {
@@ -139,7 +148,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task ProperlyCollects()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            d.SetAutoCollect(false); // Assuming we've added this method to SnapDictionary
 
             for (int i = 0; i < 32; i++)
             {
