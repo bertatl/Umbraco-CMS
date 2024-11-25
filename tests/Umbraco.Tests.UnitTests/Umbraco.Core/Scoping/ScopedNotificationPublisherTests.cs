@@ -17,6 +17,8 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Cms.Infrastructure.Persistence;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Umbraco.Tests.UnitTests")]
+
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
 {
     [TestFixture]
