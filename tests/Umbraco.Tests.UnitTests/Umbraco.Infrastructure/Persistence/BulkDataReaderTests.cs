@@ -25,7 +25,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
     [TestFixture]
     public class BulkDataReaderTests
     {
-public class MockDataReader : IDataReader
+        private class MockDataReader : IDataReader
         {
             public void Close() { }
             public int Depth => 0;
@@ -2203,7 +2203,7 @@ public class MockDataReader : IDataReader
     /// <summary>
     /// A mock class for testing BulkDataReader functionality.
     /// </summary>
-public class MockBulkDataReader : MockDataReader
+    private class MockBulkDataReader : MockDataReader
     {
         /// <summary>
         /// Constructor.
@@ -2359,7 +2359,7 @@ public class MockBulkDataReader : MockDataReader
             public override bool Read() => _readCount++ < 1;
         }
 
-public class BulkDataReaderSchemaTest : BulkDataReader
+        private class BulkDataReaderSchemaTest : BulkDataReader
         {
             /// <summary>
             /// Gets or sets a value indicating whether the column is nullable (i.e. optional).
