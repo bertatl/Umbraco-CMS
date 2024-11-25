@@ -12,7 +12,6 @@ using Umbraco.Cms.Core.Persistence.Repositories;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Services.Implement;
 using Umbraco.Cms.Tests.UnitTests.AutoFixture;
-using Umbraco.Cms.Infrastructure.Services;
 
 namespace Umbraco.Tests.Services
 {
