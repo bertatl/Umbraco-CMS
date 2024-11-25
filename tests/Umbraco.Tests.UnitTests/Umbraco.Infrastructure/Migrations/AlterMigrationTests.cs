@@ -27,7 +27,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations
         private IMigrationContext GetMigrationContext(out TestDatabase db)
         {
             db = new TestDatabase();
-            return new MigrationContext(new TestPlan(), db, _logger);
+            return Context.GetMigrationContext(new TestPlan(), db, _logger);
         }
 
         [Test]
