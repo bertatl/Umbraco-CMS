@@ -29,6 +29,7 @@ using Umbraco.Cms.Infrastructure.PublishedCache.DataSource;
 using Umbraco.Cms.Infrastructure.Serialization;
 using Umbraco.Cms.Tests.Common;
 using Umbraco.Extensions;
+using Umbraco.Cms.Infrastructure.PublishedCache.Persistence;
 
 namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
 {
