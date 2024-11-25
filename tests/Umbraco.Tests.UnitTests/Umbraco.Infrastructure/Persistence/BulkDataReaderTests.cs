@@ -32,7 +32,7 @@ private class MockDataReader : IDataReader
     public DataTable GetSchemaTable() => new DataTable();
     public bool IsClosed => false;
     public bool NextResult() => false;
-    public bool Read() => false;
+    public virtual bool Read() => false;
     public int RecordsAffected => 0;
     public void Dispose() { }
     public int FieldCount => 1;
@@ -2355,9 +2355,9 @@ private class MockDataReader : IDataReader
             /// <returns>
             /// True if there are more rows; otherwise, false.
             /// </returns>
-            /// <seealso cref="BulkDataReader.Read()"/>
-            public override bool Read() => _readCount++ < 1;
-        }
+    /// <seealso cref="BulkDataReader.Read()"/>
+    public override bool Read() => _readCount++ < 1;
+}
 
         private class BulkDataReaderSchemaTest : BulkDataReader
         {
