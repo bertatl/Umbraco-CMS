@@ -14,8 +14,6 @@ using Umbraco.Cms.Core.Media;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors.ValueConverters;
 using Umbraco.Extensions;
-using Umbraco.Cms.Core.Extensions;
-using Umbraco.Cms.Core.Serialization;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common
 {
