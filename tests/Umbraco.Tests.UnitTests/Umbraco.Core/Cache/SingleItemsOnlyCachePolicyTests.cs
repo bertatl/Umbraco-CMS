@@ -35,9 +35,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 .Callback((string cacheKey, Func<object> o, TimeSpan? t, bool b, string[] s) => cached.Add(cacheKey));
             cache.Setup(x => x.SearchByKey(It.IsAny<string>())).Returns(new AuditItem[] { });
 
-            var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
+            var defaultPolicy = new SingleItemsOnlyRepositoryCachePolicy<AuditItem, int>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions());
 
-            AuditItem[] unused = defaultPolicy.GetAll(new object[] { }, ids => new[]
+            IEnumerable<AuditItem> unused = defaultPolicy.GetAll(Array.Empty<int>(), ids => new[]
                     {
                         new AuditItem(1, AuditType.Copy, 123, "test", "blah"),
                         new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
