@@ -2201,14 +2201,30 @@ public abstract class BulkDataReader : IDataReader
         /// <summary>
         /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
         /// </summary>
-        private class BulkDataReaderSubclass : BulkDataReader
+    private class BulkDataReaderSubclass : BulkDataReader
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public BulkDataReaderSubclass() : base()
         {
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            public BulkDataReaderSubclass() : base()
+        }
+
+        /// <summary>
+        /// Gets the column mappings for testing purposes.
+        /// </summary>
+        public ReadOnlyCollection<SqlBulkCopyColumnMapping> ColumnMappings
+        {
+            get
             {
+                var mappings = new List<SqlBulkCopyColumnMapping>();
+                for (int i = 0; i < this.FieldCount; i++)
+                {
+                    mappings.Add(new SqlBulkCopyColumnMapping(i, this.GetName(i)));
+                }
+                return new ReadOnlyCollection<SqlBulkCopyColumnMapping>(mappings);
             }
+        }
 
         /// <summary>
         /// Gets the schema name.
