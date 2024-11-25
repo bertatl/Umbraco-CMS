@@ -28,21 +28,12 @@ using Umbraco.Cms.Infrastructure.Migrations.Install;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
-using Umbraco.Cms.Core.Composing;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
     [TestFixture]
     public class ComponentTests
     {
-        // Add a mock ComposerGraph for testing purposes
-        private class MockComposerGraph : ComposerGraph
-        {
-            public MockComposerGraph(IUmbracoBuilder composition, IEnumerable<Type> types, IEnumerable<Attribute> attributes, ILogger<ComposerGraph> logger)
-                : base(composition, types, attributes, logger)
-            {
-            }
-        }
         private static readonly List<Type> Composed = new List<Type>();
         private static readonly IIOHelper IOHelper = TestHelper.IOHelper;
         private static readonly List<Type> Initialized = new List<Type>();
@@ -101,7 +92,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer4>();
-            var composers = new MockComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
             // 2 is Core and requires 4
