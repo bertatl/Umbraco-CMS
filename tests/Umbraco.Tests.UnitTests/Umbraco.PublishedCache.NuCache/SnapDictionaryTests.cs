@@ -555,14 +555,14 @@ using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
             // scope context: writers enlist
-            var scopeContext = new ScopeContext();
+            var scopeContext = Mock.Of<IScopeContext>();
             IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
 
-            using (IDisposable w1 = d.GetScopedWriteLock(scopeProvider))
+using (IDisposable w1 = d.GetScopedWriteLock(scopeProvider))
             {
                 // This one is interesting, although we don't allow recursive locks, since this is
-                // using the same ScopeContext/key, the lock acquisition is only done once.
-                using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
+// using the same ScopeContext/key, the lock acquisition is only done once.
+using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
                 {
                     Assert.AreSame(w1, w2);
 
