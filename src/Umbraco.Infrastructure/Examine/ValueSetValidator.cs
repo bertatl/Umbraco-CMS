@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Examine;
 using Umbraco.Extensions;
@@ -85,7 +85,7 @@ namespace Umbraco.Cms.Infrastructure.Examine
 
                     if (ExcludeFields != null && ExcludeFields.InvariantContains(key))
                     {
-                        valueSet.Values.Remove(key, out _); //remove any value with a key that matches the exclusion list
+                        valueSet.Values.Remove(key); //remove any value with a key that matches the exclusion list
                         isFiltered = true;
                     }
 
