@@ -29,6 +29,11 @@ public class BulkDataReader
     {
         throw new NotImplementedException();
     }
+
+    public virtual bool Read()
+    {
+        throw new NotImplementedException();
+    }
 }
         /// <summary>
         /// The <see cref="BulkDataReaderSubclass"/> schema name.
