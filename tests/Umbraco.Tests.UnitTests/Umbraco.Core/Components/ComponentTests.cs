@@ -30,6 +30,7 @@ using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Infrastructure.Composing;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
@@ -180,13 +181,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer3, Composer4>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var typeFinder = new Mock<ITypeFinder>();
+            typeFinder.Setup(x => x.FindClassesOfType<IComposer>()).Returns(types);
+
+            var composerGraph = new ComposerGraph(typeFinder.Object, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
             // 2 is Core and requires 4
             // 3 is User - stays with RuntimeLevel.Run
             // => reorder components accordingly
-            composers.Compose();
+            var orderedComposers = composerGraph.OrderComposers(composition);
+            foreach (var composer in orderedComposers)
+            {
+                ((IComposer)Activator.CreateInstance(composer)).Compose(composition);
+            }
+
             AssertTypeArray(TypeArray<Composer1, Composer4, Composer2, Composer3>(), Composed);
         }
 
