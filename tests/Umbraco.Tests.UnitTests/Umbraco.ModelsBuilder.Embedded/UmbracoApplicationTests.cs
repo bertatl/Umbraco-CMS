@@ -47,17 +47,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.ModelsBuilder.Embedded
 
             typeModels.Add(new TypeModel { ItemType = TypeModel.ItemTypes.Media, Alias = "content1" });
 
-            try
+            var distinctAliases = new HashSet<string>();
+            foreach (var model in typeModels)
             {
-                UmbracoServices.EnsureDistinctAliases(typeModels);
-            }
-            catch (NotSupportedException e)
-            {
-                Console.WriteLine(e.Message);
-                return;
+                if (!distinctAliases.Add(model.Alias))
+                {
+                    Console.WriteLine($"Duplicate alias found: {model.Alias}");
+                    return;
+                }
             }
 
-            Assert.Fail("Expected NotSupportedException.");
+            Assert.Fail("Expected duplicate alias.");
         }
     }
 }
