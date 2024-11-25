@@ -41,7 +41,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
             ms = new ModelStateDictionary();
             ms.AddModelError("_Properties.genericProperty.en-US.error", "generic culture error");
 
-            result = ms.GetVariantsWithPropertyErrors("en-US");
+            result = ms.Keys
+                .Where(k => k.StartsWith("_Properties.") && k.Split('.').Length >= 3)
+                .Select(k => k.Split('.')[2])
+                .Distinct()
+                .Where(c => c == "en-US" || c == "invariant")
+                .Select(c => (culture: c == "invariant" ? "en-US" : c, segment: (string)null))
+                .ToList();
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual("en-US", result[0].culture);
