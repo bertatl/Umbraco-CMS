@@ -28,7 +28,6 @@ using Umbraco.Cms.Infrastructure.Migrations.Install;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
-using Umbraco.Cms.Core.Composing;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
