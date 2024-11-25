@@ -53,14 +53,11 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IConfigurationEditor explicitConfigurationEditor = _explicitConfigurationEditorBuilder.Build();
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
-            return new DataEditor(
-                name,
-                alias,
-                explicitValueEditor,
-                explicitConfigurationEditor)
-            {
-                DefaultConfiguration = defaultConfiguration
-            };
+            var dataEditor = new DataEditor(name, alias);
+            dataEditor.DefaultConfiguration = defaultConfiguration;
+            dataEditor.Editor = explicitValueEditor;
+            dataEditor.ConfigurationEditor = explicitConfigurationEditor;
+            return dataEditor;
         }
 
         string IWithAliasBuilder.Alias
