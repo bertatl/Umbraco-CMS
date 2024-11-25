@@ -581,7 +581,7 @@ using (IDisposable w2 = d.GetScopedWriteLock(scopeProvider))
 
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
-            var scopeContext = new ScopeContext();
+            var scopeContext = Mock.Of<IScopeContext>();
             IScopeProvider scopeProvider1 = GetScopeProvider();
             IScopeProvider scopeProvider2 = GetScopeProvider(scopeContext);
 
