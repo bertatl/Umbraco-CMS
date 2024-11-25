@@ -17,6 +17,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.BackOffice.Filters;
+using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
