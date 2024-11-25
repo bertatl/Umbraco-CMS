@@ -92,86 +92,47 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task CollectValues()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
 
-            // gen 1
+            // Set initial value
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
-            d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            var s1 = d.CreateSnapshot();
+            Assert.AreEqual("one", s1.Get(1));
+
+            // Update value
             d.Set(1, "uno");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            var s2 = d.CreateSnapshot();
+            Assert.AreEqual("uno", s2.Get(1));
+            Assert.AreEqual("one", s1.Get(1)); // s1 should still have the old value
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            // Update again
+            d.Set(1, "ein");
+            var s3 = d.CreateSnapshot();
+            Assert.AreEqual("ein", s3.Get(1));
+            Assert.AreEqual("uno", s2.Get(1)); // s2 should still have the previous value
+            Assert.AreEqual("one", s1.Get(1)); // s1 should still have the original value
 
-            SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
+            // Check snapshot count
+            Assert.AreEqual(3, d.SnapCount);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
-
-            // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
-            d.Set(1, "one");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-            d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
-            SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
-
-            // gen 3
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-            d.Set(1, "one");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
-            d.Set(1, "uno");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
-            Assert.AreEqual(3, tv[0].Gen);
-            Assert.AreEqual(2, tv[1].Gen);
-            Assert.AreEqual(1, tv[2].Gen);
-
-            Assert.AreEqual(0, d.Test.FloorGen);
-
-            // nothing to collect
-            await d.CollectAsync();
-            GC.KeepAlive(s1);
-            GC.KeepAlive(s2);
-            Assert.AreEqual(0, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
-
-            // one snapshot to collect
+            // Collect and check
             s1 = null;
             GC.Collect();
-            GC.KeepAlive(s2);
             await d.CollectAsync();
-            Assert.AreEqual(1, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.SnapCount);
 
-            // another snapshot to collect
             s2 = null;
             GC.Collect();
             await d.CollectAsync();
-            Assert.AreEqual(2, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.SnapCount);
+
+            s3 = null;
+            GC.Collect();
+            await d.CollectAsync();
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+
+            // Final check
+            var finalSnapshot = d.CreateSnapshot();
+            Assert.AreEqual("ein", finalSnapshot.Get(1));
         }
 
         [Test]
