@@ -1,9 +1,11 @@
 // Copyright (c) Umbraco.
 // See LICENSE for more details.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Actions;
@@ -29,7 +31,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var att = CreateFilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -172,6 +174,25 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         private class MyTestClass
         {
             public IEnumerable<ContentItemBasic> MyList { get; set; }
+        }
+
+        private IActionFilter CreateFilterAllowedOutgoingContentFilter(
+            Type type,
+            string propertyName,
+            string requiredAction,
+            IUserService userService,
+            IEntityService entityService,
+            AppCaches appCaches,
+            IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
+        {
+            return new FilterAllowedOutgoingContentFilter(
+                type,
+                propertyName,
+                requiredAction,
+                userService,
+                entityService,
+                appCaches,
+                backOfficeSecurityAccessor);
         }
     }
 }
