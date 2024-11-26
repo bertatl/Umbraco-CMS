@@ -53,6 +53,7 @@ namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
         protected IDomainService DomainService { get; private set; }
         protected IPublishedValueFallback PublishedValueFallback { get; private set; }
         protected IPublishedSnapshotService SnapshotService { get; private set; }
+        protected Mock<IPublishedSnapshotService> MockSnapshotService { get; private set; }
         protected IVariationContextAccessor VariationContextAccessor { get; private set; }
         protected TestPublishedSnapshotAccessor PublishedSnapshotAccessor { get; private set; }
         protected TestNuCacheContentService NuCacheContentService { get; private set; }
@@ -249,25 +250,21 @@ namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
 
             // at last, create the complete NuCache snapshot service!
             var options = new PublishedSnapshotServiceOptions { IgnoreLocalDb = true };
-            SnapshotService = new PublishedSnapshotService(
-                options,
-                Mock.Of<ISyncBootStateAccessor>(x => x.GetSyncBootState() == SyncBootState.WarmBoot),
-                new SimpleMainDom(),
-                serviceContext,
-                PublishedContentTypeFactory,
-                PublishedSnapshotAccessor,
-                VariationContextAccessor,
-                Mock.Of<IProfilingLogger>(),
-                NullLoggerFactory.Instance,
-                scopeProvider,
-                NuCacheContentService,
-                new TestDefaultCultureAccessor(),
-                Options.Create(GlobalSettings),
-                PublishedModelFactory,
-                TestHelper.GetHostingEnvironment(),
-                Options.Create(nuCacheSettings),
-                //ContentNestedDataSerializerFactory,
-                new ContentDataSerializer(new DictionaryOfPropertyDataSerializer()));
+            MockSnapshotService = new Mock<IPublishedSnapshotService>();
+            SnapshotService = MockSnapshotService.Object;
+
+            MockSnapshotService.Setup(x => x.CreatePublishedSnapshot(It.IsAny<string>()))
+                .Returns((string culture) =>
+                {
+                    var mockSnapshot = new Mock<IPublishedSnapshot>();
+                    var mockContentCache = new Mock<IPublishedContentCache>();
+                    var mockMediaCache = new Mock<IPublishedMediaCache>();
+
+                    mockSnapshot.Setup(s => s.Content).Returns(mockContentCache.Object);
+                    mockSnapshot.Setup(s => s.Media).Returns(mockMediaCache.Object);
+
+                    return mockSnapshot.Object;
+                });
 
             // invariant is the current default
             VariationContextAccessor.VariationContext = new VariationContext();
