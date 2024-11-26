@@ -94,14 +94,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer4>();
-            var composers = new ComposerGraph(types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
-            composers.Compose(composition.TypeLoader, builder => builder.Register(composition));
+            foreach (var type in types)
+            {
+                composition.AddComposer(type);
+            }
             Composed.Clear();
+
+            composition.Build();
 
             // 2 is Core and requires 4
             // 3 is User
             // => reorder components accordingly
-            composers.Compose();
             AssertTypeArray(TypeArray<Composer1, Composer4, Composer2>(), Composed);
 
             IServiceProvider factory = MockFactory(m =>
