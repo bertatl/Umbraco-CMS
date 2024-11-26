@@ -67,7 +67,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 
             var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            AuditItem found = defaultPolicy.Get(1, id => null, ids => getAll);
+            AuditItem found = defaultPolicy.Get(1, id => null, ids => getAll.AsEnumerable());
             Assert.IsNotNull(found);
         }
 
