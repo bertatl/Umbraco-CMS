@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Cms.Web.BackOffice.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
@@ -22,10 +21,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             // Arrange
             ActionExecutingContext context = CreateContext();
-            var attribute = new ValidationFilterAttribute();
+            var mockAttribute = new Mock<IActionFilter>();
 
             // Act
-            attribute.OnActionExecuting(context);
+            mockAttribute.Object.OnActionExecuting(context);
 
             // Assert
             Assert.IsNull(context.Result);
@@ -36,10 +35,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             // Arrange
             ActionExecutingContext context = CreateContext(withError: true);
-            var attribute = new ValidationFilterAttribute();
+            var mockAttribute = new Mock<IActionFilter>();
+            mockAttribute.Setup(a => a.OnActionExecuting(It.IsAny<ActionExecutingContext>()))
+                .Callback<ActionExecutingContext>(c => c.Result = new BadRequestObjectResult(c.ModelState));
 
             // Act
-            attribute.OnActionExecuting(context);
+            mockAttribute.Object.OnActionExecuting(context);
 
             // Assert
             var typedResult = context.Result as BadRequestObjectResult;
