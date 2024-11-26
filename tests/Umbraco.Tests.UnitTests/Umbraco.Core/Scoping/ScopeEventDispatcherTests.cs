@@ -13,6 +13,7 @@ using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Cms.Infrastructure.Persistence;
@@ -72,7 +73,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             Assert.AreEqual(expected2, counter2);
         }
 
-        private ScopeProvider GetScopeProvider(NullLoggerFactory instance)
+        private IScopeProvider GetScopeProvider(NullLoggerFactory instance)
         {
             var fileSystems = new FileSystems(
                 instance,
