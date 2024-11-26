@@ -21,7 +21,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var version = CreateUmbracoVersion(9, 3, 1);
             var siteIdentifierServiceMock = new Mock<ISiteIdentifierService>();
             var usageInformationServiceMock = new Mock<IUsageInformationService>();
-            var sut = Mock.Of<ITelemetryService>();
+            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, siteIdentifierServiceMock.Object, usageInformationServiceMock.Object, Mock.Of<IMetricsConsentService>());
             Guid guid;
 
             // Call a public method or property of TelemetryService to trigger the internal logic
@@ -34,10 +34,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
         public void SkipsIfCantGetOrCreateId()
         {
             var version = CreateUmbracoVersion(9, 3, 1);
-            var sut = Mock.Of<ITelemetryService>();
-            Mock.Get(sut)
-                .Setup(x => x.TryGetTelemetryReportData(out It.Ref<object>.IsAny))
-                .Returns(false);
+            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(false), Mock.Of<IUsageInformationService>(), Mock.Of<IMetricsConsentService>());
 
             var result = sut.TryGetTelemetryReportData(out var telemetry);
 
@@ -52,16 +49,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 
             var metricsConsentService = new Mock<IMetricsConsentService>();
             metricsConsentService.Setup(x => x.GetConsentLevel()).Returns(TelemetryLevel.Detailed);
-            var sut = Mock.Of<ITelemetryService>();
-            Mock.Get(sut)
-                .Setup(x => x.TryGetTelemetryReportData(out It.Ref<object>.IsAny))
-                .Returns(true)
-                .Callback((out object telemetry) => telemetry = new { Version = "9.1.1-rc" });
+            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(), Mock.Of<IUsageInformationService>(), metricsConsentService.Object);
 
             var result = sut.TryGetTelemetryReportData(out var telemetry);
 
             Assert.IsTrue(result);
-            Assert.AreEqual("9.1.1-rc", (telemetry as dynamic).Version);
+            Assert.AreEqual("9.1.1-rc", telemetry.Version);
         }
 
         [Test]
@@ -79,31 +72,19 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var manifestParser = CreateManifestParser(manifests);
             var metricsConsentService = new Mock<IMetricsConsentService>();
             metricsConsentService.Setup(x => x.GetConsentLevel()).Returns(TelemetryLevel.Basic);
-            var sut = Mock.Of<ITelemetryService>();
-            Mock.Get(sut)
-                .Setup(x => x.TryGetTelemetryReportData(out It.Ref<object>.IsAny))
-                .Returns(true)
-                .Callback((out object telemetry) => telemetry = new
-                {
-                    Packages = new[]
-                    {
-                        new { Name = versionPackageName, Version = packageVersion },
-                        new { Name = noVersionPackageName, Version = string.Empty }
-                    }
-                });
+            var sut = new TelemetryService(manifestParser, version, createSiteIdentifierService(), Mock.Of<IUsageInformationService>(), metricsConsentService.Object);
 
             var success = sut.TryGetTelemetryReportData(out var telemetry);
 
             Assert.IsTrue(success);
             Assert.Multiple(() =>
             {
-                dynamic dynamicTelemetry = telemetry;
-                Assert.AreEqual(2, dynamicTelemetry.Packages.Count);
-                var versionPackage = dynamicTelemetry.Packages[0];
+                Assert.AreEqual(2, telemetry.Packages.Count());
+                var versionPackage = telemetry.Packages.FirstOrDefault(x => x.Name == versionPackageName);
                 Assert.AreEqual(versionPackageName, versionPackage.Name);
                 Assert.AreEqual(packageVersion, versionPackage.Version);
 
-                var noVersionPackage = dynamicTelemetry.Packages[1];
+                var noVersionPackage = telemetry.Packages.FirstOrDefault(x => x.Name == noVersionPackageName);
                 Assert.AreEqual(noVersionPackageName, noVersionPackage.Name);
                 Assert.AreEqual(string.Empty, noVersionPackage.Version);
             });
@@ -121,26 +102,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var manifestParser = CreateManifestParser(manifests);
             var metricsConsentService = new Mock<IMetricsConsentService>();
             metricsConsentService.Setup(x => x.GetConsentLevel()).Returns(TelemetryLevel.Basic);
-            var sut = Mock.Of<ITelemetryService>();
-            Mock.Get(sut)
-                .Setup(x => x.TryGetTelemetryReportData(out It.Ref<object>.IsAny))
-                .Returns(true)
-                .Callback((out object telemetry) => telemetry = new
-                {
-                    Packages = new[]
-                    {
-                        new { Name = "TrackingAllowed", Version = string.Empty }
-                    }
-                });
+            var sut = new TelemetryService(manifestParser, version, createSiteIdentifierService(), Mock.Of<IUsageInformationService>(), metricsConsentService.Object);
 
             var success = sut.TryGetTelemetryReportData(out var telemetry);
 
             Assert.IsTrue(success);
             Assert.Multiple(() =>
             {
-                dynamic dynamicTelemetry = telemetry;
-                Assert.AreEqual(1, dynamicTelemetry.Packages.Count);
-                Assert.AreEqual("TrackingAllowed", dynamicTelemetry.Packages[0].Name);
+                Assert.AreEqual(1, telemetry.Packages.Count());
+                Assert.AreEqual("TrackingAllowed", telemetry.Packages.First().Name);
             });
         }
 
