@@ -126,7 +126,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual("one", s2.Get(1));
             d.Set(1, "uno");
 
-            SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
+            SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsFalse(d.Test.NextGen);
