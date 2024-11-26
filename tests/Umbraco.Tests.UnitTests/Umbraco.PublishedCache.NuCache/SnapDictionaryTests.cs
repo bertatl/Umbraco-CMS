@@ -9,22 +9,12 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Infrastructure.PublishedCache;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
     [TestFixture]
     public class SnapDictionaryTests
     {
-        // Add this extension method for testing purposes
-        private static class SnapDictionaryTestExtensions
-        {
-            public static SnapDictionary<TKey, TValue>.TestHelper GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
-                where TValue : class
-            {
-                return dictionary.Test;
-            }
-        }
         [Test]
         public void LiveGenUpdate()
         {
@@ -144,12 +134,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 3
             d.Set(1, "one");
-            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
+            Assert.AreEqual(3, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
+            Assert.AreEqual(3, d.Test.GetValues(1).Length);
 
-            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
-            Assert.IsTrue(d.GetTestHelper().NextGen);
+            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
             Assert.AreEqual(3, tv[0].Gen);
