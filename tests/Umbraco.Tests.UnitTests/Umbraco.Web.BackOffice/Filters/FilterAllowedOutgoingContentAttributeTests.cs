@@ -19,6 +19,7 @@ using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Extensions;
 using Umbraco.Cms.Web.BackOffice.Filters;
+using System;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
@@ -30,7 +31,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var filterType = Type.GetType("Umbraco.Cms.Web.BackOffice.Filters.FilterAllowedOutgoingContentFilter, Umbraco.Web.BackOffice");
+            Assert.IsNotNull(filterType, "FilterAllowedOutgoingContentFilter type not found");
+
+            var att = Activator.CreateInstance(filterType,
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -39,7 +43,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            dynamic result = att.GetValueFromResponse(new ObjectResult(expected));
+            var getValueFromResponseMethod = filterType.GetMethod("GetValueFromResponse");
+            Assert.IsNotNull(getValueFromResponseMethod, "GetValueFromResponse method not found");
+
+            var result = getValueFromResponseMethod.Invoke(att, new object[] { new ObjectResult(expected) });
 
             Assert.AreEqual(expected, result);
         }
