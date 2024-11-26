@@ -29,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -49,7 +49,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 nameof(MyTestClass.MyList),
                 ActionBrowse.ActionLetter,
@@ -69,7 +69,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 "DontFind",
                 ActionBrowse.ActionLetter,
@@ -95,7 +95,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             IEntityService entityService = entityServiceMock.Object;
 
             var list = new List<ContentItemBasic>();
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -147,7 +147,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             userServiceMock.Setup(x => x.GetPermissions(user, ids)).Returns(permissions);
             IUserService userService = userServiceMock.Object;
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
