@@ -417,11 +417,11 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "one");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             await d.CollectAsync();
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
+            object[] tv = d.GetTestHelper().GetValues(1);
             Assert.AreEqual(1, tv.Length);
             Assert.AreEqual(1, tv[0].Gen);
 
@@ -784,14 +784,14 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
                 d.SetLocked(1, "ein");
                 Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
-                SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
+            SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
-                Assert.AreEqual(2, s3.Gen);
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen); // has NOT changed when (non) creating snapshot
+            Assert.AreEqual(2, s3.Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen); // has NOT changed when (non) creating snapshot
                 Assert.AreEqual("uno", s3.Get(1));
             }
 
@@ -938,14 +938,14 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
                 d.SetLocked(1, "ein");
                 Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
-                SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
+            SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
-                Assert.AreEqual(2, s3.Gen);
-                Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen); // has NOT changed when (non) creating snapshot
+            Assert.AreEqual(2, s3.Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen); // has NOT changed when (non) creating snapshot
                 Assert.AreEqual("uno", s3.Get(1));
             }
 
