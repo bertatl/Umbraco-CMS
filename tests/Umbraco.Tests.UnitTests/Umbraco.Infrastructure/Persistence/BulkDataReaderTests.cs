@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
+using Umbraco.Cms.Infrastructure.Persistence.BulkLoading;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
@@ -2164,8 +2165,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// <summary>
         /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
         /// </summary>
-        private class BulkDataReaderSubclass : BulkDataReader
+        private class BulkDataReaderSubclass : IBulkDataReader
         {
+            private int _currentIndex = -1;
+
             /// <summary>
             /// Constructor.
             /// </summary>
@@ -2179,23 +2182,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
             /// </remarks>
-            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
+            public string SchemaName => BulkDataReaderTests.TestSchemaName;
 
             /// <summary>
-            /// See <see cref="BulkDataReader.TableName"/>.
+            /// See <see cref="IBulkDataReader.TableName"/>.
             /// </summary>
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
-            protected override string TableName => BulkDataReaderTests.TestTableName;
+            public string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
-            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
+            /// Creates schema rows for the various <see cref="SqlDbType"/> values.
             /// </summary>
-            /// <remarks>
-            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-            /// </remarks>
-            protected override void AddSchemaTableRows()
+            public void AddSchemaTableRows()
             {
                 AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
                 AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
@@ -2302,21 +2302,87 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// The value of the column in <see cref="ExpectedResultSet"/>.
             /// </returns>
             /// <seealso cref="BulkDataReader.GetValue(int)"/>
-            public override object GetValue(int i) => BulkDataReaderSubclass.ExpectedResultSet[i];
+            public object GetValue(int i) => BulkDataReaderSubclass.ExpectedResultSet[i];
 
             /// <summary>
-            /// The number of rows read.
-            /// </summary>
-            private int _readCount = 0;
-
-            /// <summary>
-            /// See <see cref="BulkDataReader.Read()"/>
+            /// See <see cref="IBulkDataReader.Read()"/>
             /// </summary>
             /// <returns>
             /// True if there are more rows; otherwise, false.
             /// </returns>
-            /// <seealso cref="BulkDataReader.Read()"/>
-            public override bool Read() => _readCount++ < 1;
+            public bool Read() => ++_currentIndex < ExpectedResultSet.Count;
+
+            public int FieldCount => ExpectedResultSet.Count;
+
+            public object this[int i] => GetValue(i);
+
+            public object this[string name] => throw new NotImplementedException();
+
+            public void Close() { }
+
+            public void Dispose() { }
+
+            public bool GetBoolean(int i) => (bool)GetValue(i);
+
+            public byte GetByte(int i) => (byte)GetValue(i);
+
+            public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
+
+            public char GetChar(int i) => (char)GetValue(i);
+
+            public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
+
+            public IDataReader GetData(int i) => null;
+
+            public string GetDataTypeName(int i) => GetValue(i).GetType().Name;
+
+            public DateTime GetDateTime(int i) => (DateTime)GetValue(i);
+
+            public decimal GetDecimal(int i) => (decimal)GetValue(i);
+
+            public double GetDouble(int i) => (double)GetValue(i);
+
+            public Type GetFieldType(int i) => GetValue(i).GetType();
+
+            public float GetFloat(int i) => (float)GetValue(i);
+
+            public Guid GetGuid(int i) => (Guid)GetValue(i);
+
+            public short GetInt16(int i) => (short)GetValue(i);
+
+            public int GetInt32(int i) => (int)GetValue(i);
+
+            public long GetInt64(int i) => (long)GetValue(i);
+
+            public string GetName(int i) => throw new NotImplementedException();
+
+            public int GetOrdinal(string name) => throw new NotImplementedException();
+
+            public string GetString(int i) => (string)GetValue(i);
+
+            public int GetValues(object[] values)
+            {
+                int count = Math.Min(values.Length, ExpectedResultSet.Count);
+                for (int i = 0; i < count; i++)
+                {
+                    values[i] = GetValue(i);
+                }
+                return count;
+            }
+
+            public bool IsDBNull(int i) => GetValue(i) == null;
+
+            public bool NextResult() => false;
+
+            public DataTable GetSchemaTable() => throw new NotImplementedException();
+
+            public int Depth => 0;
+
+            public bool IsClosed => false;
+
+            public int RecordsAffected => -1;
+
+            public ICollection<SqlBulkCopyColumnMapping> ColumnMappings => throw new NotImplementedException();
         }
 
         private class BulkDataReaderSchemaTest : BulkDataReader
@@ -2399,23 +2465,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
             /// </remarks>
-            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
+            public string SchemaName => BulkDataReaderTests.TestSchemaName;
 
             /// <summary>
-            /// See <see cref="BulkDataReader.TableName"/>.
+            /// See <see cref="IBulkDataReader.TableName"/>.
             /// </summary>
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
-            protected override string TableName => BulkDataReaderTests.TestTableName;
+            public string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
-            /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
+            /// Creates schema rows for the various <see cref="SqlDbType"/> values.
             /// </summary>
-            /// <remarks>
-            /// Creates a schema row for the various <see cref="SqlDbType"/> values.
-            /// </remarks>
-            protected override void AddSchemaTableRows() =>
+            public void AddSchemaTableRows() =>
                 AddSchemaTableRow(
                     ColumnName,
                     ColumnSize,
