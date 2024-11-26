@@ -1,5 +1,6 @@
 using System;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -61,8 +62,6 @@ using Umbraco.Cms.Web.Common.Security;
 using Umbraco.Cms.Web.Common.Templates;
 using Umbraco.Cms.Web.Common.UmbracoContext;
 using IHostingEnvironment = Umbraco.Cms.Core.Hosting.IHostingEnvironment;
-using Microsoft.Data.SqlClient;
-
 
 namespace Umbraco.Extensions
 {

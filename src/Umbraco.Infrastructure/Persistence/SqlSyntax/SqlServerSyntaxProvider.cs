@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,8 +11,6 @@ using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseModelDefinitions;
 using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Extensions;
-using Microsoft.Data.SqlClient;
-
 
 namespace Umbraco.Cms.Infrastructure.Persistence.SqlSyntax
 {

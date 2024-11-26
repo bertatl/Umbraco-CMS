@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -12,8 +13,6 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
 using Umbraco.Cms.Tests.Common.Testing;
 using Umbraco.Cms.Tests.Integration.Testing;
-using Microsoft.Data.SqlClient;
-
 
 namespace Umbraco.Cms.Tests.Integration.Umbraco.Infrastructure.Persistence.Repositories
 {
