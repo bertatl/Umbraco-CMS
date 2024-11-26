@@ -100,7 +100,7 @@ public class TestHelper
             Assert.AreEqual(0, d.Count);
 
             // gen 1
-            d[1] = "one";
+            d.Set(1, "one");
             Assert.AreEqual(1, d.Count);
             d.Clear(1); // Use Clear method to remove the item
             Assert.AreEqual(0, d.Count); // gone
