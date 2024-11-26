@@ -237,12 +237,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(LogViewerQueryModelFactory.BuildEntity));
+                .Select(dto => new TestLogViewerQuery
+                {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    Query = dto.Query
+                }));
         }
 
         private IList<ILogViewerQuery> Store { get; }
-        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
-
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
 
@@ -281,5 +284,37 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public int Count(IQuery<ILogViewerQuery> query) => throw new NotImplementedException();
 
         public ILogViewerQuery GetByName(string name) => Store.FirstOrDefault(x => x.Name == name);
+    }
+
+    internal class TestLogViewerQuery : ILogViewerQuery
+    {
+        public int Id { get; set; }
+        public Guid Key { get; set; } = Guid.NewGuid();
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        public DateTime UpdateDate { get; set; } = DateTime.UtcNow;
+        public DateTime? DeleteDate { get; set; }
+        public string Name { get; set; }
+        public string Query { get; set; }
+        public bool HasIdentity => Id > 0;
+
+        public void ResetIdentity()
+        {
+            Id = 0;
+            Key = Guid.Empty;
+        }
+
+        public object DeepClone()
+        {
+            return new TestLogViewerQuery
+            {
+                Id = this.Id,
+                Key = this.Key,
+                CreateDate = this.CreateDate,
+                UpdateDate = this.UpdateDate,
+                DeleteDate = this.DeleteDate,
+                Name = this.Name,
+                Query = this.Query
+            };
+        }
     }
 }
