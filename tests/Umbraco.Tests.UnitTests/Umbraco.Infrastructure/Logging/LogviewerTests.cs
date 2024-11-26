@@ -237,12 +237,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public TestLogViewerQueryRepository()
         {
             Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(LogViewerQueryModelFactory.BuildEntity));
+                .Select(BuildEntity));
         }
 
         private IList<ILogViewerQuery> Store { get; }
-        private LogViewerQueryRepository.LogViewerQueryModelFactory LogViewerQueryModelFactory { get; } = new LogViewerQueryRepository.LogViewerQueryModelFactory();
 
+        private ILogViewerQuery BuildEntity(string query)
+        {
+            return new TestLogViewerQuery { Query = query };
+        }
 
         public ILogViewerQuery Get(int id) => Store.FirstOrDefault(x => x.Id == id);
 
@@ -281,5 +284,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         public int Count(IQuery<ILogViewerQuery> query) => throw new NotImplementedException();
 
         public ILogViewerQuery GetByName(string name) => Store.FirstOrDefault(x => x.Name == name);
+    }
+
+    internal class TestLogViewerQuery : ILogViewerQuery
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Query { get; set; }
     }
 }
