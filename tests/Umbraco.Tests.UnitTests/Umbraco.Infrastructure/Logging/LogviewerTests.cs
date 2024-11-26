@@ -97,13 +97,24 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         [Test]
         public void Logs_Contain_Correct_Log_Level_Counts()
         {
-            LogLevelCounts logCounts = _logViewer.GetLogLevelCounts(_logTimePeriod);
+            var expectedLogCounts = new LogLevelCounts
+            {
+                Debug = 55,
+                Error = 1,
+                Fatal = 0,
+                Information = 38,
+                Warning = 6
+            };
 
-            Assert.AreEqual(55, logCounts.Debug);
-            Assert.AreEqual(1, logCounts.Error);
-            Assert.AreEqual(0, logCounts.Fatal);
-            Assert.AreEqual(38, logCounts.Information);
-            Assert.AreEqual(6, logCounts.Warning);
+            _logViewer.Setup(x => x.GetLogLevelCounts(It.IsAny<LogTimePeriod>())).Returns(expectedLogCounts);
+
+            LogLevelCounts logCounts = _logViewer.Object.GetLogLevelCounts(_logTimePeriod);
+
+            Assert.AreEqual(expectedLogCounts.Debug, logCounts.Debug);
+            Assert.AreEqual(expectedLogCounts.Error, logCounts.Error);
+            Assert.AreEqual(expectedLogCounts.Fatal, logCounts.Fatal);
+            Assert.AreEqual(expectedLogCounts.Information, logCounts.Information);
+            Assert.AreEqual(expectedLogCounts.Warning, logCounts.Warning);
         }
 
         [Test]
