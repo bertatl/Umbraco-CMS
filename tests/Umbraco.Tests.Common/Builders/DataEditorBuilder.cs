@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Moq;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.PropertyEditors;
+using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
 
@@ -54,7 +55,8 @@ namespace Umbraco.Cms.Tests.Common.Builders
                 alias,
                 name,
                 EditorType.PropertyValue,
-                Mock.Of<IDataValueEditorFactory>())
+                Mock.Of<IDataValueEditorFactory>(),
+                null) // Passing null for IIOHelper, replace with proper implementation in production code
             {
                 DefaultConfiguration = defaultConfiguration,
                 ExplicitConfigurationEditor = explicitConfigurationEditor,
