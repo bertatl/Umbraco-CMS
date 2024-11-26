@@ -10,7 +10,6 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
 using System.Reflection;
-using static Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache.SnapDictionaryTestExtensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
