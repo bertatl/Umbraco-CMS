@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
 {
@@ -14,57 +13,33 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
     public class BackOfficeAuthenticationBuilderTests
     {
         [Test]
-        public void ConfigureBackOfficeAuthentication_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
+        public void EnsureBackOfficeScheme_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
         {
-            // Arrange
-            var services = new ServiceCollection();
             var scheme = $"{Constants.Security.BackOfficeExternalAuthenticationTypePrefix}test";
-            services.AddAuthentication()
-                .AddRemoteScheme<RemoteAuthenticationOptions, TestRemoteAuthenticationHandler>(scheme, scheme, _ => { });
+            var options = new RemoteAuthenticationOptions
+            {
+                SignInScheme = "my_cookie"
+            };
 
-            var builder = new BackOfficeAuthenticationBuilder(services);
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
 
-            // Act
-            builder.ConfigureBackOfficeAuthentication();
-
-            // Assert
-            var provider = services.BuildServiceProvider();
-            var options = provider.GetRequiredService<IOptionsMonitor<RemoteAuthenticationOptions>>().Get(scheme);
             Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
         }
 
         [Test]
-        public void ConfigureBackOfficeAuthentication_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
+        public void EnsureBackOfficeScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
         {
-            // Arrange
-            var services = new ServiceCollection();
             var scheme = "test";
-            var originalSignInScheme = "my_cookie";
-            services.AddAuthentication()
-                .AddRemoteScheme<RemoteAuthenticationOptions, TestRemoteAuthenticationHandler>(scheme, scheme, options =>
-                {
-                    options.SignInScheme = originalSignInScheme;
-                });
-
-            var builder = new BackOfficeAuthenticationBuilder(services);
-
-            // Act
-            builder.ConfigureBackOfficeAuthentication();
-
-            // Assert
-            var provider = services.BuildServiceProvider();
-            var options = provider.GetRequiredService<IOptionsMonitor<RemoteAuthenticationOptions>>().Get(scheme);
-            Assert.AreEqual(originalSignInScheme, options.SignInScheme);
-        }
-
-        private class TestRemoteAuthenticationHandler : RemoteAuthenticationHandler<RemoteAuthenticationOptions>
-        {
-            public TestRemoteAuthenticationHandler(IOptionsMonitor<RemoteAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-                : base(options, logger, encoder, clock)
+            var options = new RemoteAuthenticationOptions
             {
-            }
+                SignInScheme = "my_cookie"
+            };
 
-            protected override Task<HandleRequestResult> HandleRemoteAuthenticateAsync() => Task.FromResult(HandleRequestResult.NoResult());
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
+
+            Assert.AreEqual("my_cookie", options.SignInScheme);
         }
     }
 }
