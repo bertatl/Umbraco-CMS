@@ -9,7 +9,6 @@ using Umbraco.Cms.Core.PropertyEditors;
 using Umbraco.Cms.Core.IO;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Tests.Common.Builders.Interfaces;
-using Umbraco.Cms.Core.Services;
 
 namespace Umbraco.Cms.Tests.Common.Builders
 {
@@ -53,14 +52,12 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
             return new DataEditor(
+                alias,
+                name,
+                EditorType.PropertyValue,
                 Mock.Of<IDataValueEditorFactory>(),
-                Mock.Of<IIOHelper>(),
-                Mock.Of<IEditorConfigurationParser>())
+                null) // Passing null for IIOHelper, replace with proper implementation in production code
             {
-                Alias = alias,
-                Name = name,
-                Icon = "icon-document",
-                Group = "default",
                 DefaultConfiguration = defaultConfiguration,
                 ExplicitConfigurationEditor = explicitConfigurationEditor,
                 ExplicitValueEditor = explicitValueEditor
