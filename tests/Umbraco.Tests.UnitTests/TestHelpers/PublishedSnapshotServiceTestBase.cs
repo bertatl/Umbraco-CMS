@@ -26,7 +26,6 @@ using Umbraco.Cms.Core.Sync;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Infrastructure.PublishedCache.DataSource;
-using Umbraco.Cms.Infrastructure.PublishedCache.Persistence;
 using Umbraco.Cms.Infrastructure.Serialization;
 using Umbraco.Cms.Tests.Common;
 using Umbraco.Extensions;
@@ -250,7 +249,7 @@ namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
 
             // at last, create the complete NuCache snapshot service!
             var options = new PublishedSnapshotServiceOptions { IgnoreLocalDb = true };
-            SnapshotService = new Umbraco.Cms.Infrastructure.PublishedCache.PublishedSnapshotService(
+            SnapshotService = new PublishedSnapshotService(
                 options,
                 Mock.Of<ISyncBootStateAccessor>(x => x.GetSyncBootState() == SyncBootState.WarmBoot),
                 new SimpleMainDom(),
