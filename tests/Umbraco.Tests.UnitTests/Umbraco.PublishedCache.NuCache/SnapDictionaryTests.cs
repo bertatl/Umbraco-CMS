@@ -11,6 +11,16 @@ using Umbraco.Cms.Infrastructure.PublishedCache;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
+    public static class SnapDictionaryTestExtensions
+    {
+        public static dynamic GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+            where TValue : class
+        {
+            var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            return testProperty.GetValue(dictionary);
+        }
+    }
+
     [TestFixture]
     public class SnapDictionaryTests
     {
@@ -18,19 +28,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public void LiveGenUpdate()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            var testHelper = d.GetTestHelper();
+            testHelper.CollectAuto = false;
 
-            Assert.AreEqual(0, d.Test.GetValues(1).Length);
+            Assert.AreEqual(0, testHelper.GetValues(1).Length);
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Clear(1);
-            Assert.AreEqual(0, d.Test.GetValues(1).Length); // gone
+            Assert.AreEqual(0, testHelper.GetValues(1).Length); // gone
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(0, d.Test.FloorGen);
+            Assert.AreEqual(1, testHelper.LiveGen);
+            Assert.IsTrue(testHelper.NextGen);
+            Assert.AreEqual(0, testHelper.FloorGen);
         }
 
         [Test]
