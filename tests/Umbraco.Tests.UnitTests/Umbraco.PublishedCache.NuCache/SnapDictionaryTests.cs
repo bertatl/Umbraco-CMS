@@ -1177,7 +1177,7 @@ public class TestHelper
     /// <summary>
     /// Used for tests so that we don't have to wrap every Set/Clear call in locks
     /// </summary>
-    public static class SnapDictionaryExtensions
+    public static class SnapDictionaryTestExtensions
     {
         internal static void Set<TKey, TValue>(this SnapDictionary<TKey, TValue> d, TKey key, TValue value)
             where TValue : class
