@@ -4,6 +4,8 @@
 using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Infrastructure.Media;
+using Umbraco.Cms.Core.Configuration.Models;
+using Microsoft.Extensions.Options;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
 {
@@ -14,7 +16,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Media
         private static readonly ImageUrlGenerationOptions.CropCoordinates s_crop = new ImageUrlGenerationOptions.CropCoordinates(0.58729977382575338m, 0.055768992440203169m, 0m, 0.32457553600198386m);
         private static readonly ImageUrlGenerationOptions.FocalPointPosition s_focus1 = new ImageUrlGenerationOptions.FocalPointPosition(0.96m, 0.80827067669172936m);
         private static readonly ImageUrlGenerationOptions.FocalPointPosition s_focus2 = new ImageUrlGenerationOptions.FocalPointPosition(0.4275m, 0.41m);
-        private static readonly ImageSharpImageUrlGenerator s_generator = new ImageSharpImageUrlGenerator(new string[0]);
+        private static readonly ImageSharpImageUrlGenerator s_generator = new ImageSharpImageUrlGenerator(Options.Create(new ImageSharpConfiguration()));
 
         [Test]
         public void GetCropUrl_CropAliasTest()
