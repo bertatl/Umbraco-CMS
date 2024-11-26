@@ -10,7 +10,6 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
 using System.Reflection;
-using Umbraco.Cms.Infrastructure.PublishedCache;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
@@ -102,7 +101,7 @@ public class TestHelper
             // gen 1
             d.Set(1, "one");
             Assert.AreEqual(1, d.Count);
-            SnapDictionaryExtensions.Clear(d, 1);
+            d.Clear(1);
             Assert.AreEqual(0, d.Count); // gone
 
             // We can't assert on internal state, so we'll remove these assertions
