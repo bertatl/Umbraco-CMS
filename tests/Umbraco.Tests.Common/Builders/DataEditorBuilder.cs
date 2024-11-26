@@ -54,9 +54,9 @@ namespace Umbraco.Cms.Tests.Common.Builders
             return new DataEditor(
                 alias,
                 name,
-                "icon-document", // Default icon, replace with appropriate icon if needed
-                "default", // Default group, replace with appropriate group if needed
-                EditorType.PropertyValue)
+                EditorType.PropertyValue,
+                Mock.Of<IDataValueEditorFactory>(),
+                null) // Passing null for IIOHelper, replace with proper implementation in production code
             {
                 DefaultConfiguration = defaultConfiguration,
                 ExplicitConfigurationEditor = explicitConfigurationEditor,
