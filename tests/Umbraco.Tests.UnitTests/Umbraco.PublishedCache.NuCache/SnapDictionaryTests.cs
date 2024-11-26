@@ -15,12 +15,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
 public static class SnapDictionaryTestExtensions
 {
-    public static object GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
-        where TValue : class
-    {
-        var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
-        return testProperty.GetValue(dictionary);
-    }
+public static SnapDictionary<TKey, TValue>.TestHelper GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+    where TValue : class
+{
+    var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
+    return (SnapDictionary<TKey, TValue>.TestHelper)testProperty.GetValue(dictionary);
+}
 
     public static object[] GetValues<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, TKey key)
         where TValue : class
