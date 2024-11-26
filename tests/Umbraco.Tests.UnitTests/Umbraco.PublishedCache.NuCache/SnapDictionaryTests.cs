@@ -9,16 +9,49 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
+using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
 public static class SnapDictionaryTestExtensions
 {
-    public static dynamic GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+    public static object GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
         where TValue : class
     {
-        var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
         return testProperty.GetValue(dictionary);
+    }
+
+    public static object[] GetValues<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, TKey key)
+        where TValue : class
+    {
+        var helper = GetTestHelper(dictionary);
+        var method = helper.GetType().GetMethod("GetValues", BindingFlags.Public | BindingFlags.Instance);
+        return (object[])method.Invoke(helper, new object[] { key });
+    }
+
+    public static int GetLiveGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        var helper = GetTestHelper(dictionary);
+        var property = helper.GetType().GetProperty("LiveGen", BindingFlags.Public | BindingFlags.Instance);
+        return (int)property.GetValue(helper);
+    }
+
+    public static bool GetNextGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        var helper = GetTestHelper(dictionary);
+        var property = helper.GetType().GetProperty("NextGen", BindingFlags.Public | BindingFlags.Instance);
+        return (bool)property.GetValue(helper);
+    }
+
+    public static int GetFloorGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        var helper = GetTestHelper(dictionary);
+        var property = helper.GetType().GetProperty("FloorGen", BindingFlags.Public | BindingFlags.Instance);
+        return (int)property.GetValue(helper);
     }
 }
 
