@@ -10,12 +10,29 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
     [TestFixture]
     public class SnapDictionaryTests
     {
+        private SnapDictionary<int, string> CreateSnapDictionary()
+        {
+            return new SnapDictionary<int, string>();
+        }
+
+        private int GetGeneration(SnapDictionary<int, string> dictionary)
+        {
+            var field = dictionary.GetType().GetField("_liveGen", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (int)field.GetValue(dictionary);
+        }
+
+        private ConcurrentDictionary<int, string> GetInternalDictionary(SnapDictionary<int, string> dictionary)
+        {
+            var field = dictionary.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (ConcurrentDictionary<int, string>)field.GetValue(dictionary);
+        }
         // Remove SnapDictionaryReflectionHelper class as it's no longer needed
         [Test]
         public void LiveGenUpdate()
