@@ -44,15 +44,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Insert(It.IsAny<string>(), It.IsAny<Func<object>>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Callback(() => isCached = true);
 
-            var policy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            policy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) =>
-                {
-                    isCached = true;
-                    return getEntity(id);
-                });
+            IRepositoryCachePolicy<AuditItem, object> policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            AuditItem unused = policy.Object.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => getAll);
+            AuditItem unused = policy.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => getAll);
             Assert.IsTrue(isCached);
         }
 
@@ -68,11 +62,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             var cache = new Mock<IAppPolicyCache>();
             cache.Setup(x => x.Get(It.IsAny<string>())).Returns(new AuditItem(1, AuditType.Copy, 123, "test", "blah"));
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) => cache.Object.Get(id.ToString()) as AuditItem);
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            AuditItem found = defaultPolicy.Object.Get(1, id => null, ids => getAll);
+            AuditItem found = defaultPolicy.Get(1, id => null, ids => getAll);
             Assert.IsNotNull(found);
         }
 
@@ -98,13 +90,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Get(It.IsAny<string>()))
                 .Returns(() => cached.Any() ? new DeepCloneableList<AuditItem>(ListCloneBehavior.CloneOnce) : null);
 
-            var policy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            policy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) =>
-                {
-                    isCached = true;
-                    return getEntity(id);
-                });
+            IRepositoryCachePolicy<AuditItem, object> policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem[] found = policy.GetAll(new object[] { }, ids => getAll);
 
@@ -142,9 +128,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 });
             cache.Setup(x => x.Get(It.IsAny<string>())).Returns(new AuditItem[] { });
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) => cache.Object.Get(id.ToString()) as AuditItem);
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem[] found = defaultPolicy.GetAll(new object[] { }, ids => getAll);
 
@@ -165,9 +149,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
             });
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) => cache.Object.Get(id.ToString()) as AuditItem);
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem[] found = defaultPolicy.GetAll(new object[] { }, ids => getAll);
             Assert.AreEqual(2, found.Length);
@@ -187,9 +169,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Clear(It.IsAny<string>()))
                 .Callback(() => cacheCleared = true);
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) => cache.Object.Get(id.ToString()) as AuditItem);
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
             try
             {
                 defaultPolicy.Update(new AuditItem(1, AuditType.Copy, 123, "test", "blah"), item => throw new Exception("blah!"));
@@ -218,9 +198,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Clear(It.IsAny<string>()))
                 .Callback(() => cacheCleared = true);
 
-            var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            defaultPolicy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) => cache.Object.Get(id.ToString()) as AuditItem);
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
             try
             {
                 defaultPolicy.Delete(new AuditItem(1, AuditType.Copy, 123, "test", "blah"), item => throw new Exception("blah!"));
