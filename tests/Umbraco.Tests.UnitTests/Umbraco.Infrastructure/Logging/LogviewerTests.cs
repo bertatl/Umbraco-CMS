@@ -68,9 +68,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             ILogger<ILogViewer> logger = Mock.Of<ILogger<ILogViewer>>();
             var logViewerConfig = new LogViewerConfig(LogViewerQueryRepository, Mock.Of<IScopeProvider>());
             var logLevelLoader = Mock.Of<ILogLevelLoader>();
-            // Temporarily commenting out the SerilogJsonLogViewer instantiation
-            // _logViewer = new SerilogJsonLogViewer(logger, logViewerConfig, loggingConfiguration, logLevelLoader, Log.Logger);
-            _logViewer = null; // Temporarily set to null
+            _logViewer = new SerilogJsonLogViewer(logger, logViewerConfig, loggingConfiguration, logLevelLoader, Log.Logger);
         }
 
         [OneTimeTearDown]
