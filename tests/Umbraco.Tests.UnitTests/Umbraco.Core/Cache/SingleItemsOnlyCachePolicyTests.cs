@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Cache;
@@ -36,8 +37,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.SearchByKey(It.IsAny<string>())).Returns(new AuditItem[] { });
 
             var defaultPolicy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
+            defaultPolicy.Setup(x => x.GetAll(It.IsAny<IEnumerable<object>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
+                .Returns((IEnumerable<object> ids, Func<IEnumerable<object>, IEnumerable<AuditItem>> fetcher) => fetcher(ids).ToArray());
 
-            AuditItem[] unused = defaultPolicy.GetAll(new object[] { }, ids => new[]
+            AuditItem[] unused = defaultPolicy.Object.GetAll(new object[] { }, ids => new[]
                     {
                         new AuditItem(1, AuditType.Copy, 123, "test", "blah"),
                         new AuditItem(2, AuditType.Copy, 123, "test", "blah2")
