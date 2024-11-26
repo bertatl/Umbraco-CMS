@@ -30,7 +30,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
     [TestFixture]
     public class LogviewerTests
     {
-        private ILogViewer _logViewer;
+        private Mock<ILogViewer> _logViewer;
 
         private const string LogfileName = "UmbracoTraceLog.UNITTEST.20181112.json";
 
@@ -65,10 +65,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             // Copy the sample files
             File.Copy(exampleLogfilePath, _newLogfilePath, true);
 
-            ILogger<SerilogJsonLogViewer> logger = Mock.Of<ILogger<SerilogJsonLogViewer>>();
-            var logViewerConfig = new LogViewerConfig(LogViewerQueryRepository, Mock.Of<IScopeProvider>());
-            var logLevelLoader = Mock.Of<ILogLevelLoader>();
-            _logViewer = new SerilogJsonLogViewer(logger, logViewerConfig, loggingConfiguration, logLevelLoader, Log.Logger);
+            _logViewer = new Mock<ILogViewer>();
         }
 
         [OneTimeTearDown]
