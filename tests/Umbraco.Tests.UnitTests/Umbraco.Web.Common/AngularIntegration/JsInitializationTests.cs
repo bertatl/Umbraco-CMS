@@ -1,4 +1,4 @@
-// Copyright (c) Umbraco.
+﻿// Copyright (c) Umbraco.
 // See LICENSE for more details.
 
 using NUnit.Framework;
@@ -13,8 +13,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.AngularIntegration
         [Test]
         public void Parse_Main()
         {
-            var initializer = new BackOfficeJavaScriptInitializer();
-            var result = initializer.GetScript("[World]", "Hello", "Blah");
+            var result = BackOfficeJavaScriptInitializer.WriteScript("[World]", "Hello", "Blah");
 
             Assert.AreEqual(
                 @"LazyLoad.js([World], function () {
