@@ -69,36 +69,36 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
             }
         }
 
-private object GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
-{
-    NullLoggerFactory loggerFactory = NullLoggerFactory.Instance;
+        private ScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
+        {
+            NullLoggerFactory loggerFactory = NullLoggerFactory.Instance;
 
-    var fileSystems = new FileSystems(
-        loggerFactory,
-        Mock.Of<IIOHelper>(),
-        Options.Create(new GlobalSettings()),
-        Mock.Of<IHostingEnvironment>());
+            var fileSystems = new FileSystems(
+                loggerFactory,
+                Mock.Of<IIOHelper>(),
+                Options.Create(new GlobalSettings()),
+                Mock.Of<IHostingEnvironment>());
 
-    var mediaFileManager = new MediaFileManager(
-        Mock.Of<IFileSystem>(),
-        Mock.Of<IMediaPathScheme>(),
-        loggerFactory.CreateLogger<MediaFileManager>(),
-        Mock.Of<IShortStringHelper>(),
-        Mock.Of<IServiceProvider>(),
-        Options.Create(new ContentSettings()));
+            var mediaFileManager = new MediaFileManager(
+                Mock.Of<IFileSystem>(),
+                Mock.Of<IMediaPathScheme>(),
+                loggerFactory.CreateLogger<MediaFileManager>(),
+                Mock.Of<IShortStringHelper>(),
+                Mock.Of<IServiceProvider>(),
+                Options.Create(new ContentSettings()));
 
-    eventAggregatorMock = new Mock<IEventAggregator>();
+            eventAggregatorMock = new Mock<IEventAggregator>();
 
-    return ScopeProviderHelper.CreateScopeProvider(
-        Mock.Of<IUmbracoDatabaseFactory>(),
-        fileSystems,
-        Options.Create(new CoreDebugSettings()),
-        mediaFileManager,
-        loggerFactory.CreateLogger<object>(),
-        loggerFactory,
-        Mock.Of<IRequestCache>(),
-        eventAggregatorMock.Object
-    );
-}
+            return new ScopeProvider(
+                Mock.Of<IUmbracoDatabaseFactory>(),
+                fileSystems,
+                Options.Create(new CoreDebugSettings()),
+                mediaFileManager,
+                loggerFactory.CreateLogger<ScopeProvider>(),
+                loggerFactory,
+                Mock.Of<IRequestCache>(),
+                eventAggregatorMock.Object
+            );
+        }
     }
 }
