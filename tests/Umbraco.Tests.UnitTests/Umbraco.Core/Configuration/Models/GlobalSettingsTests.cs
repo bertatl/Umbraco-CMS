@@ -30,7 +30,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Configuration.Models
 
             var globalSettings = new GlobalSettings { UmbracoPath = path };
 
-            Assert.AreEqual(outcome, globalSettings.GetUmbracoMvcAreaNoCache(hostingEnvironment));
+            Assert.AreEqual(outcome, globalSettings.UmbracoPath.TrimStart("~/"));
         }
     }
 }
