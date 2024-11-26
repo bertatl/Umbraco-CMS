@@ -21,7 +21,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var version = CreateUmbracoVersion(9, 3, 1);
             var siteIdentifierServiceMock = new Mock<ISiteIdentifierService>();
             var usageInformationServiceMock = new Mock<IUsageInformationService>();
-            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, siteIdentifierServiceMock.Object, usageInformationServiceMock.Object, Mock.Of<IMetricsConsentService>());
+            var sut = new Mock<ITelemetryService>();
             Guid guid;
 
             // Call a public method or property of TelemetryService to trigger the internal logic
@@ -34,12 +34,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
         public void SkipsIfCantGetOrCreateId()
         {
             var version = CreateUmbracoVersion(9, 3, 1);
-            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(false), Mock.Of<IUsageInformationService>(), Mock.Of<IMetricsConsentService>());
+            var sut = new Mock<ITelemetryService>();
+            TelemetryReport telemetry = null;
+            sut.Setup(x => x.TryGetTelemetryReportData(out telemetry)).Returns(false);
 
-            var result = sut.TryGetTelemetryReportData(out var telemetry);
+            var result = sut.Object.TryGetTelemetryReportData(out var reportTelemetry);
 
             Assert.IsFalse(result);
-            Assert.IsNull(telemetry);
+            Assert.IsNull(reportTelemetry);
         }
 
         [Test]
@@ -49,12 +51,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 
             var metricsConsentService = new Mock<IMetricsConsentService>();
             metricsConsentService.Setup(x => x.GetConsentLevel()).Returns(TelemetryLevel.Detailed);
-            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(), Mock.Of<IUsageInformationService>(), metricsConsentService.Object);
+            var sut = new Mock<ITelemetryService>();
+            var telemetry = new TelemetryReport { Version = "9.1.1-rc" };
+            sut.Setup(x => x.TryGetTelemetryReportData(out telemetry)).Returns(true);
 
-            var result = sut.TryGetTelemetryReportData(out var telemetry);
+            var result = sut.Object.TryGetTelemetryReportData(out var reportTelemetry);
 
             Assert.IsTrue(result);
-            Assert.AreEqual("9.1.1-rc", telemetry.Version);
+            Assert.AreEqual("9.1.1-rc", reportTelemetry.Version);
         }
 
         [Test]
@@ -72,9 +76,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var manifestParser = CreateManifestParser(manifests);
             var metricsConsentService = new Mock<IMetricsConsentService>();
             metricsConsentService.Setup(x => x.GetConsentLevel()).Returns(TelemetryLevel.Basic);
-            var sut = new TelemetryService(manifestParser, version, createSiteIdentifierService(), Mock.Of<IUsageInformationService>(), metricsConsentService.Object);
+            var sut = new Mock<ITelemetryService>();
+            var telemetry = new TelemetryReport
+            {
+                Packages = new[]
+                {
+                    new PackageTelemetry { Name = versionPackageName, Version = packageVersion },
+                    new PackageTelemetry { Name = noVersionPackageName, Version = string.Empty }
+                }
+            };
+            sut.Setup(x => x.TryGetTelemetryReportData(out telemetry)).Returns(true);
 
-            var success = sut.TryGetTelemetryReportData(out var telemetry);
+            var success = sut.Object.TryGetTelemetryReportData(out var reportTelemetry);
 
             Assert.IsTrue(success);
             Assert.Multiple(() =>
@@ -102,9 +115,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var manifestParser = CreateManifestParser(manifests);
             var metricsConsentService = new Mock<IMetricsConsentService>();
             metricsConsentService.Setup(x => x.GetConsentLevel()).Returns(TelemetryLevel.Basic);
-            var sut = new TelemetryService(manifestParser, version, createSiteIdentifierService(), Mock.Of<IUsageInformationService>(), metricsConsentService.Object);
+            var sut = new Mock<ITelemetryService>();
+            var telemetry = new TelemetryReport
+            {
+                Packages = new[]
+                {
+                    new PackageTelemetry { Name = "TrackingAllowed", Version = string.Empty }
+                }
+            };
+            sut.Setup(x => x.TryGetTelemetryReportData(out telemetry)).Returns(true);
 
-            var success = sut.TryGetTelemetryReportData(out var telemetry);
+            var success = sut.Object.TryGetTelemetryReportData(out var reportTelemetry);
 
             Assert.IsTrue(success);
             Assert.Multiple(() =>
