@@ -134,12 +134,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 3
             d.Set(1, "one");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestValues(1).Length);
 
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestLiveGen());
+            Assert.IsTrue(d.GetTestNextGen());
 
             SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
             Assert.AreEqual(3, tv[0].Gen);
