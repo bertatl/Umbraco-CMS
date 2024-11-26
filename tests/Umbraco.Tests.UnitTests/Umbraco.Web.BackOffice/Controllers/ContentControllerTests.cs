@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -23,12 +23,18 @@ using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.BackOffice.Controllers;
+using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
 {
     [TestFixture]
     public class ContentControllerTests
     {
+        private void AddDomainWarningsWrapper(ContentController controller, IContent content, string[] culturesPublished, SimpleNotificationModel notifications)
+        {
+            MethodInfo method = typeof(ContentController).GetMethod("AddDomainWarnings", BindingFlags.NonPublic | BindingFlags.Instance);
+            method.Invoke(controller, new object[] { content, culturesPublished, notifications });
+        }
         [Test]
         public void Root_Node_With_Domains_Causes_No_Warning()
         {
@@ -55,7 +61,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
+            AddDomainWarningsWrapper(contentController, rootNode, culturesPublished, notifications);
 
             Assert.IsEmpty(notifications.Notifications);
         }
@@ -81,7 +87,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
+            AddDomainWarningsWrapper(contentController, rootNode, culturesPublished, notifications);
 
             Assert.IsEmpty(notifications.Notifications);
         }
@@ -110,7 +116,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
+            AddDomainWarningsWrapper(contentController, rootNode, culturesPublished, notifications);
             Assert.AreEqual(1, notifications.Notifications.Count(x => x.NotificationType == NotificationStyle.Warning));
         }
 
@@ -139,7 +145,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
+            AddDomainWarningsWrapper(contentController, rootNode, culturesPublished, notifications);
             Assert.AreEqual(3, notifications.Notifications.Count(x => x.NotificationType == NotificationStyle.Warning));
         }
 
@@ -189,7 +195,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             ContentController contentController = CreateContentController(domainServiceMock.Object);
             var notifications = new SimpleNotificationModel();
 
-            contentController.AddDomainWarnings(level3Node, culturesPublished, notifications);
+            AddDomainWarningsWrapper(contentController, level3Node, culturesPublished, notifications);
             // We expect one error because all domains except "de-de" is registered somewhere in the ancestor path
             Assert.AreEqual(1, notifications.Notifications.Count(x => x.NotificationType == NotificationStyle.Warning));
         }
@@ -224,7 +230,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Controllers
             var notifications = new SimpleNotificationModel();
 
             ContentController contentController = CreateContentController(domainServiceMock.Object);
-            contentController.AddDomainWarnings(rootNode, culturesPublished, notifications);
+            AddDomainWarningsWrapper(contentController, rootNode, culturesPublished, notifications);
 
             // We only get two errors, one for each culture being published, so no errors from previously published cultures.
             Assert.AreEqual(2, notifications.Notifications.Count(x => x.NotificationType == NotificationStyle.Warning));
