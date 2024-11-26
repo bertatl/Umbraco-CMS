@@ -1,22 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Umbraco.Cms.Tests.Integration</RootNamespace>
     <PackageId>Umbraco.Cms.Tests.Integration</PackageId>
     <Title>Umbraco CMS Integration Tests</Title>
     <Description>Contains helper classes for integration tests with Umbraco, including all internal integration tests.</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
-
   <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2" />
   </ItemGroup>
-
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
     <DefineConstants>IS_WINDOWS</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="App_Data\**" />
     <Compile Remove="TEMP\**" />
@@ -54,11 +51,9 @@
     <None Remove="Umbraco.Web.BackOffice\UrlAndDomains\package.xml" />
     <EmbeddedResource Include="Umbraco.Web.BackOffice\UrlAndDomains\package.xml" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Umbraco.Infrastructure\Services\Importing\Dictionary-Package.xml" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Umbraco.Examine.Lucene\UmbracoExamine\TestFiles\media.xml" />
     <Content Include="Umbraco.Infrastructure\Services\Importing\CheckboxList-Content-Package.xml">
@@ -78,24 +73,6 @@
     <Content Include="Umbraco.Infrastructure\Services\Importing\uBlogsy-Package.xml" />
     <Content Include="Umbraco.Infrastructure\Services\Importing\XsltSearch-Package.xml" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Bogus" Version="33.1.1" />
-    <PackageReference Include="Examine.Lucene" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.11" />
-    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.9" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\Umbraco.Core\Umbraco.Core.csproj" />
     <ProjectReference Include="..\..\src\Umbraco.Infrastructure\Umbraco.Infrastructure.csproj" />
@@ -104,11 +81,23 @@
     <ProjectReference Include="..\..\src\Umbraco.Web.BackOffice\Umbraco.Web.BackOffice.csproj" />
     <ProjectReference Include="..\..\src\Umbraco.Web.Website\Umbraco.Web.Website.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Umbraco.Examine.Lucene\UmbracoExamine\TestFiles\umbraco-sort.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.9" />
+    <PackageReference Include="Examine.Lucene" Version="3.4.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Bogus" Version="35.6.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8" />
+  </ItemGroup>
 </Project>
