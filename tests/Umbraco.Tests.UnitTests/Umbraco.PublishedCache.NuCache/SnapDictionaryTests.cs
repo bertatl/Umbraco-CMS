@@ -17,10 +17,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void LiveGenUpdate()
         {
-            var d = new TestableSnapDictionary<int, string>();
-            d.SetCollectAuto(false);
+            var d = new SnapDictionary<int, string>();
+            d.Test.CollectAuto = false;
 
-            Assert.AreEqual(0, d.GetTestValues(1).Length);
+            Assert.AreEqual(0, d.Test.GetValues(1).Length);
 
             // gen 1
             d.Set(1, "one");
@@ -36,31 +36,31 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void OtherGenUpdate()
         {
-            var d = new TestableSnapDictionary<int, string>();
-            d.SetCollectAuto(false);
+            var d = new SnapDictionary<int, string>();
+            d.Test.CollectAuto = false;
 
-            Assert.AreEqual(0, d.GetTestValues(1).Length);
-            Assert.AreEqual(0, d.GetTestLiveGen());
-            Assert.IsFalse(d.GetTestNextGen());
+            Assert.AreEqual(0, d.Test.GetValues(1).Length);
+            Assert.AreEqual(0, d.Test.LiveGen);
+            Assert.IsFalse(d.Test.NextGen);
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.GetTestValues(1).Length);
-            Assert.AreEqual(1, d.GetTestLiveGen());
-            Assert.IsTrue(d.GetTestNextGen());
+            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
             Assert.AreEqual(1, s.Gen);
-            Assert.AreEqual(1, d.GetTestLiveGen());
-            Assert.IsFalse(d.GetTestNextGen());
+            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
             d.Clear(1);
-            Assert.AreEqual(2, d.GetTestValues(1).Length); // there
-            Assert.AreEqual(2, d.GetTestLiveGen());
-            Assert.IsTrue(d.GetTestNextGen());
+            Assert.AreEqual(2, d.Test.GetValues(1).Length); // there
+            Assert.AreEqual(2, d.Test.LiveGen);
+            Assert.IsTrue(d.Test.NextGen);
 
-            Assert.AreEqual(0, d.GetTestFloorGen());
+            Assert.AreEqual(0, d.Test.FloorGen);
 
             GC.KeepAlive(s);
         }
