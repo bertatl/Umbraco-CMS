@@ -88,44 +88,44 @@ public class TestHelper
     }
 
     [TestFixture]
-    public class SnapDictionaryTests
+public class SnapDictionaryTests
+{
+    // Remove SnapDictionaryReflectionHelper class as it's no longer needed
+    [Test]
+    public void LiveGenUpdate()
     {
-        // Remove SnapDictionaryReflectionHelper class as it's no longer needed
-        [Test]
-        public void LiveGenUpdate()
-        {
-            var d = new SnapDictionary<int, string>();
+        var d = new SnapDictionary<int, string>();
 
-            Assert.AreEqual(0, d.Count);
+        Assert.AreEqual(0, d.Count);
 
-            // gen 1
-            d.Set(1, "one");
-            Assert.AreEqual(1, d.Count);
-            d.Clear(1);
-            Assert.AreEqual(0, d.Count); // gone
+        // gen 1
+        d.SetValue(1, "one");
+        Assert.AreEqual(1, d.Count);
+        d.Clear(1);
+        Assert.AreEqual(0, d.Count); // gone
 
-            // We can't assert on internal state, so we'll remove these assertions
-        }
+        // We can't assert on internal state, so we'll remove these assertions
+    }
 
         [Test]
-        public void OtherGenUpdate()
-        {
-            var d = new SnapDictionary<int, string>();
-            // Remove d.Test.CollectAuto = false; as we can't access it
+    public void OtherGenUpdate()
+    {
+        var d = new SnapDictionary<int, string>();
+        // Remove d.Test.CollectAuto = false; as we can't access it
 
-            // We can't directly test internal state, so we'll focus on observable behavior
-            Assert.AreEqual(0, d.Count);
+        // We can't directly test internal state, so we'll focus on observable behavior
+        Assert.AreEqual(0, d.Count);
 
-            // gen 1
-            d.Set(1, "one");
-            Assert.AreEqual(1, d.Count);
+        // gen 1
+        d.SetValue(1, "one");
+        Assert.AreEqual(1, d.Count);
 
-            SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
-            Assert.AreEqual("one", s.Get(1));
+        SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
+        Assert.AreEqual("one", s.Get(1));
 
-            // gen 2
-            d.Clear(1);
-            Assert.AreEqual(0, d.Count);
+        // gen 2
+        d.Clear(1);
+        Assert.AreEqual(0, d.Count);
 
             // The snapshot should still have the old value
             Assert.AreEqual("one", s.Get(1));
@@ -168,21 +168,21 @@ public class TestHelper
 
         [Retry(5)] // TODO make this test non-flaky.
         [Test]
-        public async Task CollectValues()
-        {
-            var d = new SnapDictionary<int, string>();
-            // Remove direct access to Test property
-            // Use a public method to set CollectAuto if available, or skip this step
-            // d.SetCollectAuto(false);
+    public async Task CollectValues()
+    {
+        var d = new SnapDictionary<int, string>();
+        // Remove direct access to Test property
+        // Use a public method to set CollectAuto if available, or skip this step
+        // d.SetCollectAuto(false);
 
-            // gen 1
-            d.Set(1, "one");
-            // Use public methods to assert on the dictionary's state
-            Assert.AreEqual(1, d.Count);
-            d.Set(1, "one");
-            Assert.AreEqual(1, d.Count);
-            d.Set(1, "uno");
-            Assert.AreEqual(1, d.Count);
+        // gen 1
+        d.SetValue(1, "one");
+        // Use public methods to assert on the dictionary's state
+        Assert.AreEqual(1, d.Count);
+        d.SetValue(1, "one");
+        Assert.AreEqual(1, d.Count);
+        d.SetValue(1, "uno");
+        Assert.AreEqual(1, d.Count);
 
             // Remove assertions on internal state
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
