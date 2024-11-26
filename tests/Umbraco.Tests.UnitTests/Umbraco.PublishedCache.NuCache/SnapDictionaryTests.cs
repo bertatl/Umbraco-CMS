@@ -126,11 +126,11 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -255,11 +255,11 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
