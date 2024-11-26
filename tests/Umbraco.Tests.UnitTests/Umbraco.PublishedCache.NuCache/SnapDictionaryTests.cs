@@ -100,9 +100,9 @@ public class TestHelper
             Assert.AreEqual(0, d.Count);
 
             // gen 1
-            d.Add(1, "one");
+            d.Set(1, "one");
             Assert.AreEqual(1, d.Count);
-            d.Add(1, null); // Set the value to null to effectively remove the item
+            d.Set(1, null); // Set the value to null to effectively remove the item
             Assert.AreEqual(0, d.Count); // should be gone
 
             // We can't assert on internal state, so we'll remove these assertions
