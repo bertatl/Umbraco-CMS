@@ -18,19 +18,18 @@ using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Extensions;
-using Umbraco.Cms.Web.BackOffice.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
     [TestFixture]
-    public class AllowedOutgoingContentFilterTests
+    public class FilterAllowedOutgoingContentFilterTests
     {
         [Test]
         public void GetValueFromResponse_Already_EnumerableContent()
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -50,7 +49,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 nameof(MyTestClass.MyList),
                 ActionBrowse.ActionLetter,
@@ -70,7 +69,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 "DontFind",
                 ActionBrowse.ActionLetter,
@@ -96,7 +95,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             IEntityService entityService = entityServiceMock.Object;
 
             var list = new List<ContentItemBasic>();
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -148,7 +147,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             userServiceMock.Setup(x => x.GetPermissions(user, ids)).Returns(permissions);
             IUserService userService = userServiceMock.Object;
 
-            var att = new AllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
