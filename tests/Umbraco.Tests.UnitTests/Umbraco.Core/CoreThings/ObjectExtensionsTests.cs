@@ -286,9 +286,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.CoreThings
         {
             DataValueEditor valueEditor = MockedValueEditors.CreateDataValueEditor(ValueTypes.Decimal);
 
-            Attempt<object> result = valueEditor.TryConvertValueToCrlType(12.34d);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(12.34d, result.Result);
+            object result = valueEditor.GetValueEditor().FromEditor(12.34d, null);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(12.34d, result);
         }
 
         private class MyTestObject
