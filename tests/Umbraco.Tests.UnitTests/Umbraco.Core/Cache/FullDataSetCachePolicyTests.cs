@@ -65,7 +65,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             var cache = new Mock<IAppPolicyCache>();
             cache.Setup(x => x.Get(It.IsAny<string>())).Returns(new AuditItem(1, AuditType.Copy, 123, "test", "blah"));
 
-            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
+            var defaultPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, int>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             AuditItem found = defaultPolicy.Get(1, id => null, ids => getAll);
             Assert.IsNotNull(found);
