@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Data.Odbc;
 using System.Data.OleDb;
 using System.Data.SqlClient;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
