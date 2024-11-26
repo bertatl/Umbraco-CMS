@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
 using Microsoft.Extensions.Options;
-using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
 {
@@ -22,12 +21,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var ensureBackOfficeSchemeType = typeof(BackOfficeAuthenticationBuilder).GetNestedType("EnsureBackOfficeScheme`1", BindingFlags.NonPublic);
-            var genericType = ensureBackOfficeSchemeType.MakeGenericType(typeof(RemoteAuthenticationOptions));
-            var sut = Activator.CreateInstance(genericType);
-
-            var postConfigureMethod = genericType.GetMethod("PostConfigure");
-            postConfigureMethod.Invoke(sut, new object[] { scheme, options });
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
 
             Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
         }
@@ -41,12 +36,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var ensureBackOfficeSchemeType = typeof(BackOfficeAuthenticationBuilder).GetNestedType("EnsureBackOfficeScheme`1", BindingFlags.NonPublic);
-            var genericType = ensureBackOfficeSchemeType.MakeGenericType(typeof(RemoteAuthenticationOptions));
-            var sut = Activator.CreateInstance(genericType);
-
-            var postConfigureMethod = genericType.GetMethod("PostConfigure");
-            postConfigureMethod.Invoke(sut, new object[] { scheme, options });
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
 
             Assert.AreEqual("my_cookie", options.SignInScheme);
         }
