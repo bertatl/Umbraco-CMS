@@ -15,19 +15,45 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
 public static class SnapDictionaryTestExtensions
 {
-    public static object GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+    public class TestHelperWrapper
+    {
+        private readonly object _testHelper;
+
+        public TestHelperWrapper(object testHelper)
+        {
+            _testHelper = testHelper;
+        }
+
+        public object[] GetValues<TKey>(TKey key)
+        {
+            var method = _testHelper.GetType().GetMethod("GetValues", BindingFlags.Public | BindingFlags.Instance);
+            return (object[])method.Invoke(_testHelper, new object[] { key });
+        }
+
+        public int LiveGen => (int)_testHelper.GetType().GetProperty("LiveGen", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+
+        public bool NextGen => (bool)_testHelper.GetType().GetProperty("NextGen", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+
+        public int FloorGen => (int)_testHelper.GetType().GetProperty("FloorGen", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+
+        public bool IsLocked => (bool)_testHelper.GetType().GetProperty("IsLocked", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+
+        public object GenObj => _testHelper.GetType().GetProperty("GenObj", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+
+        public object LiveSnapshot => _testHelper.GetType().GetProperty("LiveSnapshot", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+
+        public bool CollectAuto
+        {
+            get => (bool)_testHelper.GetType().GetProperty("CollectAuto", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
+            set => _testHelper.GetType().GetProperty("CollectAuto", BindingFlags.Public | BindingFlags.Instance).SetValue(_testHelper, value);
+        }
+    }
+
+    public static TestHelperWrapper GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
         where TValue : class
     {
         var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
-        return testProperty.GetValue(dictionary);
-    }
-
-    public static object[] GetValues<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, TKey key)
-        where TValue : class
-    {
-        var helper = GetTestHelper(dictionary);
-        var method = helper.GetType().GetMethod("GetValues", BindingFlags.Public | BindingFlags.Instance);
-        return (object[])method.Invoke(helper, new object[] { key });
+        return new TestHelperWrapper(testProperty.GetValue(dictionary));
     }
 
     public static int GetLiveGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
@@ -57,13 +83,12 @@ public static class SnapDictionaryTestExtensions
 
 public static class SnapDictionaryTestHelperExtensions
 {
-    public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, bool value)
-        where TValue : class
-    {
-        var testHelper = dictionary.GetTestHelper();
-        var collectAutoProperty = testHelper.GetType().GetProperty("CollectAuto", BindingFlags.Public | BindingFlags.Instance);
-        collectAutoProperty.SetValue(testHelper, value);
-    }
+public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, bool value)
+    where TValue : class
+{
+    var testHelper = dictionary.GetTestHelper();
+    testHelper.CollectAuto = value;
+}
 }
 
     [TestFixture]
