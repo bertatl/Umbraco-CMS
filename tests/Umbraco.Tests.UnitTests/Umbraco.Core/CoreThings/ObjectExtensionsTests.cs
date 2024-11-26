@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Reflection;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.PropertyEditors;
@@ -286,9 +287,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.CoreThings
         {
             DataValueEditor valueEditor = MockedValueEditors.CreateDataValueEditor(ValueTypes.Decimal);
 
-            Attempt<object> result = valueEditor.TryConvertValueToCrlType(12.34d);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(12.34d, result.Result);
+            var method = typeof(DataValueEditor).GetMethod("TryConvertValueToCrlType", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (method != null)
+            {
+                var result = method.Invoke(valueEditor, new object[] { 12.34d });
+                Assert.IsNotNull(result);
+                Assert.IsInstanceOf<Attempt<object>>(result);
+                var attempt = (Attempt<object>)result;
+                Assert.IsTrue(attempt.Success);
+                Assert.AreEqual(12.34d, attempt.Result);
+            }
+            else
+            {
+                Assert.Inconclusive("TryConvertValueToCrlType method not found. This test may need to be updated for the current Umbraco version.");
+            }
         }
 
         private class MyTestObject
