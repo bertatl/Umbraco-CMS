@@ -13,6 +13,52 @@ using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
+    public static class SnapDictionaryTestExtensions
+    {
+        public static SnapDictionaryTestHelper<TKey, TValue> Test<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+            where TValue : class
+        {
+            return new SnapDictionaryTestHelper<TKey, TValue>(dictionary);
+        }
+    }
+
+    public class SnapDictionaryTestHelper<TKey, TValue>
+        where TValue : class
+    {
+        private readonly SnapDictionary<TKey, TValue> _dictionary;
+
+        public SnapDictionaryTestHelper(SnapDictionary<TKey, TValue> dictionary)
+        {
+            _dictionary = dictionary;
+        }
+
+        public bool CollectAuto
+        {
+            get => (bool)GetPrivateField("_collectAuto");
+            set => SetPrivateField("_collectAuto", value);
+        }
+
+        public int LiveGen => (int)GetPrivateField("_liveGen");
+
+        public bool NextGen => (bool)GetPrivateField("_nextGen");
+
+        public Array GetValues(TKey key)
+        {
+            var method = _dictionary.GetType().GetMethod("GetValues", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (Array)method.Invoke(_dictionary, new object[] { key });
+        }
+
+        private object GetPrivateField(string fieldName)
+        {
+            return _dictionary.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_dictionary);
+        }
+
+        private void SetPrivateField(string fieldName, object value)
+        {
+            _dictionary.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance).SetValue(_dictionary, value);
+        }
+    }
+
     [TestFixture]
     public class SnapDictionaryTests
     {
