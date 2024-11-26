@@ -2,6 +2,7 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
@@ -12,33 +13,45 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
     public class BackOfficeAuthenticationBuilderTests
     {
         [Test]
-        public void EnsureBackOfficeScheme_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
+        public void AddBackOfficeAuthentication_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
         {
+            var services = new ServiceCollection();
+            var authBuilder = new AuthenticationBuilder(services);
+
             var scheme = $"{Constants.Security.BackOfficeExternalAuthenticationTypePrefix}test";
-            var options = new RemoteAuthenticationOptions
+            authBuilder.AddBackOfficeAuthentication();
+            authBuilder.AddRemoteScheme<RemoteAuthenticationOptions, RemoteAuthenticationHandler>(scheme, scheme, options =>
             {
-                SignInScheme = "my_cookie"
-            };
+                options.SignInScheme = "my_cookie";
+            });
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            var provider = services.BuildServiceProvider();
+            var schemeProvider = provider.GetRequiredService<IAuthenticationSchemeProvider>();
+            var updatedScheme = schemeProvider.GetSchemeAsync(scheme).GetAwaiter().GetResult();
 
-            Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
+            Assert.IsNotNull(updatedScheme);
+            Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, updatedScheme.HandlerType.GetProperty("SignInScheme")?.GetValue(null));
         }
 
         [Test]
-        public void EnsureBackOfficeScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
+        public void AddBackOfficeAuthentication_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
         {
+            var services = new ServiceCollection();
+            var authBuilder = new AuthenticationBuilder(services);
+
             var scheme = "test";
-            var options = new RemoteAuthenticationOptions
+            authBuilder.AddBackOfficeAuthentication();
+            authBuilder.AddRemoteScheme<RemoteAuthenticationOptions, RemoteAuthenticationHandler>(scheme, scheme, options =>
             {
-                SignInScheme = "my_cookie"
-            };
+                options.SignInScheme = "my_cookie";
+            });
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            var provider = services.BuildServiceProvider();
+            var schemeProvider = provider.GetRequiredService<IAuthenticationSchemeProvider>();
+            var updatedScheme = schemeProvider.GetSchemeAsync(scheme).GetAwaiter().GetResult();
 
-            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
+            Assert.IsNotNull(updatedScheme);
+            Assert.AreEqual("my_cookie", updatedScheme.HandlerType.GetProperty("SignInScheme")?.GetValue(null));
         }
     }
 }
