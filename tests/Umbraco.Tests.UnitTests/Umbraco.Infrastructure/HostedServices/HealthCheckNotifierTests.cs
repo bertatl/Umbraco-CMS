@@ -99,10 +99,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.HostedServices
             await sut.PerformExecuteAsync(null);
             _mockNotificationMethod.Verify(
                 x => x.SendAsync(
-                    It.Is<HealthCheckResults>(y =>
-                        y.GetAllChecks().Count() == 1 &&
-                        y.GetAllChecks().Any(r => r.Name == "Check1"))),
-                Times.Once);
+                    It.Is<HealthCheckResults>(y => y.ResultsAsDictionary.Count == 1 && y.ResultsAsDictionary.ContainsKey("Check1"))), Times.Once);
         }
 
         private HealthCheckNotifier CreateHealthCheckNotifier(
