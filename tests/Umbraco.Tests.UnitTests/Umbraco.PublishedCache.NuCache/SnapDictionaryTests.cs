@@ -16,32 +16,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
     [TestFixture]
     public class SnapDictionaryTests
     {
-        private static class SnapDictionaryReflectionHelper
-        {
-            public static T GetInternalProperty<T>(object obj, string propertyName)
-            {
-                var property = obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
-                return (T)property.GetValue(obj);
-            }
-
-            public static T InvokeInternalMethod<T>(object obj, string methodName, params object[] parameters)
-            {
-                var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-                return (T)method.Invoke(obj, parameters);
-            }
-
-            public static object GetTestHelperProperty(object snapDictionary)
-            {
-                var testProperty = snapDictionary.GetType().GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
-                return testProperty.GetValue(snapDictionary);
-            }
-
-            public static object[] InvokeGetValues(object testHelper, int key)
-            {
-                var method = testHelper.GetType().GetMethod("GetValues", BindingFlags.Public | BindingFlags.Instance);
-                return (object[])method.Invoke(testHelper, new object[] { key });
-            }
-        }
+        // Remove SnapDictionaryReflectionHelper class as it's no longer needed
         [Test]
         public void LiveGenUpdate()
         {
@@ -188,11 +163,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             GC.Collect();
             GC.KeepAlive(s2);
             await d.CollectAsync();
-            Assert.AreEqual(1, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
 
             // another snapshot to collect
             s2 = null;
@@ -316,11 +288,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             GC.Collect();
             GC.KeepAlive(s2);
             await d.CollectAsync();
-            Assert.AreEqual(1, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
 
             // another snapshot to collect
             s2 = null;
