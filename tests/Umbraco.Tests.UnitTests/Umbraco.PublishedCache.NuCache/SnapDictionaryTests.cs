@@ -71,9 +71,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             d.Clear(1);
             Assert.AreEqual(2, testHelper.GetValues(1).Length); // there
             Assert.AreEqual(2, testHelper.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.IsTrue(testHelper.NextGen);
 
-            Assert.AreEqual(0, d.Test.FloorGen);
+            Assert.AreEqual(0, testHelper.FloorGen);
 
             GC.KeepAlive(s);
         }
