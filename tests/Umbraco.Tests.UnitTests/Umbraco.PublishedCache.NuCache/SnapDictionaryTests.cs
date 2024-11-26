@@ -162,10 +162,10 @@ public static class SnapDictionaryTestHelperExtensions
             d.Set(1, "uno");
             Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
+            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.GetTestHelper().GetValues(1);
             Assert.AreEqual(3, tv[0].Gen);
             Assert.AreEqual(2, tv[1].Gen);
             Assert.AreEqual(1, tv[2].Gen);
@@ -293,10 +293,10 @@ public static class SnapDictionaryTestHelperExtensions
             d.Clear(1);
             Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
+            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.GetTestHelper().GetValues(1);
             Assert.AreEqual(3, tv[0].Gen);
             Assert.AreEqual(2, tv[1].Gen);
             Assert.AreEqual(1, tv[2].Gen);
