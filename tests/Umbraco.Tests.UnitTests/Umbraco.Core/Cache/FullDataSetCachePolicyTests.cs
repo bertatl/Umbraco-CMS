@@ -11,7 +11,7 @@ using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Collections;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Scoping;
-using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Infrastructure.Persistence.Repositories;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 {
@@ -44,9 +44,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Insert(It.IsAny<string>(), It.IsAny<Func<object>>(), It.IsAny<TimeSpan?>(), It.IsAny<bool>(), It.IsAny<string[]>()))
                 .Callback(() => isCached = true);
 
-            IRepositoryCachePolicy<AuditItem, object> policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
+            var policy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
+            policy.Setup(x => x.Get(It.IsAny<object>(), It.IsAny<Func<object, AuditItem>>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
+                .Callback(() => isCached = true)
+                .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) => getEntity(id));
 
-            AuditItem unused = policy.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => getAll);
+            AuditItem unused = policy.Object.Get(1, id => new AuditItem(1, AuditType.Copy, 123, "test", "blah"), ids => getAll);
             Assert.IsTrue(isCached);
         }
 
