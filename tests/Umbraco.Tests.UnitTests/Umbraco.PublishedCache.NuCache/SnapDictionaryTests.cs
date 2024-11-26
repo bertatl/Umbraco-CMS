@@ -9,12 +9,27 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
+using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
     [TestFixture]
     public class SnapDictionaryTests
     {
+        private static class SnapDictionaryReflectionHelper
+        {
+            public static T GetInternalProperty<T>(object obj, string propertyName)
+            {
+                var property = obj.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
+                return (T)property.GetValue(obj);
+            }
+
+            public static T InvokeInternalMethod<T>(object obj, string methodName, params object[] parameters)
+            {
+                var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+                return (T)method.Invoke(obj, parameters);
+            }
+        }
         [Test]
         public void LiveGenUpdate()
         {
@@ -134,12 +149,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 3
             d.Set(1, "one");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, SnapDictionaryReflectionHelper.InvokeInternalMethod<object[]>(d, "GetValues", 1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, SnapDictionaryReflectionHelper.InvokeInternalMethod<object[]>(d, "GetValues", 1).Length);
 
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, SnapDictionaryReflectionHelper.GetInternalProperty<int>(d, "LiveGen"));
+            Assert.IsTrue(SnapDictionaryReflectionHelper.GetInternalProperty<bool>(d, "NextGen"));
 
             SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
             Assert.AreEqual(3, tv[0].Gen);
