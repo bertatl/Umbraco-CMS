@@ -434,7 +434,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer9), typeof(Composer2), typeof(Composer4) };
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new TestComposerGraph(composition, types);
             Composed.Clear();
             composers.Compose();
             Assert.AreEqual(3, Composed.Count);
