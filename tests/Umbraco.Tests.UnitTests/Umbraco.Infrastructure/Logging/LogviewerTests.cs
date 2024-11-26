@@ -36,9 +36,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         private string _newLogfilePath;
         private string _newLogfileDirPath;
 
-        private readonly LogTimePeriod _logTimePeriod = new LogTimePeriod(
-            new DateTime(year: 2018, month: 11, day: 12, hour: 0, minute: 0, second: 0),
-            new DateTime(year: 2018, month: 11, day: 13, hour: 0, minute: 0, second: 0));
+        private readonly (DateTimeOffset Start, DateTimeOffset End) _logTimePeriod = (
+            new DateTimeOffset(year: 2018, month: 11, day: 12, hour: 0, minute: 0, second: 0, offset: TimeSpan.Zero),
+            new DateTimeOffset(year: 2018, month: 11, day: 13, hour: 0, minute: 0, second: 0, offset: TimeSpan.Zero));
 
         private ILogViewerQueryRepository LogViewerQueryRepository { get; } = new TestLogViewerQueryRepository();
 
