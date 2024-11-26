@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
 {
@@ -22,14 +21,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var builder = new BackOfficeAuthenticationBuilder(null);
-            builder.AddRemoteScheme<RemoteAuthenticationOptions, RemoteAuthenticationHandler>(scheme, scheme, _ => { });
-
-            var postConfigureOptions = builder.Services
-                .BuildServiceProvider()
-                .GetRequiredService<IPostConfigureOptions<RemoteAuthenticationOptions>>();
-
-            postConfigureOptions.PostConfigure(scheme, options);
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
 
             Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
         }
@@ -43,14 +36,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var builder = new BackOfficeAuthenticationBuilder(null);
-            builder.AddRemoteScheme<RemoteAuthenticationOptions, RemoteAuthenticationHandler>(scheme, scheme, _ => { });
-
-            var postConfigureOptions = builder.Services
-                .BuildServiceProvider()
-                .GetRequiredService<IPostConfigureOptions<RemoteAuthenticationOptions>>();
-
-            postConfigureOptions.PostConfigure(scheme, options);
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
 
             Assert.AreEqual("my_cookie", options.SignInScheme);
         }
