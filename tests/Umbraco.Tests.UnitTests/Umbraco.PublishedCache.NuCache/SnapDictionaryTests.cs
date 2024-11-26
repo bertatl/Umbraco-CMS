@@ -279,8 +279,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             Assert.AreEqual(0, d.SnapCount); // because we've disposed them
 
             await d.CollectAsync();
-            Assert.AreEqual(32, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(32, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual(0, d.GenCount);
             Assert.AreEqual(0, d.SnapCount);
             Assert.AreEqual(32, d.Count);
