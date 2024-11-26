@@ -2,6 +2,12 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Web.Common.Exceptions;
 using Umbraco.Cms.Web.Common.Filters;
@@ -17,9 +23,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         [Test]
         public void Validate_Route_String()
         {
-            var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
-
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(null, null, null, null));
+            var attribute = new ValidateUmbracoFormRouteStringAttribute();
+            var context = CreateActionExecutingContext();
 
             const string ControllerName = "Test";
             const string ControllerAction = "Index";
@@ -27,17 +32,47 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
             var validUfprt = EncryptionHelper.CreateEncryptedRouteString(DataProtectionProvider, ControllerName, ControllerAction, Area);
 
             var invalidUfprt = validUfprt + "z";
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(invalidUfprt, null, null, null));
 
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, "doesntMatch"));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, null));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, "doesntMatch", Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, null, Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, "doesntMatch", ControllerAction, Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, null, ControllerAction, Area));
+            // Set up the route data
+            context.RouteData.Values["controller"] = ControllerName;
+            context.RouteData.Values["action"] = ControllerAction;
+            context.RouteData.Values["area"] = Area;
 
-            Assert.DoesNotThrow(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, Area));
-            Assert.DoesNotThrow(() => filter.ValidateRouteString(validUfprt, ControllerName.ToLowerInvariant(), ControllerAction.ToLowerInvariant(), Area.ToLowerInvariant()));
+            // Test invalid cases
+            context.HttpContext.Request.Form["ufprt"] = null;
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => attribute.OnActionExecuting(context));
+
+            context.HttpContext.Request.Form["ufprt"] = invalidUfprt;
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => attribute.OnActionExecuting(context));
+
+            context.HttpContext.Request.Form["ufprt"] = validUfprt;
+            context.RouteData.Values["area"] = "doesntMatch";
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => attribute.OnActionExecuting(context));
+
+            // Test valid case
+            context.RouteData.Values["area"] = Area;
+            Assert.DoesNotThrow(() => attribute.OnActionExecuting(context));
+
+            // Test case insensitivity
+            context.RouteData.Values["controller"] = ControllerName.ToLowerInvariant();
+            context.RouteData.Values["action"] = ControllerAction.ToLowerInvariant();
+            context.RouteData.Values["area"] = Area.ToLowerInvariant();
+            Assert.DoesNotThrow(() => attribute.OnActionExecuting(context));
+        }
+
+        private ActionExecutingContext CreateActionExecutingContext()
+        {
+            var httpContext = new DefaultHttpContext();
+            var actionContext = new ActionContext(
+                httpContext,
+                new RouteData(),
+                new ActionDescriptor());
+
+            return new ActionExecutingContext(
+                actionContext,
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                new Mock<Controller>().Object);
         }
     }
 }
