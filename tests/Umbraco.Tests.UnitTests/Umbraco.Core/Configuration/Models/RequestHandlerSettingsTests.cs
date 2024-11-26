@@ -57,7 +57,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Configuration.Models
             var settings = new RequestHandlerSettings { UserDefinedCharCollection = userCollection };
             var actual = settings.GetCharReplacements().ToList();
 
-            Assert.AreEqual(RequestHandlerSettings.DefaultCharCollection.Length, actual.Count);
+            var defaultSettings = new RequestHandlerSettings();
+            var defaultCount = defaultSettings.GetCharReplacements().Count();
+
+            Assert.AreEqual(defaultCount, actual.Count);
 
             Assert.That(actual, Has.Exactly(1).Matches<CharItem>(x => x.Char == "%" && x.Replacement == "percent"));
             Assert.That(actual, Has.Exactly(1).Matches<CharItem>(x => x.Char == "." && x.Replacement == "dot"));
