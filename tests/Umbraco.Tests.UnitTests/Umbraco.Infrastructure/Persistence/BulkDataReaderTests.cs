@@ -2164,7 +2164,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// <summary>
         /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
         /// </summary>
-        public class BulkDataReaderSubclass : BulkDataReader
+        private class BulkDataReaderSubclass : BulkDataReader
         {
             /// <summary>
             /// Constructor.
@@ -2319,7 +2319,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             public override bool Read() => _readCount++ < 1;
         }
 
-        public class BulkDataReaderSchemaTest : BulkDataReader
+        private class BulkDataReaderSchemaTest : BulkDataReader
         {
             /// <summary>
             /// Gets or sets a value indicating whether the column is nullable (i.e. optional).
