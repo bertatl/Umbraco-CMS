@@ -188,7 +188,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer3, Composer4>();
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
 
             // 2 is Core and requires 4
