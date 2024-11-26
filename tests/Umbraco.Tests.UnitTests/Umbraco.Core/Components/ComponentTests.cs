@@ -38,12 +38,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         private readonly IUmbracoBuilder _builder;
         private readonly Type[] _types;
         private readonly IEnumerable<Attribute> _attributes;
+        private readonly ILogger _logger;
 
         public ComposerGraphWrapper(IUmbracoBuilder builder, Type[] types, IEnumerable<Attribute> attributes, ILogger logger)
         {
             _builder = builder;
             _types = types;
             _attributes = attributes;
+            _logger = logger;
         }
 
         public void Compose()
@@ -60,9 +62,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 
         public Dictionary<Type, List<Type>> GetRequirements(bool includeDisabled = true)
         {
-            // This method might not be directly replaceable without access to ComposerGraph
-            // You may need to implement your own logic or use a different approach
-            throw new NotImplementedException("GetRequirements is not implemented in this wrapper");
+            var requirements = new Dictionary<Type, List<Type>>();
+            foreach (var type in _types)
+            {
+                if (typeof(IComposer).IsAssignableFrom(type))
+                {
+                    requirements[type] = new List<Type>();
+                    var attributes = type.GetCustomAttributes(typeof(ComposeAfterAttribute), true);
+                    foreach (ComposeAfterAttribute attr in attributes)
+                    {
+                        requirements[type].Add(attr.ComposerType);
+                    }
+                }
+            }
+            return requirements;
         }
     }
 
