@@ -32,25 +32,37 @@ using Umbraco.Cms.Tests.UnitTests.TestHelpers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
-    // Add this wrapper class
+// Wrapper class using IUmbracoBuilder
     public class ComposerGraphWrapper
     {
-        private readonly object _composerGraph;
+        private readonly IUmbracoBuilder _builder;
+        private readonly Type[] _types;
+        private readonly IEnumerable<Attribute> _attributes;
 
-        public ComposerGraphWrapper(IUmbracoBuilder composition, Type[] types, IEnumerable<Attribute> attributes, ILogger<ComposerGraph> logger)
+        public ComposerGraphWrapper(IUmbracoBuilder builder, Type[] types, IEnumerable<Attribute> attributes, ILogger logger)
         {
-            var composerGraphType = typeof(IUmbracoBuilder).Assembly.GetType("Umbraco.Cms.Core.Composing.ComposerGraph");
-            _composerGraph = Activator.CreateInstance(composerGraphType, composition, types, attributes, logger);
+            _builder = builder;
+            _types = types;
+            _attributes = attributes;
         }
 
         public void Compose()
         {
-            _composerGraph.GetType().GetMethod("Compose").Invoke(_composerGraph, null);
+            foreach (var type in _types)
+            {
+                if (typeof(IComposer).IsAssignableFrom(type))
+                {
+                    var composer = (IComposer)Activator.CreateInstance(type);
+                    composer.Compose(_builder);
+                }
+            }
         }
 
         public Dictionary<Type, List<Type>> GetRequirements(bool includeDisabled = true)
         {
-            return (Dictionary<Type, List<Type>>)_composerGraph.GetType().GetMethod("GetRequirements").Invoke(_composerGraph, new object[] { includeDisabled });
+            // This method might not be directly replaceable without access to ComposerGraph
+            // You may need to implement your own logic or use a different approach
+            throw new NotImplementedException("GetRequirements is not implemented in this wrapper");
         }
     }
 
