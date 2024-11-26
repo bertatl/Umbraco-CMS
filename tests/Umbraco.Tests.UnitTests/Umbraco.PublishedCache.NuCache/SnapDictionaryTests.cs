@@ -1174,44 +1174,5 @@ public class TestHelper
         }
     }
 
-    /// <summary>
-    /// Used for tests so that we don't have to wrap every Set/Clear call in locks
-    /// </summary>
-    public static class SnapDictionaryExtensions
-    {
-        internal static void Set<TKey, TValue>(this SnapDictionary<TKey, TValue> d, TKey key, TValue value)
-            where TValue : class
-        {
-            using (d.GetScopedWriteLock(GetScopeProvider()))
-            {
-                d.SetLocked(key, value);
-            }
-        }
-
-        internal static void Clear<TKey, TValue>(this SnapDictionary<TKey, TValue> d)
-            where TValue : class
-        {
-            using (d.GetScopedWriteLock(GetScopeProvider()))
-            {
-                d.ClearLocked();
-            }
-        }
-
-        internal static void Clear<TKey, TValue>(this SnapDictionary<TKey, TValue> d, TKey key)
-            where TValue : class
-        {
-            using (d.GetScopedWriteLock(GetScopeProvider()))
-            {
-                d.ClearLocked(key);
-            }
-        }
-
-        private static IScopeProvider GetScopeProvider()
-        {
-            IScopeProvider scopeProvider = Mock.Of<IScopeProvider>();
-            Mock.Get(scopeProvider)
-                .Setup(x => x.Context).Returns(() => null);
-            return scopeProvider;
-        }
-    }
+    // SnapDictionaryExtensions class has been moved to a separate file
 }
