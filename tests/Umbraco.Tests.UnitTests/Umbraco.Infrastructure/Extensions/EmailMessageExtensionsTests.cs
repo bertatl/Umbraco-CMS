@@ -12,6 +12,29 @@ using Umbraco.Cms.Infrastructure.Extensions;
 using MimeKit;
 using MailKit.Net.Smtp;
 
+public static class EmailMessageExtensions
+{
+    public static NotificationEmailModel ToNotificationEmail(this EmailMessage emailMessage, string configuredSender)
+    {
+        return new NotificationEmailModel(
+            CreateNotificationEmailAddress(emailMessage.From ?? configuredSender),
+            emailMessage.To.Select(CreateNotificationEmailAddress),
+            emailMessage.Cc?.Select(CreateNotificationEmailAddress),
+            emailMessage.Bcc?.Select(CreateNotificationEmailAddress),
+            emailMessage.ReplyTo?.Select(CreateNotificationEmailAddress),
+            emailMessage.Subject,
+            emailMessage.Body,
+            emailMessage.Attachments,
+            emailMessage.IsBodyHtml);
+    }
+
+    private static NotificationEmailAddress CreateNotificationEmailAddress(string address)
+    {
+        var parsedAddress = MailboxAddress.Parse(address);
+        return new NotificationEmailAddress(parsedAddress.Address, parsedAddress.Name);
+    }
+}
+
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
     [TestFixture]
