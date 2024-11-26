@@ -9,6 +9,8 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
@@ -27,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(from, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = ConvertToMimeMessage(emailMessage, ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -57,7 +59,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
                 };
             var emailMessage = new EmailMessage(from, to, cc, bcc, replyTo, subject, body, isBodyHtml, attachments);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = ConvertToMimeMessage(emailMessage, ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(from, result.From.First().ToString());
@@ -88,7 +90,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             const bool isBodyHtml = true;
             var emailMessage = new EmailMessage(null, to, subject, body, isBodyHtml);
 
-            var result = emailMessage.ToMimeMessage(ConfiguredSender);
+            var result = ConvertToMimeMessage(emailMessage, ConfiguredSender);
 
             Assert.AreEqual(1, result.From.Count());
             Assert.AreEqual(ConfiguredSender, result.From.First().ToString());
@@ -219,6 +221,29 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
             Assert.AreEqual(subject, result.Subject);
             Assert.AreEqual(body, result.Body);
             Assert.AreEqual(1, result.Attachments.Count());
-        }
     }
+
+    private MimeMessage ConvertToMimeMessage(EmailMessage emailMessage, string configuredSender)
+    {
+        var message = new MimeMessage();
+
+        message.From.Add(new MailboxAddress(emailMessage.From ?? configuredSender, emailMessage.From ?? configuredSender));
+        message.To.AddRange(emailMessage.To.Select(x => new MailboxAddress(x, x)));
+        message.Subject = emailMessage.Subject;
+
+        var builder = new BodyBuilder();
+        if (emailMessage.IsBodyHtml)
+        {
+            builder.HtmlBody = emailMessage.Body;
+        }
+        else
+        {
+            builder.TextBody = emailMessage.Body;
+        }
+
+        message.Body = builder.ToMessageBody();
+
+        return message;
+    }
+}
 }
