@@ -9,7 +9,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
@@ -2170,7 +2169,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <summary>
             /// Constructor.
             /// </summary>
-            public BulkDataReaderSubclass() : base(new DataReaderSchema())
+            public BulkDataReaderSubclass()
             {
             }
 
