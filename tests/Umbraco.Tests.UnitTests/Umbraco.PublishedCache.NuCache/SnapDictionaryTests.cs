@@ -74,7 +74,7 @@ public static class SnapDictionaryTestHelperExtensions
         {
             var d = new SnapDictionary<int, string>();
             var testHelper = d.GetTestHelper();
-            testHelper.CollectAuto = false;
+            d.SetCollectAuto(false);
 
             Assert.AreEqual(0, testHelper.GetValues(1).Length);
 
