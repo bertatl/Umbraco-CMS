@@ -167,7 +167,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             userServiceMock.Setup(x => x.GetPermissions(user, ids)).Returns(permissions);
             IUserService userService = userServiceMock.Object;
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var filterType = Type.GetType("Umbraco.Cms.Web.BackOffice.Filters.FilterAllowedOutgoingContentFilter, Umbraco.Web.BackOffice");
+            var att = Activator.CreateInstance(filterType,
                 list.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -175,7 +176,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 Mock.Of<IEntityService>(),
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
-            att.FilterBasedOnPermissions(list, user);
+            var filterBasedOnPermissionsMethod = filterType.GetMethod("FilterBasedOnPermissions");
+            filterBasedOnPermissionsMethod.Invoke(att, new object[] { list, user });
 
             Assert.AreEqual(3, list.Count);
             Assert.AreEqual(1, list.ElementAt(0).Id);
