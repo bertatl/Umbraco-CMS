@@ -20,7 +20,6 @@ using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Extensions;
 using Umbraco.Cms.Web.BackOffice.Filters;
 using System;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
@@ -137,23 +136,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 list.Add(new ContentItemBasic { Id = i, Name = "Test" + i, ParentId = i, Path = path });
             }
 
-            // Create a mock ActionExecutingContext
-            var actionContext = new ActionContext();
-            var actionExecutingContext = new ActionExecutingContext(
-                actionContext,
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                new Mock<Controller>().Object);
-            actionExecutingContext.Result = new ObjectResult(list);
+            att.FilterBasedOnStartNode(list, user);
 
-            // Execute the filter
-            att.OnActionExecuting(actionExecutingContext);
-
-            // Check the filtered result
-            var filteredList = ((ObjectResult)actionExecutingContext.Result).Value as List<ContentItemBasic>;
-            Assert.IsNotNull(filteredList);
-            Assert.AreEqual(5, filteredList.Count);
-        }
+            Assert.AreEqual(5, list.Count);
+       }
 
         [Test]
         public void Filter_On_Permissions()
