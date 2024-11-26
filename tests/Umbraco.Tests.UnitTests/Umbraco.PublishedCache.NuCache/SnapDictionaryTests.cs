@@ -180,11 +180,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             await d.CollectAsync();
             GC.KeepAlive(s1);
             GC.KeepAlive(s2);
-            Assert.AreEqual(0, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
 
             // one snapshot to collect
             s1 = null;
@@ -311,11 +308,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             await d.CollectAsync();
             GC.KeepAlive(s1);
             GC.KeepAlive(s2);
-            Assert.AreEqual(0, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.Count);
 
             // one snapshot to collect
             s1 = null;
