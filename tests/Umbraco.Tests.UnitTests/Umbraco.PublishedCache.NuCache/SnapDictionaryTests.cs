@@ -99,7 +99,7 @@ public class TestHelper
             Assert.AreEqual(0, d.Count);
 
             // gen 1
-            d.Set(1, "one");
+            d[1] = "one";
             Assert.AreEqual(1, d.Count);
             d.Clear(1);
             Assert.AreEqual(0, d.Count); // gone
@@ -176,12 +176,12 @@ public class TestHelper
             // d.SetCollectAuto(false);
 
             // gen 1
-            d.Set(1, "one");
+            d[1] = "one";
             // Use public methods to assert on the dictionary's state
             Assert.AreEqual(1, d.Count);
-            d.Set(1, "one");
+            d[1] = "one";
             Assert.AreEqual(1, d.Count);
-            d.Set(1, "uno");
+            d[1] = "uno";
             Assert.AreEqual(1, d.Count);
 
             // Remove assertions on internal state
