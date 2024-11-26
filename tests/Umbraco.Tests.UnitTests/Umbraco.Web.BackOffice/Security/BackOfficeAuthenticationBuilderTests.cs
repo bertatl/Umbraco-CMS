@@ -21,7 +21,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
             };
 
             var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            sut.Configure(options);
 
             Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
@@ -36,7 +36,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
             };
 
             var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            sut.Configure(options);
 
             Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
