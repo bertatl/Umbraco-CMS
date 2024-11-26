@@ -12,7 +12,6 @@ using Umbraco.Cms.Core.Collections;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.Persistence.Repositories;
-using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
 {
@@ -99,9 +98,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             Assert.IsNotNull(list);
 
             // Do it again, ensure that its coming from the cache!
-            var fullDataSetPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, int>(cache.Object, DefaultAccessor, item => item.Id, false);
+            policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            found = fullDataSetPolicy.GetAll(new int[] { }, ids => getAll.AsEnumerable());
+            found = policy.GetAll(new object[] { }, ids => getAll);
 
             Assert.AreEqual(1, cached.Count);
             Assert.IsNotNull(list);
