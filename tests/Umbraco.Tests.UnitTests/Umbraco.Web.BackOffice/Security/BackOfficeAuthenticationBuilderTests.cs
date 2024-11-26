@@ -2,10 +2,11 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
-using Microsoft.Extensions.Options;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
 {
@@ -13,33 +14,30 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
     public class BackOfficeAuthenticationBuilderTests
     {
         [Test]
-        public void EnsureBackOfficeScheme_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
+        public void AddExternal_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
         {
+            var services = new Mock<IServiceCollection>();
+            var builder = new BackOfficeAuthenticationBuilder(services.Object);
             var scheme = $"{Constants.Security.BackOfficeExternalAuthenticationTypePrefix}test";
-            var options = new RemoteAuthenticationOptions
-            {
-                SignInScheme = "my_cookie"
-            };
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
+            builder.AddExternal<RemoteAuthenticationOptions>(scheme, _ => { });
 
-            Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
+            services.Verify(s => s.Add(It.Is<ServiceDescriptor>(sd =>
+                sd.ServiceType == typeof(IPostConfigureOptions<RemoteAuthenticationOptions>) &&
+                sd.ImplementationInstance != null)), Times.Once);
         }
 
         [Test]
-        public void EnsureBackOfficeScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
+        public void AddExternal_When_Not_Backoffice_Auth_Scheme_Expect_No_Special_Configuration()
         {
+            var services = new Mock<IServiceCollection>();
+            var builder = new BackOfficeAuthenticationBuilder(services.Object);
             var scheme = "test";
-            var options = new RemoteAuthenticationOptions
-            {
-                SignInScheme = "my_cookie"
-            };
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            ((IPostConfigureOptions<RemoteAuthenticationOptions>)sut).PostConfigure(scheme, options);
+            builder.AddExternal<RemoteAuthenticationOptions>(scheme, _ => { });
 
-            Assert.AreEqual("my_cookie", options.SignInScheme);
+            services.Verify(s => s.Add(It.Is<ServiceDescriptor>(sd =>
+                sd.ServiceType == typeof(IPostConfigureOptions<RemoteAuthenticationOptions>))), Times.Never);
         }
     }
 }
