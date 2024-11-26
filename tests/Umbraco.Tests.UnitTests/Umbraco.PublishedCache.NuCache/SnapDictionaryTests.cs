@@ -102,7 +102,7 @@ public class TestHelper
             // gen 1
             d.Set(1, "one");
             Assert.AreEqual(1, d.Count);
-            d.Set(1, null); // Set the value to null to effectively remove the item
+            d.Clear(1); // Clear the item to remove it
             Assert.AreEqual(0, d.Count); // should be gone
 
             // We can't assert on internal state, so we'll remove these assertions
