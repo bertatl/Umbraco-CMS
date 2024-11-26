@@ -29,7 +29,6 @@ using Umbraco.Cms.Infrastructure.Migrations.Install;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Mappers;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
-using Umbraco.Cms.Core.Composing;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
 {
@@ -94,13 +93,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer4>();
-            var componentLoader = new ComponentLoader(Mock.Of<ILogger<ComponentLoader>>(), composition);
+            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
             Composed.Clear();
 
             // 2 is Core and requires 4
             // 3 is User
             // => reorder components accordingly
-            componentLoader.Compose(types);
+            composers.Compose();
             AssertTypeArray(TypeArray<Composer1, Composer4, Composer2>(), Composed);
 
             IServiceProvider factory = MockFactory(m =>
