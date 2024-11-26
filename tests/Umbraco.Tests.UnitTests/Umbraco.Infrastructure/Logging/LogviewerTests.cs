@@ -23,6 +23,7 @@ using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
 using Umbraco.Cms.Infrastructure.Logging;
 using File = System.IO.File;
+using Umbraco.Cms.Core.Logging;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
 {
