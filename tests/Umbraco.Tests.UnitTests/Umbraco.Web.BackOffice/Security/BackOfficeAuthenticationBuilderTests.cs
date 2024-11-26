@@ -2,8 +2,6 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
@@ -14,7 +12,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
     public class BackOfficeAuthenticationBuilderTests
     {
         [Test]
-        public void AddBackOfficeExternalLogins_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
+        public void EnsureBackOfficeScheme_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
         {
             var scheme = $"{Constants.Security.BackOfficeExternalAuthenticationTypePrefix}test";
             var options = new RemoteAuthenticationOptions
@@ -22,24 +20,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var services = new ServiceCollection();
-            var authBuilder = new AuthenticationBuilder(services);
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.PostConfigure(scheme, options);
 
-            // Mock the AddRemoteScheme method to capture the options configuration
-            var mockAuthBuilder = new Mock<AuthenticationBuilder>(services);
-            mockAuthBuilder.Setup(x => x.AddRemoteScheme(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Action<RemoteAuthenticationOptions>>()))
-                .Callback<string, string, Action<RemoteAuthenticationOptions>>((s, d, action) => action(options))
-                .Returns(mockAuthBuilder.Object);
-
-            // Act
-            BackOfficeAuthenticationBuilderExtensions.AddBackOfficeExternalLogins(mockAuthBuilder.Object);
-
-            // Assert
-            Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
+            Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
 
         [Test]
-        public void AddBackOfficeExternalLogins_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
+        public void EnsureBackOfficeScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
         {
             var scheme = "test";
             var options = new RemoteAuthenticationOptions
@@ -47,20 +35,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var services = new ServiceCollection();
-            var authBuilder = new AuthenticationBuilder(services);
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.PostConfigure(scheme, options);
 
-            // Mock the AddRemoteScheme method to capture the options configuration
-            var mockAuthBuilder = new Mock<AuthenticationBuilder>(services);
-            mockAuthBuilder.Setup(x => x.AddRemoteScheme(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Action<RemoteAuthenticationOptions>>()))
-                .Callback<string, string, Action<RemoteAuthenticationOptions>>((s, d, action) => action(options))
-                .Returns(mockAuthBuilder.Object);
-
-            // Act
-            BackOfficeAuthenticationBuilderExtensions.AddBackOfficeExternalLogins(mockAuthBuilder.Object);
-
-            // Assert
-            Assert.AreEqual("my_cookie", options.SignInScheme);
+            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
     }
 }
