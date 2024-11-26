@@ -2,7 +2,6 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
@@ -21,12 +20,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var authBuilder = new AuthenticationBuilder(new ServiceCollection());
-            var backOfficeBuilder = new BackOfficeAuthenticationBuilder(authBuilder);
-            backOfficeBuilder.AddRemoteScheme<RemoteAuthenticationOptions>(scheme, scheme, _ => { });
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.Configure(options);
 
-            Assert.AreEqual(options.SignInScheme, "my_cookie");
-            Assert.AreEqual(authBuilder.Schemes[scheme].HandlerType.Name, "EnsureBackOfficeScheme`1");
+            Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
 
         [Test]
@@ -38,12 +35,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var authBuilder = new AuthenticationBuilder(new ServiceCollection());
-            var backOfficeBuilder = new BackOfficeAuthenticationBuilder(authBuilder);
-            backOfficeBuilder.AddRemoteScheme<RemoteAuthenticationOptions>(scheme, scheme, _ => { });
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.Configure(options);
 
-            Assert.AreEqual(options.SignInScheme, "my_cookie");
-            Assert.AreNotEqual(authBuilder.Schemes[scheme].HandlerType.Name, "EnsureBackOfficeScheme`1");
+            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
     }
 }
