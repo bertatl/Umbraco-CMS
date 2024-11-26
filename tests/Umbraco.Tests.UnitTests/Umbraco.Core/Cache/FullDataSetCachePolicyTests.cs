@@ -90,7 +90,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Get(It.IsAny<string>()))
                 .Returns(() => cached.Any() ? new DeepCloneableList<AuditItem>(ListCloneBehavior.CloneOnce) : null);
 
-        var policy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions { GetAllCacheAllowZeroCount = false });
+            var policy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions { GetAllCacheAllowZeroCount = false });
 
             AuditItem[] found = policy.GetAll(new object[] { }, ids => getAll);
 
@@ -98,9 +98,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             Assert.IsNotNull(list);
 
             // Do it again, ensure that its coming from the cache!
-            var fullDataSetPolicy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
+            policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            found = fullDataSetPolicy.GetAll(new object[] { }, ids => getAll);
+            found = policy.GetAll(new object[] { }, ids => getAll);
 
             Assert.AreEqual(1, cached.Count);
             Assert.IsNotNull(list);
