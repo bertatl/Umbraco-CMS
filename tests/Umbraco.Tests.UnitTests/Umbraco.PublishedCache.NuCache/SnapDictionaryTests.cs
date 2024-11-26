@@ -20,13 +20,6 @@ public static class SnapDictionaryTestExtensions
         var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         return testProperty.GetValue(dictionary);
     }
-
-    public static dynamic[] GetTestValues<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, TKey key)
-        where TValue : class
-    {
-        var testHelper = GetTestHelper(dictionary);
-        return testHelper.GetValues(key);
-    }
 }
 
 public static class SnapDictionaryTestHelperExtensions
