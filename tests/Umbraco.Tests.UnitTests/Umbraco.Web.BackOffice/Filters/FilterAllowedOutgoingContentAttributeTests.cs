@@ -30,7 +30,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = new global::Umbraco.Cms.Web.BackOffice.Filters.FilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
