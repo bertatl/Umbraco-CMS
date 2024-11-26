@@ -22,6 +22,7 @@ using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_9_0_0;
 using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
+using Umbraco.Cms.Infrastructure.Logging;
 using File = System.IO.File;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
@@ -64,7 +65,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             // Copy the sample files
             File.Copy(exampleLogfilePath, _newLogfilePath, true);
 
-            ILogger<SerilogJsonLogViewer> logger = Mock.Of<ILogger<SerilogJsonLogViewer>>();
+            ILogger<ILogViewer> logger = Mock.Of<ILogger<ILogViewer>>();
             var logViewerConfig = new LogViewerConfig(LogViewerQueryRepository, Mock.Of<IScopeProvider>());
             var logLevelLoader = Mock.Of<ILogLevelLoader>();
             _logViewer = new SerilogJsonLogViewer(logger, logViewerConfig, loggingConfiguration, logLevelLoader, Log.Logger);
