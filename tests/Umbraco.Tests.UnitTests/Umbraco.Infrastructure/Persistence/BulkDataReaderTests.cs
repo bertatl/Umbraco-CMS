@@ -2162,9 +2162,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         }
 
         /// <summary>
-        /// A subclass implementing IBulkDataReader used for testing its utility functions.
+        /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
         /// </summary>
-        private class BulkDataReaderSubclass : IBulkDataReader
+        private class BulkDataReaderSubclass : BulkDataReader
         {
             /// <summary>
             /// Constructor.
