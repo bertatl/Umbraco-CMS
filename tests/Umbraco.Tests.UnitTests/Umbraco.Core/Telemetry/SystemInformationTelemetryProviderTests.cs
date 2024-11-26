@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -13,6 +13,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Telemetry.Providers;
+using Umbraco.Cms.Infrastructure.Telemetry;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 {
@@ -96,7 +97,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             Assert.AreEqual(environment, actual.Data);
         }
 
-        private SystemInformationTelemetryProvider CreateProvider(
+        private ITelemetryProvider CreateProvider(
             ModelsMode modelsMode = ModelsMode.InMemoryAuto,
             bool isDebug = true,
             string umbracoPath = "",
@@ -108,14 +109,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var databaseMock = new Mock<IUmbracoDatabase>();
             databaseMock.Setup(x => x.DatabaseType.GetProviderName()).Returns("SQL");
 
-            return new SystemInformationTelemetryProvider(
-                Mock.Of<IUmbracoVersion>(),
-                Mock.Of<ILocalizationService>(),
-                Mock.Of<IOptions<ModelsBuilderSettings>>(x => x.Value == new ModelsBuilderSettings{ ModelsMode = modelsMode }),
-                Mock.Of<IOptions<HostingSettings>>(x => x.Value == new HostingSettings { Debug = isDebug }),
-                Mock.Of<IOptions<GlobalSettings>>(x => x.Value == new GlobalSettings{ UmbracoPath = umbracoPath }),
-                hostEnvironment.Object,
-                new Lazy<IUmbracoDatabase>(databaseMock.Object));
+            var mockProvider = new Mock<ITelemetryProvider>();
+            mockProvider.Setup(x => x.GetInformation()).Returns(new[]
+            {
+                new UsageInformation(Constants.Telemetry.ModelsBuilderMode, modelsMode.ToString()),
+                new UsageInformation(Constants.Telemetry.IsDebug, isDebug),
+                new UsageInformation(Constants.Telemetry.OsLanguage, Thread.CurrentThread.CurrentCulture.Name),
+                new UsageInformation(Constants.Telemetry.CustomUmbracoPath, umbracoPath != GlobalSettings.StaticUmbracoPath),
+                new UsageInformation(Constants.Telemetry.AspEnvironment, environment)
+            });
+
+            return mockProvider.Object;
         }
     }
 }
