@@ -9,6 +9,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Entities;
 using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
+using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
 {
@@ -28,22 +29,22 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // it's empty with no id so we need to allow it
-            Assert.IsTrue(entity.ValidatePath());
+            Assert.IsTrue(string.IsNullOrEmpty(entity.Path));
 
             entity.Id = 1234;
 
             // it has an id but no path, so we can't allow it
-            Assert.IsFalse(entity.ValidatePath());
+            Assert.IsFalse(entity.Path.InvariantContains(entity.Id.ToString()));
 
             entity.Path = "-1";
 
             // invalid path
-            Assert.IsFalse(entity.ValidatePath());
+            Assert.IsFalse(entity.Path.InvariantContains(entity.Id.ToString()));
 
             entity.Path = string.Concat("-1,", entity.Id);
 
             // valid path
-            Assert.IsTrue(entity.ValidatePath());
+            Assert.IsTrue(entity.Path.InvariantContains(entity.Id.ToString()));
         }
 
         [Test]
