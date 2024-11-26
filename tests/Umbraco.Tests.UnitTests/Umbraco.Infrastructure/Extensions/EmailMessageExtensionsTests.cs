@@ -11,7 +11,6 @@ using Umbraco.Cms.Core.Models.Email;
 using Umbraco.Cms.Infrastructure.Extensions;
 using MimeKit;
 using MailKit.Net.Smtp;
-using Umbraco.Cms.Core.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Extensions
 {
