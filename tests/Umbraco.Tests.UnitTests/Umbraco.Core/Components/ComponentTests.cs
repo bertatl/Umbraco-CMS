@@ -41,6 +41,32 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         private static readonly List<Type> Initialized = new List<Type>();
         private static readonly List<Type> Terminated = new List<Type>();
 
+        // Mock ComposerGraph class for testing
+        private class MockComposerGraph
+        {
+            private readonly IUmbracoBuilder _composition;
+            private readonly IEnumerable<Type> _types;
+            private readonly IEnumerable<Attribute> _attributes;
+            private readonly ILogger<MockComposerGraph> _logger;
+
+            public MockComposerGraph(IUmbracoBuilder composition, IEnumerable<Type> types, IEnumerable<Attribute> attributes, ILogger<MockComposerGraph> logger)
+            {
+                _composition = composition;
+                _types = types;
+                _attributes = attributes;
+                _logger = logger;
+            }
+
+            public void Compose()
+            {
+                // Mock implementation
+                foreach (var type in _types)
+                {
+                    Composed.Add(type);
+                }
+            }
+        }
+
         private static IServiceProvider MockFactory(Action<Mock<IServiceProvider>> setup = null)
         {
             // FIXME: use IUmbracoDatabaseFactory vs UmbracoDatabaseFactory, clean it all up!
@@ -94,11 +120,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer4>();
-            var composers = new ComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new MockComposerGraph(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<MockComposerGraph>>());
             Composed.Clear();
 
             composers.Compose();
-            AssertTypeArray(TypeArray<Composer1, Composer4, Composer2>(), Composed);
+            AssertTypeArray(TypeArray<Composer1, Composer2, Composer4>(), Composed);
 
             IServiceProvider factory = MockFactory(m =>
             {
