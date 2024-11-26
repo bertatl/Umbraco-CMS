@@ -65,12 +65,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
             Assert.AreEqual(1, s.Gen);
             Assert.AreEqual(1, testHelper.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(testHelper.NextGen);
 
             // gen 2
             d.Clear(1);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length); // there
-            Assert.AreEqual(2, d.Test.LiveGen);
+            Assert.AreEqual(2, testHelper.GetValues(1).Length); // there
+            Assert.AreEqual(2, testHelper.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             Assert.AreEqual(0, d.Test.FloorGen);
