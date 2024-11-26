@@ -16,14 +16,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
     public class AddPropertyTypeGroupColumnsTests
     {
         private readonly IShortStringHelper _shortStringHelper = new DefaultShortStringHelper(Options.Create(new RequestHandlerSettings()));
-        private readonly ILogger<IMigrationContext> _contextLogger = Mock.Of<ILogger<IMigrationContext>>();
+        private readonly ILogger<MigrationContext> _contextLogger = Mock.Of<ILogger<MigrationContext>>();
 
         [Test]
         public void CreateColumn()
         {
             var database = new TestDatabase();
-            var migrationPlan = new MigrationPlan("test");
-            var context = new TestMigrationContext(migrationPlan, database, _contextLogger);
+            var context = new MigrationContext(new MigrationPlan("test"), database, _contextLogger);
             var migration = new AddPropertyTypeGroupColumns(context, _shortStringHelper);
 
             var dtos = new[]
