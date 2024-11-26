@@ -256,9 +256,9 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             s2 = null;
             GC.Collect();
             await d.CollectAsync();
-            Assert.AreEqual(2, d.Test.FloorGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(2, d.GetTestHelper().FloorGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.AreEqual(true, d.GetTestHelper().NextGen);
             Assert.AreEqual(0, d.SnapCount);
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
         }
