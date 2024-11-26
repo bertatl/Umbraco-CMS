@@ -83,7 +83,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
             var container = new MyTestClass() { MyList = expected };
 
-            var att = new FilterAllowedOutgoingContentFilter(
+            var filterType = Type.GetType("Umbraco.Cms.Web.BackOffice.Filters.FilterAllowedOutgoingContentFilter, Umbraco.Web.BackOffice");
+            Assert.IsNotNull(filterType, "FilterAllowedOutgoingContentFilter type not found");
+
+            var att = Activator.CreateInstance(filterType,
                 expected.GetType(),
                 "DontFind",
                 ActionBrowse.ActionLetter,
@@ -92,9 +95,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
                 AppCaches.Disabled,
                 Mock.Of<IBackOfficeSecurityAccessor>());
 
-            dynamic actual = att.GetValueFromResponse(new ObjectResult(container));
+            var getValueFromResponseMethod = filterType.GetMethod("GetValueFromResponse");
+            Assert.IsNotNull(getValueFromResponseMethod, "GetValueFromResponse method not found");
 
-            Assert.IsNull(actual);
+            var result = getValueFromResponseMethod.Invoke(att, new object[] { new ObjectResult(container) });
+
+            Assert.IsNull(result);
         }
 
         [Test]
