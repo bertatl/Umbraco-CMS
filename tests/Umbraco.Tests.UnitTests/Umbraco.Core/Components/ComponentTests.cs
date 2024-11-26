@@ -38,20 +38,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
         private readonly IUmbracoBuilder _builder;
         private readonly Type[] _types;
         private readonly IEnumerable<Attribute> _attributes;
-        private readonly ILogger _logger;
 
         public ComposerGraphWrapper(IUmbracoBuilder builder, Type[] types, IEnumerable<Attribute> attributes, ILogger logger)
         {
             _builder = builder;
             _types = types;
             _attributes = attributes;
-            _logger = logger;
         }
 
         public void Compose()
         {
-            var sortedTypes = SortComposers();
-            foreach (var type in sortedTypes)
+            foreach (var type in _types)
             {
                 if (typeof(IComposer).IsAssignableFrom(type))
                 {
@@ -61,74 +58,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             }
         }
 
-        private IEnumerable<Type> SortComposers()
-        {
-            var graph = new Dictionary<Type, List<Type>>();
-            foreach (var type in _types)
-            {
-                graph[type] = new List<Type>();
-                var composeAfterAttributes = type.GetCustomAttributes<ComposeAfterAttribute>(true);
-                foreach (var attr in composeAfterAttributes)
-                {
-                    if (_types.Contains(attr.ComposerType))
-                    {
-                        graph[type].Add(attr.ComposerType);
-                    }
-                }
-            }
-
-            return TopologicalSort(graph);
-        }
-
-        private IEnumerable<Type> TopologicalSort(Dictionary<Type, List<Type>> graph)
-        {
-            var sorted = new List<Type>();
-            var visited = new HashSet<Type>();
-
-            foreach (var type in graph.Keys)
-            {
-                Visit(type, visited, sorted, graph);
-            }
-
-            return sorted;
-        }
-
-        private void Visit(Type type, HashSet<Type> visited, List<Type> sorted, Dictionary<Type, List<Type>> graph)
-        {
-            if (!visited.Contains(type))
-            {
-                visited.Add(type);
-
-                foreach (var dependency in graph[type])
-                {
-                    Visit(dependency, visited, sorted, graph);
-                }
-
-                sorted.Add(type);
-            }
-            else if (!sorted.Contains(type))
-            {
-                throw new Exception("Circular dependency detected");
-            }
-        }
-
         public Dictionary<Type, List<Type>> GetRequirements(bool includeDisabled = true)
         {
-            // Simplified implementation
-            var requirements = new Dictionary<Type, List<Type>>();
-            foreach (var type in _types)
-            {
-                requirements[type] = new List<Type>();
-                var composeAfterAttributes = type.GetCustomAttributes<ComposeAfterAttribute>(true);
-                foreach (var attr in composeAfterAttributes)
-                {
-                    if (_types.Contains(attr.ComposerType))
-                    {
-                        requirements[type].Add(attr.ComposerType);
-                    }
-                }
-            }
-            return requirements;
+            // This method might not be directly replaceable without access to ComposerGraph
+            // You may need to implement your own logic or use a different approach
+            throw new NotImplementedException("GetRequirements is not implemented in this wrapper");
         }
     }
 
