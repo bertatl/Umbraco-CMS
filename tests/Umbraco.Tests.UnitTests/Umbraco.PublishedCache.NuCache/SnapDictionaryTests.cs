@@ -29,6 +29,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
                 var method = obj.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
                 return (T)method.Invoke(obj, parameters);
             }
+
+            public static object GetTestHelperProperty(object snapDictionary)
+            {
+                var testProperty = snapDictionary.GetType().GetProperty("Test", BindingFlags.NonPublic | BindingFlags.Instance);
+                return testProperty.GetValue(snapDictionary);
+            }
+
+            public static object[] InvokeGetValues(object testHelper, int key)
+            {
+                var method = testHelper.GetType().GetMethod("GetValues", BindingFlags.Public | BindingFlags.Instance);
+                return (object[])method.Invoke(testHelper, new object[] { key });
+            }
         }
         [Test]
         public void LiveGenUpdate()
@@ -156,12 +168,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(3, SnapDictionaryReflectionHelper.GetInternalProperty<int>(d, "LiveGen"));
             Assert.IsTrue(SnapDictionaryReflectionHelper.GetInternalProperty<bool>(d, "NextGen"));
 
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
-            Assert.AreEqual(3, tv[0].Gen);
-            Assert.AreEqual(2, tv[1].Gen);
-            Assert.AreEqual(1, tv[2].Gen);
+            var testHelper = SnapDictionaryReflectionHelper.GetTestHelperProperty(d);
+            var tv = SnapDictionaryReflectionHelper.InvokeGetValues(testHelper, 1);
+            Assert.AreEqual(3, ((dynamic)tv[0]).Gen);
+            Assert.AreEqual(2, ((dynamic)tv[1]).Gen);
+            Assert.AreEqual(1, ((dynamic)tv[2]).Gen);
 
-            Assert.AreEqual(0, d.Test.FloorGen);
+            Assert.AreEqual(0, SnapDictionaryReflectionHelper.GetInternalProperty<int>(testHelper, "FloorGen"));
 
             // nothing to collect
             await d.CollectAsync();
