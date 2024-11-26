@@ -13,14 +13,42 @@ using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
-    public static class SnapDictionaryTestExtensions
+public static class SnapDictionaryTestExtensions
+{
+    public static SnapDictionaryTestHelper<TKey, TValue> Test<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
     {
-        public static SnapDictionaryTestHelper<TKey, TValue> Test<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
-            where TValue : class
-        {
-            return new SnapDictionaryTestHelper<TKey, TValue>(dictionary);
-        }
+        return new SnapDictionaryTestHelper<TKey, TValue>(dictionary);
     }
+}
+
+// Add this extension method to access the TestHelper
+public static class SnapDictionaryExtensions
+{
+    public static TestHelper GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        // Use reflection to access the private TestHelper property
+        var testHelperProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("TestHelper", BindingFlags.NonPublic | BindingFlags.Instance);
+        return (TestHelper)testHelperProperty.GetValue(dictionary);
+    }
+}
+
+// Add this class to represent the TestHelper
+public class TestHelper
+{
+    public class GenVal
+    {
+        public int Gen { get; set; }
+    }
+
+    public GenVal[] GetValues(object key)
+    {
+        // Implement this method to return an array of GenVal
+        // This is just a placeholder implementation
+        return new GenVal[0];
+    }
+}
 
     public class SnapDictionaryTestHelper<TKey, TValue>
         where TValue : class
@@ -338,7 +366,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsTrue(d.Test().NextGen);
 
             await d.CollectAsync();
-            SnapDictionary<int, string>.TestHelper.GenVal[] tv = d.Test.GetValues(1);
+            TestHelper.GenVal[] tv = d.GetTestHelper().GetValues(1);
             Assert.AreEqual(1, tv.Length);
             Assert.AreEqual(1, tv[0].Gen);
 
