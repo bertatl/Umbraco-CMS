@@ -249,7 +249,7 @@ namespace Umbraco.Cms.Tests.UnitTests.TestHelpers
 
             // at last, create the complete NuCache snapshot service!
             var options = new PublishedSnapshotServiceOptions { IgnoreLocalDb = true };
-            SnapshotService = new PublishedSnapshotService(
+            SnapshotService = (IPublishedSnapshotService)new PublishedSnapshotService(
                 options,
                 Mock.Of<ISyncBootStateAccessor>(x => x.GetSyncBootState() == SyncBootState.WarmBoot),
                 new SimpleMainDom(),
