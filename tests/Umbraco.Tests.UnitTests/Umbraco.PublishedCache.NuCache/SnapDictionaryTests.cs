@@ -61,7 +61,8 @@ public static class SnapDictionaryTestHelperExtensions
         where TValue : class
     {
         var testHelper = dictionary.GetTestHelper();
-        testHelper.CollectAuto = value;
+        var collectAutoProperty = testHelper.GetType().GetProperty("CollectAuto", BindingFlags.Public | BindingFlags.Instance);
+        collectAutoProperty.SetValue(testHelper, value);
     }
 }
 
