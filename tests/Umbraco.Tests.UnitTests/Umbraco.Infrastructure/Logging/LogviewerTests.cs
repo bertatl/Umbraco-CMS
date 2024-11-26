@@ -19,6 +19,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Persistence.Querying;
 using Umbraco.Cms.Core.Persistence.Repositories;
 using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Logging;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_9_0_0;
 using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
 using Umbraco.Cms.Tests.UnitTests.TestHelpers;
@@ -29,7 +30,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
     [TestFixture]
     public class LogviewerTests
     {
-        private ILogViewer _logViewer;
+        private SerilogJsonLogViewer _logViewer;
 
         private const string LogfileName = "UmbracoTraceLog.UNITTEST.20181112.json";
 
