@@ -30,7 +30,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
     [TestFixture]
     public class LogviewerTests
     {
-        private SerilogJsonLogViewer _logViewer;
+        private ILogViewer _logViewer;
 
         private const string LogfileName = "UmbracoTraceLog.UNITTEST.20181112.json";
 
