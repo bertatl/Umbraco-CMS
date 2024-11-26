@@ -101,7 +101,7 @@ public class TestHelper
             // gen 1
             d.Set(1, "one");
             Assert.AreEqual(1, d.Count);
-            d.TryRemove(1, out _);
+            d.Clear(1);
             Assert.AreEqual(0, d.Count); // gone
 
             // We can't assert on internal state, so we'll remove these assertions
