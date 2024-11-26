@@ -18,19 +18,22 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public void LiveGenUpdate()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            // Assuming SetCollectAuto is a public method we need to add to SnapDictionary
+            d.SetCollectAuto(false);
 
-            Assert.AreEqual(0, d.Test.GetValues(1).Length);
+            // Assuming GetValues is a public method we need to add to SnapDictionary
+            Assert.AreEqual(0, d.GetValues(1).Length);
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetValues(1).Length);
             d.Clear(1);
-            Assert.AreEqual(0, d.Test.GetValues(1).Length); // gone
+            Assert.AreEqual(0, d.GetValues(1).Length); // gone
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(0, d.Test.FloorGen);
+            // Assuming these are properties we need to add to SnapDictionary
+            Assert.AreEqual(1, d.LiveGen);
+            Assert.IsTrue(d.NextGen);
+            Assert.AreEqual(0, d.FloorGen);
         }
 
         [Test]
