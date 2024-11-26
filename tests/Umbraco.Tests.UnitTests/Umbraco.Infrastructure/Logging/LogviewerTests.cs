@@ -234,10 +234,19 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
 
     internal class TestLogViewerQueryRepository : ILogViewerQueryRepository
     {
+        private static readonly IEnumerable<SavedLogSearch> DefaultQueries = new[]
+        {
+            new SavedLogSearch { Name = "Find all logs where the level is NOT Verbose and NOT Debug", Query = "Not(@Level = 'Verbose') and Not(@Level = 'Debug')" },
+            new SavedLogSearch { Name = "Find all logs that have an exception property", Query = "Has(@Exception)" },
+            new SavedLogSearch { Name = "Find all logs that have a duration property", Query = "Has(Duration)" },
+            new SavedLogSearch { Name = "Find all logs that have a duration longer than 1000ms", Query = "Has(Duration) and Duration > 1000" },
+            new SavedLogSearch { Name = "Find all logs from the Umbraco.Core namespace", Query = "StartsWith(SourceContext, 'Umbraco.Core')" },
+            new SavedLogSearch { Name = "Find all logs where the level is ERROR", Query = "@Level = 'Error'" }
+        };
+
         public TestLogViewerQueryRepository()
         {
-            Store = new List<ILogViewerQuery>(MigrateLogViewerQueriesFromFileToDb.DefaultLogQueries
-                .Select(CreateLogViewerQuery));
+            Store = new List<ILogViewerQuery>(DefaultQueries.Select(CreateLogViewerQuery));
         }
 
         private IList<ILogViewerQuery> Store { get; }
