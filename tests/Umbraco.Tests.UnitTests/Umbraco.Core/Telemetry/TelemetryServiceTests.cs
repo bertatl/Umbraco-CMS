@@ -9,6 +9,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Semver;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Telemetry;
+using Umbraco.Cms.Infrastructure.Telemetry;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 {
@@ -21,7 +22,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var version = CreateUmbracoVersion(9, 3, 1);
             var siteIdentifierServiceMock = new Mock<ISiteIdentifierService>();
             var usageInformationServiceMock = new Mock<IUsageInformationService>();
-            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, siteIdentifierServiceMock.Object, usageInformationServiceMock.Object, Mock.Of<IMetricsConsentService>());
+            var sut = new Umbraco.Cms.Infrastructure.Telemetry.TelemetryService(Mock.Of<IManifestParser>(), version, siteIdentifierServiceMock.Object, usageInformationServiceMock.Object, Mock.Of<IMetricsConsentService>());
             Guid guid;
 
             var result = sut.TryGetTelemetryReportData(out var telemetryReportData);
