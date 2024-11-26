@@ -16,13 +16,13 @@ using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
-using Umbraco.Cms.Web.BackOffice.Filters;
+using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
     [TestFixture]
-    public class FilterAllowedOutgoingContentAttributeTests
+    public class FilterAllowedOutgoingContentFilterTests
     {
         [Test]
         public void GetValueFromResponse_Already_EnumerableContent()
