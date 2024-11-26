@@ -2,6 +2,7 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.BackOffice.Security;
@@ -20,10 +21,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            var postConfigureOptions = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            postConfigureOptions.PostConfigure(scheme, options);
 
-            Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
+            Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
         }
 
         [Test]
@@ -35,10 +36,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
-            sut.PostConfigure(scheme, options);
+            var postConfigureOptions = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            postConfigureOptions.PostConfigure(scheme, options);
 
-            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
+            Assert.AreEqual("my_cookie", options.SignInScheme);
         }
     }
 }
