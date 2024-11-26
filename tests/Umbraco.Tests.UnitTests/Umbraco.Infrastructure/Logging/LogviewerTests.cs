@@ -82,16 +82,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         [Test]
         public void Logs_Contain_Correct_Error_Count()
         {
-            // Set up the mock to return 1 when GetNumberOfErrors is called with any LogTimePeriod
-            _logViewer.Setup(x => x.Object.GetNumberOfErrors(It.IsAny<LogTimePeriod>())).Returns(1);
+            var numberOfErrors = _logViewer.GetNumberOfErrors(_logTimePeriod);
 
-            var numberOfErrors = _logViewer.Object.GetNumberOfErrors(_logTimePeriod);
-
-            // Our dummy log should contain 1 error
+            // Our dummy log should contain 2 errors
             Assert.AreEqual(1, numberOfErrors);
-
-            // Verify that the method was called with the correct LogTimePeriod
-            _logViewer.Verify(x => x.Object.GetNumberOfErrors(_logTimePeriod), Times.Once);
         }
 
         [Test]
