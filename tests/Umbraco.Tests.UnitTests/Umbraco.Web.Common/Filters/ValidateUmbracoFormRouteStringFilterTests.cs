@@ -2,7 +2,14 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
 using Umbraco.Cms.Web.Common.Exceptions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Cms.Web.Common.Security;
@@ -19,7 +26,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         {
             var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
 
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(null, null, null, null));
+            var context = new ActionExecutingContext(
+                new ActionContext(),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                new Mock<Controller>().Object);
+
+            context.HttpContext = new DefaultHttpContext();
+            context.RouteData = new RouteData();
+
+            // Test with null values
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.OnActionExecuting(context));
 
             const string ControllerName = "Test";
             const string ControllerAction = "Index";
