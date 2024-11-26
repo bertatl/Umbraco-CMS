@@ -13,6 +13,37 @@ using System.Reflection;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
+    internal static class SnapDictionaryTestExtensions
+    {
+        public static SnapDictionaryTestAccess GetTestAccess<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+            where TValue : class
+        {
+            return new SnapDictionaryTestAccess(dictionary);
+        }
+    }
+
+    internal class SnapDictionaryTestAccess
+    {
+        private readonly object _dictionary;
+
+        public SnapDictionaryTestAccess(object dictionary)
+        {
+            _dictionary = dictionary;
+        }
+
+        public bool CollectAuto
+        {
+            get => (bool)_dictionary.GetType().GetProperty("CollectAuto", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(_dictionary);
+            set => _dictionary.GetType().GetProperty("CollectAuto", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(_dictionary, value);
+        }
+
+        public int[] GetValues(int key)
+        {
+            var method = _dictionary.GetType().GetMethod("GetValues", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (int[])method.Invoke(_dictionary, new object[] { key });
+        }
+    }
+
     [TestFixture]
     public class SnapDictionaryTests
     {
