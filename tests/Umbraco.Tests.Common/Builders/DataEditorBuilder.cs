@@ -51,17 +51,19 @@ namespace Umbraco.Cms.Tests.Common.Builders
             IConfigurationEditor explicitConfigurationEditor = _explicitConfigurationEditorBuilder.Build();
             IDataValueEditor explicitValueEditor = _explicitValueEditorBuilder.Build();
 
-            return new DataEditor(
+            var dataEditor = new DataEditor(
                 alias,
                 name,
-                EditorType.PropertyValue,
-                Mock.Of<IDataValueEditorFactory>(),
-                null) // Passing null for IIOHelper, replace with proper implementation in production code
+                "icon-document", // Default icon, replace with appropriate icon if needed
+                "Umbraco") // Default group, replace with appropriate group if needed
             {
                 DefaultConfiguration = defaultConfiguration,
                 ExplicitConfigurationEditor = explicitConfigurationEditor,
-                ExplicitValueEditor = explicitValueEditor
+                ExplicitValueEditor = explicitValueEditor,
+                Type = EditorType.PropertyValue,
+                ValueEditorFactory = Mock.Of<IDataValueEditorFactory>()
             };
+            return dataEditor;
         }
 
         string IWithAliasBuilder.Alias
