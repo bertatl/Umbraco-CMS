@@ -12,15 +12,25 @@ using Umbraco.Cms.Core.Services;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
-    public static class SnapDictionaryTestExtensions
+public static class SnapDictionaryTestExtensions
+{
+    public static dynamic GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
     {
-        public static dynamic GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
-            where TValue : class
-        {
-            var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            return testProperty.GetValue(dictionary);
-        }
+        var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        return testProperty.GetValue(dictionary);
     }
+}
+
+public static class SnapDictionaryTestHelperExtensions
+{
+    public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, bool value)
+        where TValue : class
+    {
+        var testHelper = dictionary.GetTestHelper();
+        testHelper.CollectAuto = value;
+    }
+}
 
     [TestFixture]
     public class SnapDictionaryTests
@@ -111,8 +121,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task CollectValues()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -197,8 +207,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task ProperlyCollects()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             for (int i = 0; i < 32; i++)
             {
@@ -240,8 +250,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task CollectNulls()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -339,8 +349,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Retry(5)] // TODO make this test non-flaky.
         public async Task EventuallyCollectNulls()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             Assert.AreEqual(0, d.Test.GetValues(1).Length);
 
@@ -434,8 +444,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task CollectDisposedSnapshots()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -495,8 +505,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task CollectGcSnapshots()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -552,8 +562,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task RandomTest1()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             d.Set(1, "one");
             d.Set(2, "two");
@@ -599,8 +609,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public async Task RandomTest2()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             d.Set(1, "one");
             d.Set(2, "two");
@@ -645,8 +655,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void WriteLockingFirstSnapshot()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -676,8 +686,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void WriteLocking()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -776,8 +786,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void NestedWriteLocking2()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             Assert.AreEqual(0, d.CreateSnapshot().Gen);
 
@@ -829,8 +839,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void WriteLocking2()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -891,8 +901,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void WriteLocking3()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -929,8 +939,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void ScopeLocking1()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             // gen 1
             d.Set(1, "one");
@@ -1040,8 +1050,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void GetAll()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             Assert.AreEqual(0, d.Test.GetValues(1).Length);
 
@@ -1073,8 +1083,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         [Test]
         public void DontPanic()
         {
-            var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+        var d = new SnapDictionary<int, string>();
+        d.SetCollectAuto(false);
 
             Assert.IsNull(d.Test.GenObj);
 
