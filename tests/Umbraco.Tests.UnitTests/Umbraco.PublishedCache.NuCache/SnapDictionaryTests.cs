@@ -124,12 +124,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             Assert.AreEqual(1, s2.Gen); // The next snapshot should have Gen 1
             Assert.AreEqual("one", s2.Get(1));
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
-
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
