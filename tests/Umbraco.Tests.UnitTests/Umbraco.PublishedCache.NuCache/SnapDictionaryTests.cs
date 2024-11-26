@@ -60,8 +60,8 @@ public static class SnapDictionaryTestHelperExtensions
     public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, bool value)
         where TValue : class
     {
-        var testHelper = dictionary.GetTestHelper();
-        testHelper.CollectAuto = value;
+        // Assuming SnapDictionary has a public method to set CollectAuto
+        dictionary.SetTestCollectAuto(value);
     }
 }
 
