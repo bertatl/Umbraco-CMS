@@ -53,6 +53,7 @@ namespace Umbraco.Cms.Tests.Common.Builders
             return new DataEditor(
                 alias,
                 name,
+                EditorType.PropertyValue,
                 Mock.Of<IDataValueEditorFactory>())
             {
                 DefaultConfiguration = defaultConfiguration,
