@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -13,7 +13,6 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Telemetry.Providers;
-using Umbraco.Cms.Core.Configuration;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 {
@@ -97,11 +96,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             Assert.AreEqual(environment, actual.Data);
         }
 
-        private bool IsCustomUmbracoPath(string path)
-        {
-            return path != Constants.System.DefaultUmbracoPath;
-        }
-
         private SystemInformationTelemetryProvider CreateProvider(
             ModelsMode modelsMode = ModelsMode.InMemoryAuto,
             bool isDebug = true,
@@ -121,7 +115,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
                 Mock.Of<IOptions<HostingSettings>>(x => x.Value == new HostingSettings { Debug = isDebug }),
                 Mock.Of<IOptions<GlobalSettings>>(x => x.Value == new GlobalSettings{ UmbracoPath = umbracoPath }),
                 hostEnvironment.Object,
-                new Lazy<IUmbracoDatabase>(() => databaseMock.Object));
+                new Lazy<IUmbracoDatabase>(databaseMock.Object));
         }
     }
 }
