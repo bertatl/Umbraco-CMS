@@ -49,11 +49,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public void OtherGenUpdate()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
+            var testHelper = d.GetTestHelper();
+            testHelper.CollectAuto = false;
 
-            Assert.AreEqual(0, d.Test.GetValues(1).Length);
-            Assert.AreEqual(0, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(0, testHelper.GetValues(1).Length);
+            Assert.AreEqual(0, testHelper.LiveGen);
+            Assert.IsFalse(testHelper.NextGen);
 
             // gen 1
             d.Set(1, "one");
