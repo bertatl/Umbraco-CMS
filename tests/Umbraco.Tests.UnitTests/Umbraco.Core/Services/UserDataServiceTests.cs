@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,6 +14,7 @@ using Umbraco.Cms.Core.Semver;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Telemetry.Providers;
+using Umbraco.Cms.Core.Telemetry;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
 {
@@ -120,21 +121,31 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Services
             Assert.AreEqual(isDebug.ToString(), actual.Data);
         }
 
-        private SystemInformationTelemetryProvider CreateUserDataService(string culture = "", ModelsMode modelsMode = ModelsMode.InMemoryAuto, bool isDebug = true)
+        private IUserTelemetryProvider CreateUserDataService(string culture = "", ModelsMode modelsMode = ModelsMode.InMemoryAuto, bool isDebug = true)
         {
             var localizationService = CreateILocalizationService(culture);
 
             var databaseMock = new Mock<IUmbracoDatabase>();
             databaseMock.Setup(x => x.DatabaseType.GetProviderName()).Returns("SQL");
 
-            return new SystemInformationTelemetryProvider(
-                _umbracoVersion,
-                localizationService,
-                Mock.Of<IOptions<ModelsBuilderSettings>>(x => x.Value == new ModelsBuilderSettings { ModelsMode = modelsMode }),
-                Mock.Of<IOptions<HostingSettings>>(x => x.Value == new HostingSettings { Debug = isDebug }),
-                Mock.Of<IOptions<GlobalSettings>>(x => x.Value == new GlobalSettings()),
-                Mock.Of<IHostEnvironment>(),
-                new Lazy<IUmbracoDatabase>(databaseMock.Object));
+            var systemInformationTelemetryProvider = new Mock<IUserTelemetryProvider>();
+            systemInformationTelemetryProvider.Setup(x => x.GetUserData()).Returns(() =>
+            {
+                var userData = new List<UserData>
+                {
+                    new UserData("Default Language", culture),
+                    new UserData("Current Culture", Thread.CurrentThread.CurrentCulture.Name),
+                    new UserData("Current UI Culture", Thread.CurrentThread.CurrentUICulture.Name),
+                    new UserData("Server OS", Environment.OSVersion.ToString()),
+                    new UserData("Server Framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription),
+                    new UserData("Current Webserver", "Test Environment"),
+                    new UserData("Models Builder Mode", modelsMode.ToString()),
+                    new UserData("Debug Mode", isDebug.ToString())
+                };
+                return userData;
+            });
+
+            return systemInformationTelemetryProvider.Object;
         }
 
         private ILocalizationService CreateILocalizationService(string culture)
