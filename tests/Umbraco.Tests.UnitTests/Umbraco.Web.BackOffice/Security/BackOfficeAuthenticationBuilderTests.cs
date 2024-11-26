@@ -20,13 +20,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var builder = new BackOfficeAuthenticationBuilder(null);
-            builder.AddRemoteAuthentication<RemoteAuthenticationOptions>(scheme, null, opt =>
-            {
-                opt.SignInScheme = options.SignInScheme;
-            });
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.PostConfigure(scheme, options);
 
-            Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
+            Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
 
         [Test]
@@ -38,13 +35,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
                 SignInScheme = "my_cookie"
             };
 
-            var builder = new BackOfficeAuthenticationBuilder(null);
-            builder.AddRemoteAuthentication<RemoteAuthenticationOptions>(scheme, null, opt =>
-            {
-                opt.SignInScheme = options.SignInScheme;
-            });
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.PostConfigure(scheme, options);
 
-            Assert.AreNotEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
+            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
     }
 }
