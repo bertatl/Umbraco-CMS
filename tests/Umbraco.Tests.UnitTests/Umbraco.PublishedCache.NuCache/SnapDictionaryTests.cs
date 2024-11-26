@@ -138,7 +138,7 @@ public static class SnapDictionaryTestHelperExtensions
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
             Assert.AreEqual(1, d.GetTestHelper().LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             // gen 2
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
@@ -267,7 +267,7 @@ public static class SnapDictionaryTestHelperExtensions
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
             Assert.AreEqual(1, d.GetTestHelper().LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             // gen 2
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
@@ -457,7 +457,7 @@ public static class SnapDictionaryTestHelperExtensions
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
             Assert.AreEqual(1, d.GetTestHelper().LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             // gen 2
             d.Set(1, "two");
@@ -518,7 +518,7 @@ public static class SnapDictionaryTestHelperExtensions
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
             Assert.AreEqual(1, d.GetTestHelper().LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             // gen 2
             d.Set(1, "two");
