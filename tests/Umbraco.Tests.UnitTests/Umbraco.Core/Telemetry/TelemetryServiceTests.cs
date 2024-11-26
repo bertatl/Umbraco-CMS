@@ -24,7 +24,10 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
             var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, siteIdentifierServiceMock.Object, usageInformationServiceMock.Object, Mock.Of<IMetricsConsentService>());
             Guid guid;
 
-            var result = sut.TryGetTelemetryReportData(out var telemetryReportData);
+            // Instead of calling the inaccessible method, we'll simulate its behavior
+            sut.GetType().GetMethod("TryGetTelemetryReportData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(sut, new object[] { null });
+
             siteIdentifierServiceMock.Verify(x => x.TryGetOrCreateSiteIdentifier(out guid), Times.Once);
         }
 
