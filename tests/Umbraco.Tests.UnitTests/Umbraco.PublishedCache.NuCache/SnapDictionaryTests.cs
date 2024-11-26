@@ -58,7 +58,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
@@ -116,11 +116,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -131,7 +131,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "one");
             Assert.AreEqual(2, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
@@ -191,7 +191,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
         }
 
         [Test]
@@ -245,11 +245,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -260,7 +260,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "one");
             Assert.AreEqual(2, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
@@ -325,7 +325,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // and everything is gone?
             // no, cannot collect the live gen because we'd need to lock
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             d.CreateSnapshot();
             GC.Collect();
@@ -346,7 +346,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -397,7 +397,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             GC.Collect(); // should release the generation reference
             await d.CollectAsync();
 
-            Assert.AreEqual(1, d.Test.GetValues(1).Length); // "one" value is gone
+            Assert.AreEqual(1, testHelper.GetValues(1).Length); // "one" value is gone
             Assert.AreEqual(1, d.Count); // still have 1 item
             Assert.AreEqual(0, d.SnapCount); // snapshot is gone
             Assert.AreEqual(0, d.GenCount); // and generation has been dequeued
@@ -439,7 +439,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -483,12 +483,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             s2.Dispose();
             await d.CollectAsync();
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             s3.Dispose();
             await d.CollectAsync();
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
         }
 
         [Retry(5)] // TODO make this test non-flaky.
@@ -500,7 +500,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -545,7 +545,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             GC.Collect();
             await d.CollectAsync();
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
         }
 
         [Retry(5)] // TODO make this test non-flaky.
@@ -650,7 +650,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -681,7 +681,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -694,7 +694,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
             Assert.AreEqual(2, d.Test.GetValues(1).Length);
 
@@ -834,7 +834,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -847,7 +847,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, testHelper.GetValues(1).Length);
             d.Set(1, "uno");
             Assert.AreEqual(2, d.Test.GetValues(1).Length);
 
