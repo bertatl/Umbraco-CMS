@@ -205,7 +205,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer20, Composer21>();
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
 
             // 21 is required by 20
@@ -239,7 +239,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer1, Composer2, Composer3>();
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
             try
             {
@@ -262,7 +262,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = TypeArray<Composer2, Composer4, Composer13>();
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
 
             // 2 is Core and requires 4
@@ -328,7 +328,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer1), typeof(Composer5), typeof(Composer5a) };
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
 
             Assert.IsEmpty(Composed);
             composers.Compose();
@@ -354,7 +354,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer6), typeof(Composer7), typeof(Composer8) };
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
             composers.Compose();
             Assert.AreEqual(2, Composed.Count);
@@ -369,7 +369,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer9), typeof(Composer2), typeof(Composer4) };
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
             composers.Compose();
             Assert.AreEqual(3, Composed.Count);
@@ -386,7 +386,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer9), typeof(Composer2), typeof(Composer4) };
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
             composers.Compose();
             ComponentCollectionBuilder builder = composition.WithCollectionBuilder<ComponentCollectionBuilder>();
@@ -405,7 +405,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer10) };
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
             composers.Compose();
             Assert.AreEqual(1, Composed.Count);
@@ -444,7 +444,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Components
             var composition = new UmbracoBuilder(register, Mock.Of<IConfiguration>(), TestHelper.GetMockedTypeLoader());
 
             Type[] types = new[] { typeof(Composer6), typeof(Composer8) }; // 8 disables 7 which is not in the list
-            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraph>>());
+            var composers = new ComposerGraphWrapper(composition, types, Enumerable.Empty<Attribute>(), Mock.Of<ILogger<ComposerGraphWrapper>>());
             Composed.Clear();
             composers.Compose();
             Assert.AreEqual(2, Composed.Count);
