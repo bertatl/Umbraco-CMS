@@ -132,20 +132,20 @@ public static class SnapDictionaryTestHelperExtensions
             d.Set(1, "uno");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -156,11 +156,11 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 3
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -180,7 +180,7 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             // one snapshot to collect
             s1 = null;
@@ -191,7 +191,7 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             // another snapshot to collect
             s2 = null;
@@ -201,7 +201,7 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
         }
 
         [Test]
@@ -261,20 +261,20 @@ public static class SnapDictionaryTestHelperExtensions
             d.Set(1, "uno");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -285,13 +285,13 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 3
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "one");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
             d.Clear(1);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -311,7 +311,7 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             // one snapshot to collect
             s1 = null;
@@ -322,7 +322,7 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             // another snapshot to collect
             s2 = null;
@@ -335,7 +335,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // and everything is gone?
             // no, cannot collect the live gen because we'd need to lock
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             d.CreateSnapshot();
             GC.Collect();
@@ -356,7 +356,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -392,7 +392,7 @@ public static class SnapDictionaryTestHelperExtensions
             // nothing to collect
             await d.CollectAsync();
             GC.KeepAlive(s);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Count);
             Assert.AreEqual(1, d.SnapCount);
@@ -407,7 +407,7 @@ public static class SnapDictionaryTestHelperExtensions
             GC.Collect(); // should release the generation reference
             await d.CollectAsync();
 
-            Assert.AreEqual(1, d.Test.GetValues(1).Length); // "one" value is gone
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length); // "one" value is gone
             Assert.AreEqual(1, d.Count); // still have 1 item
             Assert.AreEqual(0, d.SnapCount); // snapshot is gone
             Assert.AreEqual(0, d.GenCount); // and generation has been dequeued
@@ -449,19 +449,19 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
             d.Set(1, "two");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -473,7 +473,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 3
             d.Set(1, "three");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -488,17 +488,17 @@ public static class SnapDictionaryTestHelperExtensions
             s1.Dispose();
             await d.CollectAsync();
             Assert.AreEqual(2, d.SnapCount);
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             s2.Dispose();
             await d.CollectAsync();
             Assert.AreEqual(1, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             s3.Dispose();
             await d.CollectAsync();
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
         }
 
         [Retry(5)] // TODO make this test non-flaky.
@@ -510,19 +510,19 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsFalse(d.Test.NextGen);
 
             // gen 2
             d.Set(1, "two");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -534,7 +534,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 3
             d.Set(1, "three");
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -550,12 +550,12 @@ public static class SnapDictionaryTestHelperExtensions
 
             await d.CollectAsync();
             Assert.AreEqual(3, d.SnapCount);
-            Assert.AreEqual(3, d.Test.GetValues(1).Length);
+            Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
             GC.Collect();
             await d.CollectAsync();
             Assert.AreEqual(0, d.SnapCount);
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
         }
 
         [Retry(5)] // TODO make this test non-flaky.
@@ -660,7 +660,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -691,7 +691,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -704,9 +704,9 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -721,9 +721,9 @@ public static class SnapDictionaryTestHelperExtensions
             using (d.GetScopedWriteLock(GetScopeProvider()))
             {
                 // gen 3
-                Assert.AreEqual(2, d.Test.GetValues(1).Length);
+                Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
                 d.SetLocked(1, "ein");
-                Assert.AreEqual(3, d.Test.GetValues(1).Length);
+                Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
                 Assert.AreEqual(3, d.Test.LiveGen);
                 Assert.IsTrue(d.Test.NextGen);
@@ -844,7 +844,7 @@ public static class SnapDictionaryTestHelperExtensions
 
             // gen 1
             d.Set(1, "one");
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(1, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -857,9 +857,9 @@ public static class SnapDictionaryTestHelperExtensions
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
+            Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
             d.Set(1, "uno");
-            Assert.AreEqual(2, d.Test.GetValues(1).Length);
+            Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
             Assert.AreEqual(2, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -875,9 +875,9 @@ public static class SnapDictionaryTestHelperExtensions
             using (d.GetScopedWriteLock(scopeProvider))
             {
                 // gen 3
-                Assert.AreEqual(2, d.Test.GetValues(1).Length);
+                Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
                 d.SetLocked(1, "ein");
-                Assert.AreEqual(3, d.Test.GetValues(1).Length);
+                Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
                 Assert.AreEqual(3, d.Test.LiveGen);
                 Assert.IsTrue(d.Test.NextGen);
@@ -926,7 +926,7 @@ public static class SnapDictionaryTestHelperExtensions
                 Assert.AreEqual("uno", s3.Get(1));
 
                 // but live snapshot contains changes
-                SnapDictionary<int, string>.Snapshot ls = d.Test.LiveSnapshot;
+            SnapDictionary<int, string>.Snapshot ls = d.GetTestHelper().LiveSnapshot;
                 Assert.AreEqual("ein", ls.Get(1));
                 Assert.AreEqual(3, ls.Gen);
             }
@@ -965,7 +965,7 @@ public static class SnapDictionaryTestHelperExtensions
                 Assert.AreEqual("uno", s3.Get(1));
 
                 // but live snapshot contains changes
-                SnapDictionary<int, string>.Snapshot ls = d.Test.LiveSnapshot;
+            SnapDictionary<int, string>.Snapshot ls = d.GetTestHelper().LiveSnapshot;
                 Assert.AreEqual("ein", ls.Get(1));
                 Assert.AreEqual(3, ls.Gen);
             }
@@ -1086,19 +1086,19 @@ public static class SnapDictionaryTestHelperExtensions
         var d = new SnapDictionary<int, string>();
         d.SetCollectAuto(false);
 
-            Assert.IsNull(d.Test.GenObj);
+            Assert.IsNull(d.GetTestHelper().GenObj);
 
             // gen 1
             d.Set(1, "one");
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsNull(d.Test.GenObj);
+            Assert.IsNull(d.GetTestHelper().GenObj);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
             Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsNotNull(d.Test.GenObj);
-            Assert.AreEqual(1, d.Test.GenObj.Gen);
+            Assert.IsNotNull(d.GetTestHelper().GenObj);
+            Assert.AreEqual(1, d.GetTestHelper().GenObj.Gen);
 
             Assert.AreEqual(1, s1.Gen);
             Assert.AreEqual("one", s1.Get(1));
@@ -1106,8 +1106,8 @@ public static class SnapDictionaryTestHelperExtensions
             d.Set(1, "uno");
             Assert.IsTrue(d.Test.NextGen);
             Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsNotNull(d.Test.GenObj);
-            Assert.AreEqual(1, d.Test.GenObj.Gen);
+            Assert.IsNotNull(d.GetTestHelper().GenObj);
+            Assert.AreEqual(1, d.GetTestHelper().GenObj.Gen);
 
             var scopeContext = Mock.Of<IScopeContext>();
             IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
@@ -1121,13 +1121,13 @@ public static class SnapDictionaryTestHelperExtensions
                 d.SetLocked(1, "ein");
                 Assert.IsTrue(d.Test.NextGen);
                 Assert.AreEqual(3, d.Test.LiveGen);
-                Assert.IsNotNull(d.Test.GenObj);
-                Assert.AreEqual(2, d.Test.GenObj.Gen);
+                Assert.IsNotNull(d.GetTestHelper().GenObj);
+            Assert.AreEqual(2, d.GetTestHelper().GenObj.Gen);
             }
 
             // writer has not released
-            Assert.IsTrue(d.Test.IsLocked);
-            Assert.IsNotNull(d.Test.GenObj);
+            Assert.IsTrue(d.GetTestHelper().IsLocked);
+            Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(2, d.Test.GenObj.Gen);
 
             // nothing changed
@@ -1137,8 +1137,8 @@ public static class SnapDictionaryTestHelperExtensions
             // panic!
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
-            Assert.IsTrue(d.Test.IsLocked);
-            Assert.IsNotNull(d.Test.GenObj);
+            Assert.IsTrue(d.GetTestHelper().IsLocked);
+            Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(2, d.Test.GenObj.Gen);
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
@@ -1146,17 +1146,17 @@ public static class SnapDictionaryTestHelperExtensions
             // release writer
             scopeContext.ScopeExit(true);
 
-            Assert.IsFalse(d.Test.IsLocked);
-            Assert.IsNotNull(d.Test.GenObj);
+            Assert.IsFalse(d.GetTestHelper().IsLocked);
+            Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(2, d.Test.GenObj.Gen);
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
-            Assert.IsFalse(d.Test.IsLocked);
-            Assert.IsNotNull(d.Test.GenObj);
-            Assert.AreEqual(3, d.Test.GenObj.Gen);
+            Assert.IsFalse(d.GetTestHelper().IsLocked);
+            Assert.IsNotNull(d.GetTestHelper().GenObj);
+            Assert.AreEqual(3, d.GetTestHelper().GenObj.Gen);
             Assert.AreEqual(3, d.Test.LiveGen);
             Assert.IsFalse(d.Test.NextGen);
         }
