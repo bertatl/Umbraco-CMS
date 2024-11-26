@@ -18,7 +18,6 @@ using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
 using Umbraco.Cms.Web.BackOffice.Filters;
 using Umbraco.Extensions;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
 {
@@ -30,7 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         {
             var expected = new List<ContentItemBasic>() { new ContentItemBasic() };
 
-            var att = CreateFilterAllowedOutgoingContentFilter(
+            var att = new FilterAllowedOutgoingContentFilter(
                 expected.GetType(),
                 null,
                 ActionBrowse.ActionLetter,
@@ -173,25 +172,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
         private class MyTestClass
         {
             public IEnumerable<ContentItemBasic> MyList { get; set; }
-        }
-
-        private IActionFilter CreateFilterAllowedOutgoingContentFilter(
-            Type type,
-            string propertyName,
-            string requiredAction,
-            IUserService userService,
-            IEntityService entityService,
-            AppCaches appCaches,
-            IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
-        {
-            return new FilterAllowedOutgoingContentFilter(
-                type,
-                propertyName,
-                requiredAction,
-                userService,
-                entityService,
-                appCaches,
-                backOfficeSecurityAccessor);
         }
     }
 }
