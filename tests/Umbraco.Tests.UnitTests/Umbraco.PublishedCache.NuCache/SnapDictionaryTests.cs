@@ -423,7 +423,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             await d.CollectAsync();
             object[] tv = d.GetTestHelper().GetValues(1);
             Assert.AreEqual(1, tv.Length);
-            Assert.AreEqual(1, tv[0].Gen);
+            Assert.AreEqual(1, ((dynamic)tv[0]).Gen);
 
             SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
             Assert.AreEqual("one", s.Get(1));
