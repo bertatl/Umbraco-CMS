@@ -411,7 +411,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
         var d = new SnapDictionary<int, string>();
         d.SetCollectAuto(false);
 
-            Assert.AreEqual(0, d.Test.GetValues(1).Length);
+            Assert.AreEqual(0, d.GetTestHelper().GetValues(1).Length);
 
             // gen 1
             d.Set(1, "one");
