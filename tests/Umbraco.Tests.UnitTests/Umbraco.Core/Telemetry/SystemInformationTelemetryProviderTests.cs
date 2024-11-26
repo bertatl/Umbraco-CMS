@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
