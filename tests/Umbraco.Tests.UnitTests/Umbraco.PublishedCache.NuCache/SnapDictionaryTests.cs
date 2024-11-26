@@ -11,7 +11,6 @@ using Umbraco.Cms.Infrastructure.PublishedCache;
 using Umbraco.Cms.Core.Services;
 using System.Reflection;
 using Umbraco.Cms.Infrastructure.PublishedCache.Snap;
-using Umbraco.Cms.Infrastructure.PublishedCache.DataSource;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
 {
