@@ -9,7 +9,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
@@ -2165,12 +2164,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// <summary>
         /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
         /// </summary>
-        private class BulkDataReaderSubclass : BulkDataReader<object>
+        private class BulkDataReaderSubclass : BulkDataReader
         {
             /// <summary>
             /// Constructor.
             /// </summary>
-            public BulkDataReaderSubclass() : base(new List<object>())
+            public BulkDataReaderSubclass()
             {
             }
 
@@ -2180,7 +2179,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
             /// </remarks>
-            public override string SchemaName => BulkDataReaderTests.TestSchemaName;
+            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.TableName"/>.
@@ -2188,7 +2187,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
-            public override string TableName => BulkDataReaderTests.TestTableName;
+            protected override string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
@@ -2196,7 +2195,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Creates a schema row for the various <see cref="SqlDbType"/> values.
             /// </remarks>
-            public override void AddSchemaTableRows()
+            protected override void AddSchemaTableRows()
             {
                 AddSchemaTableRow("BigInt", null, null, null, true, false, false, SqlDbType.BigInt, null, null, null, null, null);
                 AddSchemaTableRow("Binary_20", 20, null, null, false, true, false, SqlDbType.Binary, null, null, null, null, null);
@@ -2400,7 +2399,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestSchemaName"/>.
             /// </remarks>
-            public override string SchemaName => BulkDataReaderTests.TestSchemaName;
+            protected override string SchemaName => BulkDataReaderTests.TestSchemaName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.TableName"/>.
@@ -2408,7 +2407,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
-            public override string TableName => BulkDataReaderTests.TestTableName;
+            protected override string TableName => BulkDataReaderTests.TestTableName;
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
@@ -2416,7 +2415,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// <remarks>
             /// Creates a schema row for the various <see cref="SqlDbType"/> values.
             /// </remarks>
-            public override void AddSchemaTableRows() =>
+            protected override void AddSchemaTableRows() =>
                 AddSchemaTableRow(
                     ColumnName,
                     ColumnSize,
