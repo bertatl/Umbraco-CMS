@@ -98,11 +98,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             Assert.IsNotNull(list);
 
             // Do it again, ensure that its coming from the cache!
-            policy = new DefaultRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, new RepositoryCachePolicyOptions
-            {
-                GetAllCacheAllowZeroCount = false,
-                GetAllCacheValidatorMethod = items => true
-            });
+            policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
             found = policy.GetAll(new object[] { }, ids => getAll);
 
