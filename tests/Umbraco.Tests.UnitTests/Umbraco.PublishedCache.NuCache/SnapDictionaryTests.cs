@@ -20,6 +20,35 @@ public static class SnapDictionaryTestExtensions
         var testProperty = typeof(SnapDictionary<TKey, TValue>).GetProperty("Test", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         return testProperty.GetValue(dictionary);
     }
+
+    public static dynamic[] GetTestValues<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary, TKey key)
+        where TValue : class
+    {
+        var testHelper = GetTestHelper(dictionary);
+        var method = testHelper.GetType().GetMethod("GetValues", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        return (dynamic[])method.Invoke(testHelper, new object[] { key });
+    }
+
+    public static int GetLiveGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        var testHelper = GetTestHelper(dictionary);
+        return testHelper.LiveGen;
+    }
+
+    public static bool GetNextGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        var testHelper = GetTestHelper(dictionary);
+        return testHelper.NextGen;
+    }
+
+    public static int GetFloorGen<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
+        where TValue : class
+    {
+        var testHelper = GetTestHelper(dictionary);
+        return testHelper.FloorGen;
+    }
 }
 
 public static class SnapDictionaryTestHelperExtensions
