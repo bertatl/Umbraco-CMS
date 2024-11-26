@@ -22,14 +22,13 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
     [TestFixture]
     public class ScopedNotificationPublisherTests
     {
-
         [Test]
         public void ScopeUsesInjectedNotificationPublisher()
         {
             var notificationPublisherMock = new Mock<IScopedNotificationPublisher>();
-            ScopeProvider scopeProvider = GetScopeProvider(out var eventAggregatorMock);
+            IScopeProvider scopeProvider = GetScopeProvider(out var eventAggregatorMock);
 
-            using (IScope scope = scopeProvider.CreateScope(notificationPublisher: notificationPublisherMock.Object))
+using (IScope scope = scopeProvider.CreateScope())
             {
                 scope.Notifications.Publish(Mock.Of<INotification>());
                 scope.Notifications.PublishCancelable(Mock.Of<ICancelableNotification>());
@@ -37,8 +36,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
                 notificationPublisherMock.Verify(x => x.Publish(It.IsAny<INotification>()), Times.Once);
                 notificationPublisherMock.Verify(x => x.PublishCancelable(It.IsAny<ICancelableNotification>()), Times.Once);
 
-                // Ensure that the custom scope provider is till used in inner scope.
-                using (IScope innerScope = scopeProvider.CreateScope())
+                // Ensure that the custom scope provider is still used in inner scope.
+using (IScope innerScope = scopeProvider.CreateScope())
                 {
                     innerScope.Notifications.Publish(Mock.Of<INotification>());
                     innerScope.Notifications.PublishCancelable(Mock.Of<ICancelableNotification>());
@@ -61,15 +60,15 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
         public void SpecifyingNotificationPublishInInnerScopeCausesError()
         {
             var notificationPublisherMock = new Mock<IScopedNotificationPublisher>();
-            ScopeProvider scopeProvider = GetScopeProvider(out var eventAggregatorMock);
+            IScopeProvider scopeProvider = GetScopeProvider(out var eventAggregatorMock);
 
-            using (var scope = scopeProvider.CreateScope())
+using (var scope = scopeProvider.CreateScope())
             {
-                Assert.Throws<ArgumentException>(() => scopeProvider.CreateScope(notificationPublisher: notificationPublisherMock.Object));
+                Assert.Throws<ArgumentException>(() => scopeProvider.CreateScope());
             }
         }
 
-        private ScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
+        private IScopeProvider GetScopeProvider(out Mock<IEventAggregator> eventAggregatorMock)
         {
             NullLoggerFactory loggerFactory = NullLoggerFactory.Instance;
 
@@ -89,16 +88,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Scoping
 
             eventAggregatorMock = new Mock<IEventAggregator>();
 
-            return new ScopeProvider(
-                Mock.Of<IUmbracoDatabaseFactory>(),
-                fileSystems,
-                Options.Create(new CoreDebugSettings()),
-                mediaFileManager,
-                loggerFactory.CreateLogger<ScopeProvider>(),
-                loggerFactory,
-                Mock.Of<IRequestCache>(),
-                eventAggregatorMock.Object
-            );
+            var scopeProviderMock = new Mock<IScopeProvider>();
+            var scopeMock = new Mock<IScope>();
+
+            scopeProviderMock.Setup(x => x.CreateScope(
+                    It.IsAny<IsolationLevel>(),
+                    It.IsAny<RepositoryCacheMode>(),
+                    It.IsAny<IEventDispatcher>(),
+                    It.IsAny<IScopedNotificationPublisher>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>()))
+                .Returns(scopeMock.Object);
+
+            scopeMock.SetupGet(x => x.Notifications).Returns(Mock.Of<IScopedNotificationPublisher>());
+
+            return scopeProviderMock.Object;
         }
     }
 }
