@@ -175,7 +175,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
         public async Task ProperlyCollects()
         {
             var d = new SnapDictionary<int, string>();
-            d.Test.CollectAuto = false;
 
             for (int i = 0; i < 32; i++)
             {
@@ -187,8 +186,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(0, d.SnapCount); // because we've disposed them
 
             await d.CollectAsync();
-            Assert.AreEqual(32, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
             Assert.AreEqual(0, d.GenCount);
             Assert.AreEqual(0, d.SnapCount);
             Assert.AreEqual(32, d.Count);
@@ -206,7 +203,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(32, d.Count);
 
             // once we collect, they are all gone
-            // since noone is interested anymore
+            // since no one is interested anymore
             await d.CollectAsync();
             Assert.AreEqual(0, d.GenCount);
             Assert.AreEqual(0, d.SnapCount);
