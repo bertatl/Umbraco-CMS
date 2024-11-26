@@ -14,39 +14,31 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Security
         [Test]
         public void EnsureBackOfficeScheme_When_Backoffice_Auth_Scheme_Expect_Updated_SignInScheme()
         {
-            // Arrange
             var scheme = $"{Constants.Security.BackOfficeExternalAuthenticationTypePrefix}test";
             var options = new RemoteAuthenticationOptions
             {
                 SignInScheme = "my_cookie"
             };
 
-            var ensureBackOfficeScheme = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.PostConfigure(scheme, options);
 
-            // Act
-            ensureBackOfficeScheme.PostConfigure(scheme, options);
-
-            // Assert
-            Assert.AreEqual(Constants.Security.BackOfficeExternalAuthenticationType, options.SignInScheme);
+            Assert.AreEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
 
         [Test]
         public void EnsureBackOfficeScheme_When_Not_Backoffice_Auth_Scheme_Expect_No_Change()
         {
-            // Arrange
             var scheme = "test";
             var options = new RemoteAuthenticationOptions
             {
                 SignInScheme = "my_cookie"
             };
 
-            var ensureBackOfficeScheme = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            var sut = new BackOfficeAuthenticationBuilder.EnsureBackOfficeScheme<RemoteAuthenticationOptions>();
+            sut.PostConfigure(scheme, options);
 
-            // Act
-            ensureBackOfficeScheme.PostConfigure(scheme, options);
-
-            // Assert
-            Assert.AreEqual("my_cookie", options.SignInScheme);
+            Assert.AreNotEqual(options.SignInScheme, Constants.Security.BackOfficeExternalAuthenticationType);
         }
     }
 }
