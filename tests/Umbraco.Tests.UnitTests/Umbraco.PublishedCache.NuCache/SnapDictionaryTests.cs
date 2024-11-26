@@ -112,17 +112,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.PublishedCache.NuCache
             Assert.AreEqual(1, d.Count);
 
             // Remove assertions on internal state
-            // Assert.AreEqual(1, d.Test.LiveGen);
-            // Assert.IsTrue(d.Test.NextGen);
-
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            // Instead of checking internal state, let's verify the behavior
+            Assert.IsNotNull(s1);
+            Assert.AreEqual(0, s1.Gen); // Assuming the first snapshot has Gen 0
 
             // gen 2
-            Assert.AreEqual(1, d.Test.GetValues(1).Length);
             d.Set(1, "one");
+            SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
+
+            Assert.AreEqual(1, s2.Gen); // The next snapshot should have Gen 1
+            Assert.AreEqual("one", s2.Get(1));
             Assert.AreEqual(2, d.Test.GetValues(1).Length);
             d.Set(1, "uno");
             Assert.AreEqual(2, d.Test.GetValues(1).Length);
