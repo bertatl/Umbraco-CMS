@@ -85,7 +85,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         [Test]
         public void Logs_Contain_Correct_Error_Count()
         {
-            var numberOfErrors = _logViewer.GetNumberOfErrors(_logTimePeriod);
+            var logTimePeriod = new LogTimePeriod(_logTimePeriod.Start, _logTimePeriod.End);
+            var numberOfErrors = _logViewer.GetNumberOfErrors(logTimePeriod);
 
             // Our dummy log should contain 1 error
             Assert.AreEqual(1, numberOfErrors);
