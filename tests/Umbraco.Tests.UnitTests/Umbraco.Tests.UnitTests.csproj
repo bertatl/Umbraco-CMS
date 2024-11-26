@@ -25,7 +25,6 @@
     <None Remove="umbraco\Data\TEMP\TypesCache\umbraco-types.DESKTOP-EU212M2.hash" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="12.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="MimeKit" Version="[4.1.0, )" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
