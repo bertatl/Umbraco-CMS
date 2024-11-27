@@ -546,7 +546,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
             Assert.AreEqual(3, d.GetTestHelper().LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             Assert.AreEqual(3, d.SnapCount);
 
@@ -607,7 +607,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
             Assert.AreEqual(3, d.GetTestHelper().LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             Assert.AreEqual(3, d.SnapCount);
 
@@ -727,7 +727,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "one");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             using (d.GetScopedWriteLock(GetScopeProvider()))
@@ -735,7 +735,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
                 SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
                 Assert.AreEqual(0, s1.Gen);
-                Assert.AreEqual(1, d.Test.LiveGen);
+                Assert.AreEqual(1, d.GetTestHelper().LiveGen);
                 Assert.IsTrue(d.Test.NextGen);
                 Assert.IsNull(s1.Get(1));
             }
@@ -743,8 +743,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
             Assert.AreEqual(1, s2.Gen);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("one", s2.Get(1));
         }
 
@@ -758,14 +758,14 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "one");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
             Assert.AreEqual(1, s1.Gen);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
@@ -773,14 +773,14 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "uno");
             Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(2, d.Test.LiveGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
             Assert.AreEqual(2, s2.Gen);
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("uno", s2.Get(1));
 
             using (d.GetScopedWriteLock(GetScopeProvider()))
@@ -804,8 +804,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             SnapDictionary<int, string>.Snapshot s4 = d.CreateSnapshot();
 
             Assert.AreEqual(3, s4.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("ein", s4.Get(1));
         }
 
@@ -911,14 +911,14 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "one");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
             Assert.AreEqual(1, s1.Gen);
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("one", s1.Get(1));
 
             // gen 2
@@ -926,14 +926,14 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "uno");
             Assert.AreEqual(2, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(2, d.Test.LiveGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
             Assert.AreEqual(2, s2.Gen);
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("uno", s2.Get(1));
 
             IScopeProvider scopeProvider = GetScopeProvider();
@@ -958,8 +958,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             SnapDictionary<int, string>.Snapshot s4 = d.CreateSnapshot();
 
             Assert.AreEqual(3, s4.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
             Assert.AreEqual("ein", s4.Get(1));
         }
 
@@ -1156,12 +1156,12 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             // gen 1
             d.Set(1, "one");
             Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsNull(d.GetTestHelper().GenObj);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
-            Assert.IsFalse(d.Test.NextGen);
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(1, d.GetTestHelper().GenObj.Gen);
 
@@ -1170,7 +1170,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
 
             d.Set(1, "uno");
             Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(2, d.Test.LiveGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(1, d.GetTestHelper().GenObj.Gen);
 
@@ -1185,7 +1185,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             {
                 d.SetLocked(1, "ein");
                 Assert.IsTrue(d.Test.NextGen);
-                Assert.AreEqual(3, d.Test.LiveGen);
+                Assert.AreEqual(3, d.GetTestHelper().LiveGen);
                 Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(2, d.GetTestHelper().GenObj.Gen);
             }
@@ -1193,19 +1193,19 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             // writer has not released
             Assert.IsTrue(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.Test.GenObj.Gen);
+            Assert.AreEqual(2, d.GetTestHelper().GenObj.Gen);
 
             // nothing changed
             Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
 
             // panic!
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
             Assert.IsTrue(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.Test.GenObj.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.AreEqual(2, d.GetTestHelper().GenObj.Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             // release writer
@@ -1213,8 +1213,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
 
             Assert.IsFalse(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.Test.GenObj.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.AreEqual(2, d.GetTestHelper().GenObj.Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
             Assert.IsTrue(d.Test.NextGen);
 
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
@@ -1222,8 +1222,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             Assert.IsFalse(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
             Assert.AreEqual(3, d.GetTestHelper().GenObj.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
         }
 
         private IScopeProvider GetScopeProvider(IScopeContext scopeContext = null)
