@@ -437,12 +437,12 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
 
             // gen 2
             d.Clear(1);
-            tv = d.Test.GetValues(1);
+            tv = d.GetTestHelper().GetValues(1);
             Assert.AreEqual(2, tv.Length);
-            Assert.AreEqual(2, tv[0].Gen);
+            Assert.AreEqual(2, ((dynamic)tv[0]).Gen);
 
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             Assert.AreEqual(1, d.Count);
             Assert.AreEqual(1, d.SnapCount);
