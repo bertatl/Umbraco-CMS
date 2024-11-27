@@ -54,7 +54,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
                 .ToArray();
 
             // All DTOs should be returned and Id and Text should be unaltered
-            Assert.That(dtos.Select(x => (x.Id, x.Text)), Is.EquivalentTo(populatedDtos.Select(x => (x.Id, x.Text))));
+            Assert.That(dtos.Select(x => (x.Id, x.Text)), Is.EquivalentTo(populatedDtos.Select(x => ((dynamic)x).Id, ((dynamic)x).Text)));
 
             // Check populated aliases
             Assert.That(populatedDtos[0].Alias, Is.EqualTo("content"));
