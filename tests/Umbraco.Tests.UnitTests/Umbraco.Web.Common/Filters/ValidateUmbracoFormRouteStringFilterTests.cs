@@ -2,9 +2,7 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Exceptions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Cms.Web.Common.Security;
@@ -19,12 +17,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         [Test]
         public void Validate_Route_String()
         {
-            var services = new ServiceCollection();
-            services.AddSingleton(DataProtectionProvider);
-            var serviceProvider = services.BuildServiceProvider();
-
-            var attribute = new ValidateUmbracoFormRouteStringAttribute();
-            var filter = (ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter)attribute.CreateInstance(serviceProvider);
+            var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
 
             Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(null, null, null, null));
 
