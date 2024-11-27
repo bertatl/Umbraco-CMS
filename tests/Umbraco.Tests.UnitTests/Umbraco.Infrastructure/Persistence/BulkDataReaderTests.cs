@@ -64,7 +64,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         [Test]
         public void ColumnMappingsTest()
         {
-            using (var testReader = new BulkDataReaderSubclass())
+using (var testReader = new BulkDataReaderSubclass())
             {
                 ReadOnlyCollection<SqlBulkCopyColumnMapping> columnMappings = testReader.ColumnMappings;
 
@@ -2164,7 +2164,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
         /// <summary>
         /// A subclass of <see cref="BulkDataReader"/> used for testing its utility functions.
         /// </summary>
-        private class BulkDataReaderSubclass : BulkDataReader
+        private class BulkDataReaderSubclass : BulkDataReader, IDisposable
         {
             /// <summary>
             /// Constructor.
@@ -2188,6 +2188,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
             /// Returns <see cref="BulkDataReaderTests.TestTableName"/>.
             /// </remarks>
             protected override string TableName => BulkDataReaderTests.TestTableName;
+
+            /// <summary>
+            /// Dispose method to implement IDisposable
+            /// </summary>
+            public new void Dispose()
+            {
+                base.Dispose();
+            }
 
             /// <summary>
             /// See <see cref="BulkDataReader.AddSchemaTableRows()"/>
