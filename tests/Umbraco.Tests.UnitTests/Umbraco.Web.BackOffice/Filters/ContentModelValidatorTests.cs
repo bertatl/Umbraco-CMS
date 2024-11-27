@@ -8,8 +8,9 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.PropertyEditors.Validation;
 using Umbraco.Cms.Web.BackOffice.PropertyEditors.Validation;
+using Umbraco.Cms.Core.Serialization;
 
-namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
+namespace Umbraco.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
  {
      [TestFixture]
      public class ContentModelValidatorTests
