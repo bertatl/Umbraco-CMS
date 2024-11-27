@@ -163,24 +163,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             var sw = new Stopwatch();
             sw.Start();
 
-            // Setup mock behavior for GetLogs method
-            _logViewer.Setup(x => x.GetLogs(
-                It.IsAny<LogTimePeriod>(),
-                It.IsAny<int>(),
-                It.IsAny<int>(),
-                It.IsAny<Direction>(),
-                It.IsAny<string>(),
-                It.IsAny<string[]>()))
-            .Returns((LogTimePeriod period, int pageNumber, int pageSize, Direction direction, string filterExpression, string[] logLevels) =>
-            {
-                var items = Enumerable.Range(0, pageSize)
-                    .Select(i => new LogMessage { Timestamp = DateTimeOffset.Now.AddMinutes(-i) })
-                    .ToList();
-                return new PagedResult<LogMessage>(102, pageNumber, pageSize, items);
-            });
-
-// Should get me the most 100 recent log entries & using default overloads for remaining params
-            PagedResult<LogMessage> allLogs = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1);
+            // Should get me the most 100 recent log entries & using default overloads for remaining params
+            PagedResult<LogMessage> allLogs = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1);
 
             sw.Stop();
 
@@ -192,26 +176,36 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             // Check collection all contain same object type
             CollectionAssert.AllItemsAreInstancesOfType(allLogs.Items, typeof(LogMessage));
 
+            // Check first item is newest
+            LogMessage newestItem = allLogs.Items.First();
+            DateTimeOffset.TryParse("2018-11-12T08:39:18.1971147Z", out DateTimeOffset newDate);
+            Assert.AreEqual(newDate, newestItem.Timestamp);
+
             // Check we call method again with a smaller set of results & in ascending
-            PagedResult<LogMessage> smallQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, pageSize: 10, orderDirection: Direction.Ascending);
+            PagedResult<LogMessage> smallQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, pageSize: 10, orderDirection: Direction.Ascending);
             Assert.AreEqual(10, smallQuery.Items.Count());
             Assert.AreEqual(11, smallQuery.TotalPages);
+
+            // Check first item is oldest
+            LogMessage oldestItem = smallQuery.Items.First();
+            DateTimeOffset.TryParse("2018-11-12T08:34:45.8371142Z", out DateTimeOffset oldDate);
+            Assert.AreEqual(oldDate, oldestItem.Timestamp);
 
             // Check invalid log levels
             // Rather than expect 0 items - get all items back & ignore the invalid levels
             string[] invalidLogLevels = { "Invalid", "NotALevel" };
-            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
+            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
             Assert.AreEqual(102, queryWithInvalidLevels.TotalItems);
 
             // Check we can call method with an array of logLevel (error & warning)
             string[] logLevels = { "Warning", "Error" };
-            PagedResult<LogMessage> queryWithLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
-            Assert.AreEqual(100, queryWithLevels.Items.Count());
+            PagedResult<LogMessage> queryWithLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
+            Assert.AreEqual(7, queryWithLevels.TotalItems);
 
-            // Query @Level='Warning' BUT we pass in array of LogLevels for Debug & Info (Expect to get 100 results as per our mock setup)
+            // Query @Level='Warning' BUT we pass in array of LogLevels for Debug & Info (Expect to get 0 results)
             string[] logLevelMismatch = { "Debug", "Information" };
-            PagedResult<LogMessage> filterLevelQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
-            Assert.AreEqual(100, filterLevelQuery.Items.Count());
+            PagedResult<LogMessage> filterLevelQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
+            Assert.AreEqual(0, filterLevelQuery.TotalItems);
         }
 
         [TestCase("", 102)]
