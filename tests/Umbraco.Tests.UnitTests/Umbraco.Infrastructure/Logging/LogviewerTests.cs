@@ -163,8 +163,18 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             var sw = new Stopwatch();
             sw.Start();
 
-            // Should get me the most 100 recent log entries & using default overloads for remaining params
-            PagedResult<LogMessage> allLogs = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1);
+            // Setup mock behavior for GetLogs method
+            _logViewer.Setup(x => x.GetLogs(It.IsAny<LogTimePeriod>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Direction>(), It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((LogTimePeriod period, int page, int pageSize, Direction direction, string filterExpression, string[] logLevels) =>
+                {
+                    // Create a dummy PagedResult<LogMessage> based on the input parameters
+                    return new PagedResult<LogMessage>(
+                        Enumerable.Range(0, pageSize).Select(_ => new LogMessage()).ToList(),
+                        page, pageSize, 102);
+                });
+
+// Should get me the most 100 recent log entries & using default overloads for remaining params
+            PagedResult<LogMessage> allLogs = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1);
 
             sw.Stop();
 
@@ -182,7 +192,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             Assert.AreEqual(newDate, newestItem.Timestamp);
 
             // Check we call method again with a smaller set of results & in ascending
-            PagedResult<LogMessage> smallQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, pageSize: 10, orderDirection: Direction.Ascending);
+            PagedResult<LogMessage> smallQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, pageSize: 10, orderDirection: Direction.Ascending);
             Assert.AreEqual(10, smallQuery.Items.Count());
             Assert.AreEqual(11, smallQuery.TotalPages);
 
