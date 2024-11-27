@@ -163,8 +163,20 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             var sw = new Stopwatch();
             sw.Start();
 
-            // Should get me the most 100 recent log entries & using default overloads for remaining params
-            PagedResult<LogMessage> allLogs = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1);
+            // Setup mock to return a PagedResult<LogMessage>
+            _logViewer.Setup(x => x.GetLogs(It.IsAny<LogTimePeriod>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Direction>(), It.IsAny<string>(), It.IsAny<string[]>()))
+                .Returns((LogTimePeriod period, int pageNumber, int pageSize, Direction orderDirection, string filterExpression, string[] logLevels) =>
+                {
+                    // Create and return a dummy PagedResult<LogMessage>
+                    return new PagedResult<LogMessage>(102, 2, pageNumber, pageSize, new List<LogMessage>
+                    {
+                        new LogMessage { Timestamp = DateTimeOffset.Parse("2018-11-12T08:39:18.1971147Z") }
+                        // Add more dummy LogMessage objects as needed
+                    });
+                });
+
+// Should get me the most 100 recent log entries & using default overloads for remaining params
+            PagedResult<LogMessage> allLogs = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1);
 
             sw.Stop();
 
@@ -194,17 +206,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             // Check invalid log levels
             // Rather than expect 0 items - get all items back & ignore the invalid levels
             string[] invalidLogLevels = { "Invalid", "NotALevel" };
-            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
+            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
             Assert.AreEqual(102, queryWithInvalidLevels.TotalItems);
 
             // Check we can call method with an array of logLevel (error & warning)
             string[] logLevels = { "Warning", "Error" };
-            PagedResult<LogMessage> queryWithLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
+            PagedResult<LogMessage> queryWithLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
             Assert.AreEqual(7, queryWithLevels.TotalItems);
 
             // Query @Level='Warning' BUT we pass in array of LogLevels for Debug & Info (Expect to get 0 results)
             string[] logLevelMismatch = { "Debug", "Information" };
-            PagedResult<LogMessage> filterLevelQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
+            PagedResult<LogMessage> filterLevelQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
             Assert.AreEqual(0, filterLevelQuery.TotalItems);
         }
 
