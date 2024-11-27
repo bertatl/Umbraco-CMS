@@ -47,6 +47,8 @@ public static class SnapDictionaryTestExtensions
             get => (bool)_testHelper.GetType().GetProperty("CollectAuto", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
             set => _testHelper.GetType().GetProperty("CollectAuto", BindingFlags.Public | BindingFlags.Instance).SetValue(_testHelper, value);
         }
+
+        public object GenObjs => _testHelper.GetType().GetProperty("GenObjs", BindingFlags.Public | BindingFlags.Instance).GetValue(_testHelper);
     }
 
     public static TestHelperWrapper GetTestHelper<TKey, TValue>(this SnapDictionary<TKey, TValue> dictionary)
@@ -478,7 +480,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             // collect liveGen
             GC.Collect();
 
-            Assert.IsTrue(d.Test.GenObjs.TryPeek(out global::Umbraco.Cms.Infrastructure.PublishedCache.Snap.GenObj genObj));
+            Assert.IsTrue(((System.Collections.Concurrent.ConcurrentQueue<global::Umbraco.Cms.Infrastructure.PublishedCache.Snap.GenObj>)d.GetTestHelper().GenObjs).TryPeek(out global::Umbraco.Cms.Infrastructure.PublishedCache.Snap.GenObj genObj));
             genObj = null;
 
             // in Release mode, it works, but in Debug mode, the weak reference is still alive
