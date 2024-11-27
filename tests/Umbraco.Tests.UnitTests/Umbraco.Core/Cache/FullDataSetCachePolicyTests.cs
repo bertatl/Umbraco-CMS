@@ -2,7 +2,6 @@
 // See LICENSE for more details.
 
 using System;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,21 +93,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
             cache.Setup(x => x.Get(It.IsAny<string>()))
                 .Returns(() => cached.Any() ? new DeepCloneableList<AuditItem>(ListCloneBehavior.CloneOnce) : null);
 
-            var policy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            policy.Setup(x => x.GetAll(It.IsAny<object[]>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object[] ids, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAllItems) => getAllItems(ids));
+            IRepositoryCachePolicy<AuditItem, object> policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            AuditItem[] found = policy.Object.GetAll(new object[] { }, ids => getAll);
+            AuditItem[] found = policy.GetAll(new object[] { }, ids => getAll);
 
             Assert.AreEqual(1, cached.Count);
             Assert.IsNotNull(list);
 
             // Do it again, ensure that its coming from the cache!
-            policy = new Mock<IRepositoryCachePolicy<AuditItem, object>>();
-            policy.Setup(x => x.GetAll(It.IsAny<object[]>(), It.IsAny<Func<IEnumerable<object>, IEnumerable<AuditItem>>>()))
-                .Returns((object[] ids, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAllItems) => getAllItems(ids));
+            policy = new FullDataSetRepositoryCachePolicy<AuditItem, object>(cache.Object, DefaultAccessor, item => item.Id, false);
 
-            found = policy.Object.GetAll(new object[] { }, ids => getAll);
+            found = policy.GetAll(new object[] { }, ids => getAll);
 
             Assert.AreEqual(1, cached.Count);
             Assert.IsNotNull(list);
