@@ -735,8 +735,8 @@ using (d.GetScopedWriteLock(GetScopeProvider()))
                 SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
                 Assert.AreEqual(0, s1.Gen);
-                Assert.AreEqual(1, d.Test.LiveGen);
-                Assert.IsTrue(d.Test.NextGen);
+                Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+                Assert.IsTrue(d.GetTestHelper().NextGen);
                 Assert.IsNull(s1.Get(1));
             }
 
