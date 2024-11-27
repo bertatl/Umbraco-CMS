@@ -540,12 +540,12 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "three");
             Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
-            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
             Assert.IsFalse(d.Test.NextGen);
 
             Assert.AreEqual(3, d.SnapCount);
@@ -601,12 +601,12 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "three");
             Assert.AreEqual(3, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
-            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
             Assert.IsFalse(d.Test.NextGen);
 
             Assert.AreEqual(3, d.SnapCount);
