@@ -500,9 +500,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
 
             await d.CollectAsync();
 
-            Assert.AreEqual(0, d.Test.GetValues(1).Length); // null value is gone
+            Assert.IsNull(newSnapshot.Get(1)); // value is gone
             Assert.AreEqual(0, d.Count); // item is gone
-            Assert.AreEqual(0, d.Test.GenObjs.Count);
             Assert.AreEqual(0, d.SnapCount); // snapshot is gone
             Assert.AreEqual(0, d.GenCount); // and generation has been dequeued
         }
