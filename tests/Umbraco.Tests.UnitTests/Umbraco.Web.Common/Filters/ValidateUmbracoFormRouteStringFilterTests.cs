@@ -2,7 +2,14 @@
 // See LICENSE for more details.
 
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
+using System.Collections.Generic;
 using Umbraco.Cms.Web.Common.Exceptions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Cms.Web.Common.Security;
@@ -19,25 +26,64 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         {
             var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
 
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(null, null, null, null));
-
             const string ControllerName = "Test";
             const string ControllerAction = "Index";
             const string Area = "MyArea";
             var validUfprt = EncryptionHelper.CreateEncryptedRouteString(DataProtectionProvider, ControllerName, ControllerAction, Area);
 
+            // Test with null UFPRT
+            var context = CreateActionExecutingContext(null, ControllerName, ControllerAction, Area);
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.OnActionExecuting(context));
+
+            // Test with invalid UFPRT
             var invalidUfprt = validUfprt + "z";
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(invalidUfprt, null, null, null));
+            context = CreateActionExecutingContext(invalidUfprt, ControllerName, ControllerAction, Area);
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.OnActionExecuting(context));
 
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, "doesntMatch"));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, null));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, "doesntMatch", Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, ControllerName, null, Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, "doesntMatch", ControllerAction, Area));
-            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(validUfprt, null, ControllerAction, Area));
+            // Test with valid UFPRT
+            context = CreateActionExecutingContext(validUfprt, ControllerName, ControllerAction, Area);
+            Assert.DoesNotThrow(() => filter.OnActionExecuting(context));
 
-            Assert.DoesNotThrow(() => filter.ValidateRouteString(validUfprt, ControllerName, ControllerAction, Area));
-            Assert.DoesNotThrow(() => filter.ValidateRouteString(validUfprt, ControllerName.ToLowerInvariant(), ControllerAction.ToLowerInvariant(), Area.ToLowerInvariant()));
+            // Test with mismatched area
+            context = CreateActionExecutingContext(validUfprt, ControllerName, ControllerAction, "doesntMatch");
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.OnActionExecuting(context));
+
+            // Test with mismatched action
+            context = CreateActionExecutingContext(validUfprt, ControllerName, "doesntMatch", Area);
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.OnActionExecuting(context));
+
+            // Test with mismatched controller
+            context = CreateActionExecutingContext(validUfprt, "doesntMatch", ControllerAction, Area);
+            Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.OnActionExecuting(context));
+
+            // Test with case-insensitive match
+            context = CreateActionExecutingContext(validUfprt, ControllerName.ToLowerInvariant(), ControllerAction.ToLowerInvariant(), Area.ToLowerInvariant());
+            Assert.DoesNotThrow(() => filter.OnActionExecuting(context));
+        }
+
+        private ActionExecutingContext CreateActionExecutingContext(string ufprt, string controller, string action, string area)
+        {
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>
+            {
+                { "ufprt", ufprt }
+            });
+
+            var actionContext = new ActionContext(
+                httpContext,
+                new RouteData(new RouteValueDictionary
+                {
+                    { "controller", controller },
+                    { "action", action },
+                    { "area", area }
+                }),
+                new ActionDescriptor());
+
+            return new ActionExecutingContext(
+                actionContext,
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                new object());
         }
     }
 }
