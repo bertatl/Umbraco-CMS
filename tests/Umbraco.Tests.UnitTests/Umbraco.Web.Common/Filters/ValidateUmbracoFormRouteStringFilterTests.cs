@@ -24,7 +24,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         [Test]
         public void Validate_Route_String()
         {
-            var filter = new ValidateUmbracoFormRouteStringAttribute().CreateFilter(DataProtectionProvider) as IValidateUmbracoFormRouteStringFilter;
+            var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
 
             const string ControllerName = "Test";
             const string ControllerAction = "Index";
