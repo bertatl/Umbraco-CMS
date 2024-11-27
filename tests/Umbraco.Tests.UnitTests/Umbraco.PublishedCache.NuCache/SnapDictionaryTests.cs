@@ -428,8 +428,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             SnapDictionary<int, string>.Snapshot s = d.CreateSnapshot();
             Assert.AreEqual("one", s.Get(1));
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
 
             Assert.AreEqual(1, d.Count);
             Assert.AreEqual(1, d.SnapCount);
