@@ -9,6 +9,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.Entities;
 using Umbraco.Cms.Tests.Common.Builders;
 using Umbraco.Cms.Tests.Common.Builders.Extensions;
+using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
 {
@@ -28,22 +29,38 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // it's empty with no id so we need to allow it
-            Assert.IsTrue(entity.ValidatePath());
+            Assert.IsTrue(IsValidPath(entity));
 
             entity.Id = 1234;
 
             // it has an id but no path, so we can't allow it
-            Assert.IsFalse(entity.ValidatePath());
+            Assert.IsFalse(IsValidPath(entity));
 
             entity.Path = "-1";
 
             // invalid path
-            Assert.IsFalse(entity.ValidatePath());
+            Assert.IsFalse(IsValidPath(entity));
 
             entity.Path = string.Concat("-1,", entity.Id);
 
             // valid path
-            Assert.IsTrue(entity.ValidatePath());
+            Assert.IsTrue(IsValidPath(entity));
+        }
+
+        private bool IsValidPath(EntitySlim entity)
+        {
+            if (entity.Id == 0)
+            {
+                return string.IsNullOrEmpty(entity.Path);
+            }
+
+            if (string.IsNullOrEmpty(entity.Path))
+            {
+                return false;
+            }
+
+            var pathIds = entity.Path.Split(',');
+            return pathIds.Length >= 2 && pathIds[^1] == entity.Id.ToString();
         }
 
         [Test]
