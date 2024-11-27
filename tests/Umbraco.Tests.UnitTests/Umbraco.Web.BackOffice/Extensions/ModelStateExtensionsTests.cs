@@ -38,7 +38,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
             Assert.AreEqual("en-US", result[0].Item1);
 
             ms = new ModelStateDictionary();
-            ms.AddVariantValidationError("en-US", null, "generic culture error");
+            ms.AddModelError("_Properties.genericProperty.en-US.null", "generic culture error");
 
             result = ms.GetVariantsWithErrors("en-US");
 
