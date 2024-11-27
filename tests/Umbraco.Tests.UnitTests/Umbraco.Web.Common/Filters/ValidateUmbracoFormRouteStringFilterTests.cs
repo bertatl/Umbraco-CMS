@@ -17,7 +17,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         [Test]
         public void Validate_Route_String()
         {
-            var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
+            var attribute = new ValidateUmbracoFormRouteStringAttribute();
+            var filter = attribute.CreateInstance(DataProtectionProvider);
 
             Assert.Throws<HttpUmbracoFormRouteStringException>(() => filter.ValidateRouteString(null, null, null, null));
 
