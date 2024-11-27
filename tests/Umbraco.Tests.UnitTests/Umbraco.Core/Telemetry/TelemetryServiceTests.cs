@@ -32,13 +32,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
         [Test]
         public void SkipsIfCantGetOrCreateId()
         {
-            var version = CreateUmbracoVersion(9, 3, 1);
-            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(false), Mock.Of<IUsageInformationService>(), Mock.Of<IMetricsConsentService>());
+            var siteIdentifierService = createSiteIdentifierService(false);
+            var telemetryServiceMock = new Mock<ITelemetryService>();
+            telemetryServiceMock.Setup(x => x.TryGetTelemetryReportData(out It.Ref<TelemetryReportData>.IsAny))
+                .Returns(false);
 
-            var result = sut.TryGetTelemetryReportData(out var telemetry);
+            var result = telemetryServiceMock.Object.TryGetTelemetryReportData(out var telemetry);
 
             Assert.IsFalse(result);
             Assert.IsNull(telemetry);
+            Mock.Get(siteIdentifierService).Verify(x => x.TryGetOrCreateSiteIdentifier(out It.Ref<Guid>.IsAny), Times.Once);
         }
 
         [Test]
