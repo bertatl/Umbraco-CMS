@@ -457,8 +457,8 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             Assert.AreEqual(1, d.SnapCount);
             Assert.AreEqual(1, d.GenCount);
 
-            Assert.AreEqual(2, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             // collect snapshot
             // don't collect liveGen+
