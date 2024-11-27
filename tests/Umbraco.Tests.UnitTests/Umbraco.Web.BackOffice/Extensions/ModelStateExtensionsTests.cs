@@ -40,7 +40,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
             ms = new ModelStateDictionary();
             ms.AddModelError("_Properties.genericProperty.en-US.null", "generic culture error");
 
-            IReadOnlyList<(string culture, string segment)> propertyResult = ms.GetVariantsWithPropertyErrors("en-US");
+            IReadOnlyList<(string culture, string segment)> propertyResult = ms.GetVariants("en-US");
 
             Assert.AreEqual(1, propertyResult.Count);
             Assert.AreEqual("en-US", propertyResult[0].culture);
