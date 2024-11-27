@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Umbraco.Cms.Infrastructure.Persistence;
+using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Persistence
 {
@@ -2327,7 +2328,7 @@ using (var testReader = new BulkDataReaderSubclass())
             public override bool Read() => _readCount++ < 1;
         }
 
-        private class BulkDataReaderSchemaTest : BulkDataReader
+    private class BulkDataReaderSchemaTest : global::Umbraco.Cms.Infrastructure.Persistence.BulkDataReader
         {
             /// <summary>
             /// Gets or sets a value indicating whether the column is nullable (i.e. optional).
