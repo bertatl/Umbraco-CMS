@@ -140,7 +140,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) =>
                     new AuditItem(1, AuditType.Copy, 123, "test", "blah"));
 
-            AuditItem[] found = defaultPolicy.GetAll(new object[] { }, ids => getAll);
+            AuditItem[] found = defaultPolicy.Object.GetAll(new object[] { }, ids => getAll);
 
             Assert.AreEqual(1, cached.Count);
             Assert.IsNotNull(list);
@@ -164,7 +164,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Cache
                 .Returns((object id, Func<object, AuditItem> getEntity, Func<IEnumerable<object>, IEnumerable<AuditItem>> getAll) =>
                     new AuditItem(1, AuditType.Copy, 123, "test", "blah"));
 
-            AuditItem[] found = defaultPolicy.GetAll(new object[] { }, ids => getAll);
+            AuditItem[] found = defaultPolicy.Object.GetAll(new object[] { }, ids => getAll);
             Assert.AreEqual(2, found.Length);
         }
 
