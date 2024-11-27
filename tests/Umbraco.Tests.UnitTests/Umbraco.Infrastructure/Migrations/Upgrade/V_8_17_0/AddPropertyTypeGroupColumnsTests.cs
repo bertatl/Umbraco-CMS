@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Dynamic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -7,7 +8,6 @@ using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Strings;
 using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_8_17_0;
-using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.Common.TestHelpers;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
@@ -18,9 +18,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         private readonly IShortStringHelper _shortStringHelper = new DefaultShortStringHelper(Options.Create(new RequestHandlerSettings()));
         private readonly ILogger<IMigrationContext> _contextLogger = Mock.Of<ILogger<IMigrationContext>>();
 
-        private PropertyTypeGroupDto CreatePropertyTypeGroupDto(int id, string text)
+        private dynamic CreatePropertyTypeGroupDto(int id, string text)
         {
-            return new PropertyTypeGroupDto { Id = id, Text = text };
+            dynamic dto = new ExpandoObject();
+            dto.Id = id;
+            dto.Text = text;
+            return dto;
         }
 
         [Test]
@@ -43,8 +46,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
                 CreatePropertyTypeGroupDto(5, "Site defaults")
             };
 
-            var populatedDtos = migration.PopulateAliases(dtos)
-                .OrderBy(x => x.Id) // The populated DTOs can be returned in a different order
+            var populatedDtos = migration.PopulateAliases(dtos.Cast<object>())
+                .OrderBy(x => ((dynamic)x).Id)
                 .ToArray();
 
             // All DTOs should be returned and Id and Text should be unaltered
