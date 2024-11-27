@@ -57,12 +57,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
             Assert.That(dtos.Select(x => (Id: (int)x.Id, Text: (string)x.Text)), Is.EquivalentTo(populatedDtos.Select(x => (Id: ((dynamic)x).Id, Text: ((dynamic)x).Text))));
 
             // Check populated aliases
-            Assert.That(populatedDtos[0].Alias, Is.EqualTo("content"));
-            Assert.That(populatedDtos[1].Alias, Is.EqualTo("content"));
-            Assert.That(populatedDtos[2].Alias, Is.EqualTo("settings"));
-            Assert.That(populatedDtos[3].Alias, Is.EqualTo("content2"));
-            Assert.That(populatedDtos[4].Alias, Is.EqualTo("sEOOpenGraph"));
-            Assert.That(populatedDtos[5].Alias, Is.EqualTo("siteDefaults"));
+            Assert.That(((IDictionary<string, object>)populatedDtos[0])["Alias"], Is.EqualTo("content"));
+            Assert.That(((IDictionary<string, object>)populatedDtos[1])["Alias"], Is.EqualTo("content"));
+            Assert.That(((IDictionary<string, object>)populatedDtos[2])["Alias"], Is.EqualTo("settings"));
+            Assert.That(((IDictionary<string, object>)populatedDtos[3])["Alias"], Is.EqualTo("content2"));
+            Assert.That(((IDictionary<string, object>)populatedDtos[4])["Alias"], Is.EqualTo("sEOOpenGraph"));
+            Assert.That(((IDictionary<string, object>)populatedDtos[5])["Alias"], Is.EqualTo("siteDefaults"));
         }
     }
 }
