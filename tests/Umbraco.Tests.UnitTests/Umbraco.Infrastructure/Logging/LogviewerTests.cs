@@ -194,17 +194,17 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             // Check invalid log levels
             // Rather than expect 0 items - get all items back & ignore the invalid levels
             string[] invalidLogLevels = { "Invalid", "NotALevel" };
-            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
+            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
             Assert.AreEqual(102, queryWithInvalidLevels.TotalItems);
 
             // Check we can call method with an array of logLevel (error & warning)
             string[] logLevels = { "Warning", "Error" };
-            PagedResult<LogMessage> queryWithLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
+            PagedResult<LogMessage> queryWithLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
             Assert.AreEqual(7, queryWithLevels.TotalItems);
 
             // Query @Level='Warning' BUT we pass in array of LogLevels for Debug & Info (Expect to get 0 results)
             string[] logLevelMismatch = { "Debug", "Information" };
-            PagedResult<LogMessage> filterLevelQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
+            PagedResult<LogMessage> filterLevelQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
             Assert.AreEqual(0, filterLevelQuery.TotalItems);
         }
 
