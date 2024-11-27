@@ -8,7 +8,6 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.PropertyEditors.Validation;
 using Umbraco.Cms.Web.BackOffice.PropertyEditors.Validation;
-using Umbraco.Cms.Core.Serialization;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
  {
@@ -60,7 +59,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
              addressBookCollectionElementTypeResult.ValidationResults.Add(booksPropertyTypeResult);
              outerError.ValidationResults.Add(addressBookCollectionElementTypeResult);
 
-             var serialized = JsonConvert.SerializeObject(outerError, Formatting.Indented, new Umbraco.Cms.Core.Serialization.ValidationResultConverter());
+             var serialized = JsonConvert.SerializeObject(outerError, Formatting.Indented, new ValidationResultConverter());
              Console.WriteLine(serialized);
 
              JArray jsonError = JsonConvert.DeserializeObject<JArray>(serialized);
