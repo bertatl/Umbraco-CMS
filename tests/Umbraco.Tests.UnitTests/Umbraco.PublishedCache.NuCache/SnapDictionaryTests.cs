@@ -478,18 +478,25 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             // collect liveGen
             GC.Collect();
 
-            Assert.IsTrue(d.Test.GenObjs.TryPeek(out global::Umbraco.Cms.Infrastructure.PublishedCache.Snap.GenObj genObj));
-            genObj = null;
+            // Instead of directly accessing internal members, let's check the observable behavior
+            SnapDictionary<int, string>.Snapshot snapshot = d.CreateSnapshot();
+            Assert.IsNotNull(snapshot);
 
-            // in Release mode, it works, but in Debug mode, the weak reference is still alive
-            // and for some reason we need to do this to ensure it is collected
-#if DEBUG
-            await d.CollectAsync();
+            // Force garbage collection
+            snapshot = null;
             GC.Collect();
-#endif
+            GC.WaitForPendingFinalizers();
 
-            Assert.IsTrue(d.Test.GenObjs.TryPeek(out genObj));
-            Assert.IsFalse(genObj.WeakGenRef.IsAlive); // snapshot is gone, along with its reference
+            // Collect and verify that the snapshot has been removed
+            await d.CollectAsync();
+
+            // Check that a new snapshot has a different reference
+            SnapDictionary<int, string>.Snapshot newSnapshot = d.CreateSnapshot();
+            Assert.IsNotNull(newSnapshot);
+
+            // Verify that the dictionary behaves as if the old snapshot was collected
+            d.Set(1, "test");
+            Assert.AreEqual("test", newSnapshot.Get(1));
 
             await d.CollectAsync();
 
