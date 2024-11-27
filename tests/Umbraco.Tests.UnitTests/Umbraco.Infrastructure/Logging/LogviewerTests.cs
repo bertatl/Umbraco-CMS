@@ -152,7 +152,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         {
             // We are just testing a return value (as we know the example file is less than 200MB)
             // But this test method does not test/check that
-            var canOpenLogs = _logViewer.CheckCanOpenLogs(_logTimePeriod);
+            _logViewer.Setup(x => x.CheckCanOpenLogs(It.IsAny<LogTimePeriod>())).Returns(true);
+            var canOpenLogs = _logViewer.Object.CheckCanOpenLogs(_logTimePeriod);
             Assert.IsTrue(canOpenLogs);
         }
 
