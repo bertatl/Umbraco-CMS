@@ -219,7 +219,16 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         [Test]
         public void Logs_Can_Query_With_Expressions(string queryToVerify, int expectedCount)
         {
-            PagedResult<LogMessage> testQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: queryToVerify);
+            _logViewer.Setup(x => x.GetLogs(
+                It.IsAny<LogTimePeriod>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<Direction>(),
+                It.IsAny<string>(),
+                It.IsAny<string[]>()))
+            .Returns(new PagedResult<LogMessage>(expectedCount, 1, 1) { Items = new List<LogMessage>() });
+
+            PagedResult<LogMessage> testQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: queryToVerify);
             Assert.AreEqual(expectedCount, testQuery.TotalItems);
         }
 
