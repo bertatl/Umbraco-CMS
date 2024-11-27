@@ -9,6 +9,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_8_17_0;
 using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.Common.TestHelpers;
+using Umbraco.Cms.Core.Models;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
 {
@@ -18,9 +19,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         private readonly IShortStringHelper _shortStringHelper = new DefaultShortStringHelper(Options.Create(new RequestHandlerSettings()));
         private readonly ILogger<IMigrationContext> _contextLogger = Mock.Of<ILogger<IMigrationContext>>();
 
-        private PropertyTypeGroupDto CreatePropertyTypeGroupDto(int id, string text)
+        private IDto CreatePropertyTypeGroupDto(int id, string text)
         {
-            return new PropertyTypeGroupDto { Id = id, Text = text };
+            return new { Id = id, Text = text, Alias = (string)null };
         }
 
         [Test]
@@ -44,7 +45,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
             };
 
             var populatedDtos = migration.PopulateAliases(dtos)
-                .OrderBy(x => x.Id) // The populated DTOs can be returned in a different order
+                .OrderBy(x => ((dynamic)x).Id) // The populated DTOs can be returned in a different order
                 .ToArray();
 
             // All DTOs should be returned and Id and Text should be unaltered
