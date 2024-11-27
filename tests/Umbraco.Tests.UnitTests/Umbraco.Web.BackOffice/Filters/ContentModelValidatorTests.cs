@@ -59,7 +59,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Filters
              addressBookCollectionElementTypeResult.ValidationResults.Add(booksPropertyTypeResult);
              outerError.ValidationResults.Add(addressBookCollectionElementTypeResult);
 
-             var serialized = JsonConvert.SerializeObject(outerError, Formatting.Indented, new ValidationResultConverter());
+             var serialized = JsonConvert.SerializeObject(outerError, Formatting.Indented, new Umbraco.Cms.Core.Serialization.ValidationResultConverter());
              Console.WriteLine(serialized);
 
              JArray jsonError = JsonConvert.DeserializeObject<JArray>(serialized);
