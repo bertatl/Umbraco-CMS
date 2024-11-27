@@ -1155,24 +1155,24 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
 
             // gen 1
             d.Set(1, "one");
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsNull(d.GetTestHelper().GenObj);
 
             SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
-            Assert.IsFalse(d.Test.NextGen);
-            Assert.AreEqual(1, d.Test.LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(1, d.GetTestHelper().GenObj.Gen);
+            Assert.AreEqual(1, ((dynamic)d.GetTestHelper().GenObj).Gen);
 
             Assert.AreEqual(1, s1.Gen);
             Assert.AreEqual("one", s1.Get(1));
 
             d.Set(1, "uno");
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(2, d.Test.LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
+            Assert.AreEqual(2, d.GetTestHelper().LiveGen);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(1, d.GetTestHelper().GenObj.Gen);
+            Assert.AreEqual(1, ((dynamic)d.GetTestHelper().GenObj).Gen);
 
             var scopeContext = Mock.Of<IScopeContext>();
             IScopeProvider scopeProvider = GetScopeProvider(scopeContext);
@@ -1181,49 +1181,49 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             // writer is scope contextual and scoped
             //  when disposed, nothing happens
             //  when the context exists, the writer is released
-            using (d.GetScopedWriteLock(scopeProvider))
+using (d.GetScopedWriteLock(scopeProvider))
             {
                 d.SetLocked(1, "ein");
-                Assert.IsTrue(d.Test.NextGen);
-                Assert.AreEqual(3, d.Test.LiveGen);
+                Assert.IsTrue(d.GetTestHelper().NextGen);
+                Assert.AreEqual(3, d.GetTestHelper().LiveGen);
                 Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.GetTestHelper().GenObj.Gen);
+                Assert.AreEqual(2, ((dynamic)d.GetTestHelper().GenObj).Gen);
             }
 
             // writer has not released
             Assert.IsTrue(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.Test.GenObj.Gen);
+            Assert.AreEqual(2, ((dynamic)d.GetTestHelper().GenObj).Gen);
 
             // nothing changed
-            Assert.IsTrue(d.Test.NextGen);
-            Assert.AreEqual(3, d.Test.LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
 
             // panic!
             SnapDictionary<int, string>.Snapshot s2 = d.CreateSnapshot();
 
             Assert.IsTrue(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.Test.GenObj.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(2, ((dynamic)d.GetTestHelper().GenObj).Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             // release writer
             scopeContext.ScopeExit(true);
 
             Assert.IsFalse(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(2, d.Test.GenObj.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(2, ((dynamic)d.GetTestHelper().GenObj).Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
             SnapDictionary<int, string>.Snapshot s3 = d.CreateSnapshot();
 
             Assert.IsFalse(d.GetTestHelper().IsLocked);
             Assert.IsNotNull(d.GetTestHelper().GenObj);
-            Assert.AreEqual(3, d.GetTestHelper().GenObj.Gen);
-            Assert.AreEqual(3, d.Test.LiveGen);
-            Assert.IsFalse(d.Test.NextGen);
+            Assert.AreEqual(3, ((dynamic)d.GetTestHelper().GenObj).Gen);
+            Assert.AreEqual(3, d.GetTestHelper().LiveGen);
+            Assert.IsFalse(d.GetTestHelper().NextGen);
         }
 
         private IScopeProvider GetScopeProvider(IScopeContext scopeContext = null)
