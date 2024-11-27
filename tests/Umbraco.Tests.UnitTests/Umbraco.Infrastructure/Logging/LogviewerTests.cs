@@ -163,14 +163,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             var sw = new Stopwatch();
             sw.Start();
 
-            // Setup mock to return a sample PagedResult<LogMessage>
-            var sampleLogs = Enumerable.Range(0, 100).Select(_ => new LogMessage()).ToList();
-            var allLogs = new PagedResult<LogMessage>(100, 102, sampleLogs);
-            _logViewer.Setup(x => x.GetLogs(It.IsAny<LogTimePeriod>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Direction>(), It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns(allLogs);
-
-// Should get me the most 100 recent log entries & using default overloads for remaining params
-            var result = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1);
+            // Should get me the most 100 recent log entries & using default overloads for remaining params
+            PagedResult<LogMessage> allLogs = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1);
 
             sw.Stop();
 
@@ -188,37 +182,29 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
             Assert.AreEqual(newDate, newestItem.Timestamp);
 
             // Check we call method again with a smaller set of results & in ascending
-            var smallQueryLogs = Enumerable.Range(0, 10).Select(_ => new LogMessage()).ToList();
-            var smallQuery = new PagedResult<LogMessage>(10, 102, smallQueryLogs);
-            _logViewer.Setup(x => x.GetLogs(_logTimePeriod, 1, 10, Direction.Ascending, null, null))
-                .Returns(smallQuery);
-            var smallQueryResult = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, pageSize: 10, orderDirection: Direction.Ascending);
-            Assert.AreEqual(10, smallQueryResult.Items.Count());
-            Assert.AreEqual(11, smallQueryResult.TotalPages);
+            PagedResult<LogMessage> smallQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, pageSize: 10, orderDirection: Direction.Ascending);
+            Assert.AreEqual(10, smallQuery.Items.Count());
+            Assert.AreEqual(11, smallQuery.TotalPages);
+
+            // Check first item is oldest
+            LogMessage oldestItem = smallQuery.Items.First();
+            DateTimeOffset.TryParse("2018-11-12T08:34:45.8371142Z", out DateTimeOffset oldDate);
+            Assert.AreEqual(oldDate, oldestItem.Timestamp);
 
             // Check invalid log levels
-            var invalidLevelsQuery = new PagedResult<LogMessage>(100, 102, sampleLogs);
-            _logViewer.Setup(x => x.GetLogs(_logTimePeriod, 1, 100, Direction.Descending, null, It.Is<string[]>(arr => arr.SequenceEqual(new[] { "Invalid", "NotALevel" }))))
-                .Returns(invalidLevelsQuery);
+            // Rather than expect 0 items - get all items back & ignore the invalid levels
             string[] invalidLogLevels = { "Invalid", "NotALevel" };
-            var queryWithInvalidLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
+            PagedResult<LogMessage> queryWithInvalidLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: invalidLogLevels);
             Assert.AreEqual(102, queryWithInvalidLevels.TotalItems);
 
             // Check we can call method with an array of logLevel (error & warning)
-            var warningErrorLogs = Enumerable.Range(0, 7).Select(_ => new LogMessage()).ToList();
-            var warningErrorQuery = new PagedResult<LogMessage>(7, 7, warningErrorLogs);
-            _logViewer.Setup(x => x.GetLogs(_logTimePeriod, 1, 100, Direction.Descending, null, It.Is<string[]>(arr => arr.SequenceEqual(new[] { "Warning", "Error" }))))
-                .Returns(warningErrorQuery);
             string[] logLevels = { "Warning", "Error" };
-            var queryWithLevels = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
+            PagedResult<LogMessage> queryWithLevels = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, logLevels: logLevels);
             Assert.AreEqual(7, queryWithLevels.TotalItems);
 
             // Query @Level='Warning' BUT we pass in array of LogLevels for Debug & Info (Expect to get 0 results)
-            var emptyQuery = new PagedResult<LogMessage>(0, 0, new List<LogMessage>());
-            _logViewer.Setup(x => x.GetLogs(_logTimePeriod, 1, 100, Direction.Descending, "@Level='Warning'", It.Is<string[]>(arr => arr.SequenceEqual(new[] { "Debug", "Information" }))))
-                .Returns(emptyQuery);
             string[] logLevelMismatch = { "Debug", "Information" };
-            var filterLevelQuery = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
+            PagedResult<LogMessage> filterLevelQuery = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1, filterExpression: "@Level='Warning'", logLevels: logLevelMismatch);
             Assert.AreEqual(0, filterLevelQuery.TotalItems);
         }
 
