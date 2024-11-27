@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Configuration;
+using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Manifest;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Semver;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Telemetry;
-using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Infrastructure.Telemetry;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 {
@@ -32,13 +34,28 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
         [Test]
         public void SkipsIfCantGetOrCreateId()
         {
+            // Arrange
+            var services = new ServiceCollection();
             var version = CreateUmbracoVersion(9, 3, 1);
-            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(false), Mock.Of<IUsageInformationService>(), Mock.Of<IMetricsConsentService>());
+            var siteIdentifierService = createSiteIdentifierService(false);
 
+            services.AddSingleton(Mock.Of<IManifestParser>());
+            services.AddSingleton(version);
+            services.AddSingleton(siteIdentifierService);
+            services.AddSingleton(Mock.Of<IUsageInformationService>());
+            services.AddSingleton(Mock.Of<IMetricsConsentService>());
+            services.AddSingleton<ITelemetryService, TelemetryService>();
+
+            var serviceProvider = services.BuildServiceProvider();
+            var sut = serviceProvider.GetRequiredService<ITelemetryService>();
+
+            // Act
             var result = sut.TryGetTelemetryReportData(out var telemetry);
 
+            // Assert
             Assert.IsFalse(result);
             Assert.IsNull(telemetry);
+            Mock.Get(siteIdentifierService).Verify(x => x.TryGetOrCreateSiteIdentifier(out It.Ref<Guid>.IsAny), Times.Once);
         }
 
         [Test]
