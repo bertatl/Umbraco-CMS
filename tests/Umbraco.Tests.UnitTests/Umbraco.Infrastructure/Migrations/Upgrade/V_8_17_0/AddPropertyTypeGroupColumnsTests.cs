@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Dynamic;
+using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -46,7 +47,8 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
                 CreatePropertyTypeGroupDto(5, "Site defaults")
             };
 
-            var populatedDtos = migration.PopulateAliases(dtos.Cast<object>())
+            var populateAliasesMethod = typeof(AddPropertyTypeGroupColumns).GetMethod("PopulateAliases", BindingFlags.NonPublic | BindingFlags.Instance);
+            var populatedDtos = ((IEnumerable<object>)populateAliasesMethod.Invoke(migration, new object[] { dtos.Cast<object>() }))
                 .OrderBy(x => ((dynamic)x).Id)
                 .ToArray();
 
