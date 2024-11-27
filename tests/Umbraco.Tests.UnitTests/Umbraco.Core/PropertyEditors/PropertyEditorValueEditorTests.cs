@@ -40,9 +40,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.PropertyEditors
         {
             DataValueEditor valueEditor = MockedValueEditors.CreateDataValueEditor(valueType);
 
-            var converted = valueEditor.TryConvertValue(val, out var result);
-            Assert.IsTrue(converted);
-            Assert.AreEqual(expected, result);
+            Attempt<object> result = valueEditor.TryConvertValueToCrlType(val);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(expected, result.Result);
         }
 
         // The following decimal tests have not been added as [TestCase]s
