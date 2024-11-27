@@ -28,7 +28,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.RuntimeMinification
 
             var umbracoVersion = fixture.Freeze<Mock<IUmbracoVersion>>();
             var entryAssemblyMetadata = fixture.Freeze<Mock<IEntryAssemblyMetadata>>();
-            var sut = fixture.Create<UmbracoSmidgeConfigCacheBuster>();
+            var sut = fixture.Create<Umbraco.Cms.Web.Common.RuntimeMinification.UmbracoSmidgeConfigCacheBuster>();
 
             umbracoVersion.Setup(x => x.SemanticVersion).Returns(new SemVersion(9, 4, 5, "beta", "41658f99"));
             entryAssemblyMetadata.Setup(x => x.Name).Returns("Bills.Brilliant.Bakery");
@@ -50,7 +50,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.RuntimeMinification
 
             var umbracoVersion = fixture.Freeze<Mock<IUmbracoVersion>>();
             var entryAssemblyMetadata = fixture.Freeze<Mock<IEntryAssemblyMetadata>>();
-            var sut = fixture.Create<UmbracoSmidgeConfigCacheBuster>();
+            var sut = fixture.Create<Umbraco.Cms.Web.Common.RuntimeMinification.UmbracoSmidgeConfigCacheBuster>();
 
             umbracoVersion.Setup(x => x.SemanticVersion).Returns(new SemVersion(9, 4, 5, "beta", "41658f99"));
             entryAssemblyMetadata.Setup(x => x.Name).Returns("Bills.Brilliant.Bakery");
@@ -70,7 +70,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.RuntimeMinification
 
             var umbracoVersion = fixture.Freeze<Mock<IUmbracoVersion>>();
             var entryAssemblyMetadata = fixture.Freeze<Mock<IEntryAssemblyMetadata>>();
-            var sut = fixture.Create<UmbracoSmidgeConfigCacheBuster>();
+            var sut = fixture.Create<Umbraco.Cms.Web.Common.RuntimeMinification.UmbracoSmidgeConfigCacheBuster>();
 
             umbracoVersion.Setup(x => x.SemanticVersion).Returns(new SemVersion(9, 4, 5, "beta", "41658f99"));
             entryAssemblyMetadata.Setup(x => x.Name).Returns("Bills.Brilliant.Bakery");
@@ -94,7 +94,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.RuntimeMinification
 
             var umbracoVersion = fixture.Freeze<Mock<IUmbracoVersion>>();
             var entryAssemblyMetadata = fixture.Freeze<Mock<IEntryAssemblyMetadata>>();
-            var sut = fixture.Create<UmbracoSmidgeConfigCacheBuster>();
+            var sut = fixture.Create<Umbraco.Cms.Web.Common.RuntimeMinification.UmbracoSmidgeConfigCacheBuster>();
 
             umbracoVersion.Setup(x => x.SemanticVersion).Returns(new SemVersion(9, 4, 5, "beta", "41658f99"));
             entryAssemblyMetadata.Setup(x => x.Name).Returns("Bills.Brilliant.Bakery");
