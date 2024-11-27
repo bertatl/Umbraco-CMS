@@ -9,7 +9,6 @@ using Umbraco.Cms.Infrastructure.Migrations;
 using Umbraco.Cms.Infrastructure.Migrations.Upgrade.V_8_17_0;
 using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Tests.Common.TestHelpers;
-using Umbraco.Cms.Infrastructure.Migrations.Testing;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.V_8_17_0
 {
@@ -24,7 +23,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         {
             var database = new TestDatabase();
             var migrationPlan = new MigrationPlan("test");
-            var context = new TestMigrationContext(migrationPlan, database, _contextLogger);
+            var context = new MigrationContext(migrationPlan, database, _contextLogger);
             var migration = new AddPropertyTypeGroupColumns(context, _shortStringHelper);
 
             var dtos = new[]
