@@ -478,7 +478,7 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             // collect liveGen
             GC.Collect();
 
-            Assert.IsTrue(d.Test.GenObjs.TryPeek(out global::Umbraco.Cms.Infrastructure.PublishedCache.Snap.GenObj genObj));
+            Assert.IsTrue(d.GetTestHelper().GenObj.GenObjs.TryPeek(out global::Umbraco.Cms.Infrastructure.PublishedCache.Snap.GenObj genObj));
             genObj = null;
 
             // in Release mode, it works, but in Debug mode, the weak reference is still alive
