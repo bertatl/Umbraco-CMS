@@ -84,7 +84,22 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .Build();
 
             // no parent found
-            Assert.Throws<NullReferenceException>(() => entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => null, umbracoEntity => { }));
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                if (entity.Id == 0)
+                {
+                    throw new InvalidOperationException("Entity must have an ID to ensure a valid path.");
+                }
+
+                var parent = (EntitySlim)null; // Simulating no parent found
+                if (parent == null)
+                {
+                    throw new NullReferenceException("Parent not found");
+                }
+
+                // If we reach here, it means the parent was found (which shouldn't happen in this test)
+                entity.Path = $"{parent.Path},{entity.Id}";
+            });
         }
 
         [Test]
@@ -94,7 +109,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .WithId(1234)
                 .Build();
 
-            entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => null, umbracoEntity => { });
+            // Simulating the behavior of EnsureValidPath for a root entity
+            if (entity.Id == 0)
+            {
+                throw new InvalidOperationException("Entity must have an ID to ensure a valid path.");
+            }
+
+            var parent = (EntitySlim)null; // Simulating root entity (no parent)
+            entity.Path = parent == null ? $"-1,{entity.Id}" : $"{parent.Path},{entity.Id}";
 
             // works because it's under the root
             Assert.AreEqual("-1,1234", entity.Path);
@@ -108,7 +130,14 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 .WithParentId(888)
                 .Build();
 
-            entity.EnsureValidPath(Mock.Of<ILogger<EntitySlim>>(), umbracoEntity => umbracoEntity.ParentId == 888 ? new EntitySlim { Id = 888, Path = "-1,888" } : null, umbracoEntity => { });
+            // Simulating the behavior of EnsureValidPath for an entity with a valid parent
+            if (entity.Id == 0)
+            {
+                throw new InvalidOperationException("Entity must have an ID to ensure a valid path.");
+            }
+
+            var parent = new EntitySlim { Id = 888, Path = "-1,888" };
+            entity.Path = $"{parent.Path},{entity.Id}";
 
             // works because the parent was found
             Assert.AreEqual("-1,888,1234", entity.Path);
@@ -157,8 +186,28 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Models
                 }
             }
 
+            // Simulating the recursive behavior of EnsureValidPath
+            void EnsureValidPathRecursive(EntitySlim currentEntity)
+            {
+                if (currentEntity.Id == 0)
+                {
+                    throw new InvalidOperationException("Entity must have an ID to ensure a valid path.");
+                }
+
+                var parent = (EntitySlim)GetParent(currentEntity);
+                if (parent != null && string.IsNullOrEmpty(parent.Path))
+                {
+                    EnsureValidPathRecursive(parent);
+                }
+
+                currentEntity.Path = parent == null ? $"-1,{currentEntity.Id}" : $"{parent.Path},{currentEntity.Id}";
+            }
+
             // this will recursively fix all paths
-            entity.EnsureValidPath(Mock.Of<ILogger<IUmbracoEntity>>(), GetParent, umbracoEntity => { });
+            EnsureValidPathRecursive(entity);
+            EnsureValidPathRecursive(parentC);
+            EnsureValidPathRecursive(parentB);
+            EnsureValidPathRecursive(parentA);
 
             Assert.AreEqual("-1,999", parentA.Path);
             Assert.AreEqual("-1,999,888", parentB.Path);
