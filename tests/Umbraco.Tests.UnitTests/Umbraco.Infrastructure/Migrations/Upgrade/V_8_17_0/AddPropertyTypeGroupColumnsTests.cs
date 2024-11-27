@@ -18,6 +18,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
         private readonly IShortStringHelper _shortStringHelper = new DefaultShortStringHelper(Options.Create(new RequestHandlerSettings()));
         private readonly ILogger<IMigrationContext> _contextLogger = Mock.Of<ILogger<IMigrationContext>>();
 
+        private PropertyTypeGroupDto CreatePropertyTypeGroupDto(int id, string text)
+        {
+            return new PropertyTypeGroupDto { Id = id, Text = text };
+        }
+
         [Test]
         public void CreateColumn()
         {
@@ -30,12 +35,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Migrations.Upgrade.
 
             var dtos = new[]
             {
-                new PropertyTypeGroupDto() { Id = 0, Text = "Content" },
-                new PropertyTypeGroupDto() { Id = 1, Text = "Content" },
-                new PropertyTypeGroupDto() { Id = 2, Text = "Settings" },
-                new PropertyTypeGroupDto() { Id = 3, Text = "Content " }, // The trailing space is intentional
-                new PropertyTypeGroupDto() { Id = 4, Text = "SEO/OpenGraph" },
-                new PropertyTypeGroupDto() { Id = 5, Text = "Site defaults" }
+                CreatePropertyTypeGroupDto(0, "Content"),
+                CreatePropertyTypeGroupDto(1, "Content"),
+                CreatePropertyTypeGroupDto(2, "Settings"),
+                CreatePropertyTypeGroupDto(3, "Content "), // The trailing space is intentional
+                CreatePropertyTypeGroupDto(4, "SEO/OpenGraph"),
+                CreatePropertyTypeGroupDto(5, "Site defaults")
             };
 
             var populatedDtos = migration.PopulateAliases(dtos)
