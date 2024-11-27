@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Extensions;
 using Umbraco.Extensions;
+using Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
 {
@@ -44,6 +45,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
 
             Assert.AreEqual(1, propertyResult.Count);
             Assert.AreEqual("en-US", propertyResult[0].culture);
+            Assert.IsNull(propertyResult[0].segment);
         }
 
         [Test]
