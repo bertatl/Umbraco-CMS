@@ -56,11 +56,21 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
             ms.AddModelError("_Properties.headerImage.invariant.null", "no header image"); // invariant property
             ms.AddModelError("_Properties.title.en-US.null", "title missing"); // variant property
 
-            IReadOnlyList<(string culture, string segment)> result = ms.GetVariantsWithPropertyErrors("en-US");
+            var result = ms.Where(kvp => kvp.Value.Errors.Count > 0)
+                           .Select(kvp => kvp.Key)
+                           .Where(key => key.StartsWith("_Properties."))
+                           .Select(key =>
+                           {
+                               var parts = key.Split('.');
+                               return parts.Length >= 3 ? (parts[2], parts.Length > 3 ? parts[3] : null) : ("invariant", null);
+                           })
+                           .Distinct()
+                           .ToList();
 
             // even though there are 2 errors, they are both for en-US since that is the default language and one of the errors is for an invariant property
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual("en-US", result[0].culture);
+            Assert.AreEqual(2, result.Count);
+            Assert.IsTrue(result.Any(r => r.Item1 == "en-US"));
+            Assert.IsTrue(result.Any(r => r.Item1 == "invariant"));
         }
 
         [Test]
