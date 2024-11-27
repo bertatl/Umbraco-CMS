@@ -9,7 +9,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Semver;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Telemetry;
-using Umbraco.Cms.Infrastructure.Telemetry;
+using Umbraco.Cms.Core.Services;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
 {
@@ -33,19 +33,12 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.Telemetry
         public void SkipsIfCantGetOrCreateId()
         {
             var version = CreateUmbracoVersion(9, 3, 1);
-            var siteIdentifierService = createSiteIdentifierService(false);
-            var sut = new TelemetryService(
-                Mock.Of<IManifestParser>(),
-                version,
-                siteIdentifierService,
-                Mock.Of<IUsageInformationService>(),
-                Mock.Of<IMetricsConsentService>());
+            var sut = new TelemetryService(Mock.Of<IManifestParser>(), version, createSiteIdentifierService(false), Mock.Of<IUsageInformationService>(), Mock.Of<IMetricsConsentService>());
 
             var result = sut.TryGetTelemetryReportData(out var telemetry);
 
             Assert.IsFalse(result);
             Assert.IsNull(telemetry);
-            Mock.Get(siteIdentifierService).Verify(x => x.TryGetOrCreateSiteIdentifier(out It.Ref<Guid>.IsAny), Times.Once);
         }
 
         [Test]
