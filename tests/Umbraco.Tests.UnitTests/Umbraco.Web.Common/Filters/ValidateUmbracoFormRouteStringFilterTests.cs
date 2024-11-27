@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Umbraco.Cms.Web.Common.Exceptions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Cms.Web.Common.Security;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
 {
@@ -24,7 +25,9 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Filters
         [Test]
         public void Validate_Route_String()
         {
-            var filter = new ValidateUmbracoFormRouteStringAttribute.ValidateUmbracoFormRouteStringFilter(DataProtectionProvider);
+            var attribute = new ValidateUmbracoFormRouteStringAttribute();
+            var filter = attribute.GetType().GetMethod("CreateInstance", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(attribute, new object[] { DataProtectionProvider }) as IFilterMetadata;
 
             const string ControllerName = "Test";
             const string ControllerAction = "Index";
