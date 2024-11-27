@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.DataProtection;
 using NUnit.Framework;
+using Umbraco.Cms.Web.Common.Attributes;
 using Umbraco.Cms.Web.Common.Exceptions;
 using Umbraco.Cms.Web.Common.Filters;
 using Umbraco.Cms.Web.Common.Security;
