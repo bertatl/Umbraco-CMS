@@ -727,10 +727,10 @@ public static void SetCollectAuto<TKey, TValue>(this SnapDictionary<TKey, TValue
             d.Set(1, "one");
             Assert.AreEqual(1, d.GetTestHelper().GetValues(1).Length);
 
-            Assert.AreEqual(1, d.Test.LiveGen);
-            Assert.IsTrue(d.Test.NextGen);
+            Assert.AreEqual(1, d.GetTestHelper().LiveGen);
+            Assert.IsTrue(d.GetTestHelper().NextGen);
 
-            using (d.GetScopedWriteLock(GetScopeProvider()))
+using (d.GetScopedWriteLock(GetScopeProvider()))
             {
                 SnapDictionary<int, string>.Snapshot s1 = d.CreateSnapshot();
 
