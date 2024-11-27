@@ -40,7 +40,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Core.PropertyEditors
         {
             DataValueEditor valueEditor = MockedValueEditors.CreateDataValueEditor(valueType);
 
-            Attempt<object> result = valueEditor.TryConvertValueToSourceType(val);
+            Attempt<object> result = valueEditor.TryConvertValueToCrlType(val);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(expected, result.Result);
         }
