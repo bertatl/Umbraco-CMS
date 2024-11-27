@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.BackOffice.Extensions;
 using Umbraco.Extensions;
+using Umbraco.Cms.Web.Common.ModelBinders;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.BackOffice.Extensions
 {
