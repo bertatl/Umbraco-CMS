@@ -5,15 +5,12 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Macros;
 using Umbraco.Cms.Web.Common.Macros;
-using Moq;
 
 namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Macros
 {
     [TestFixture]
     public class MacroTests
     {
-        private Mock<IMacroRenderer> _macroRendererMock;
-
         [SetUp]
         public void Setup()
         {
@@ -22,8 +19,6 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Macros
                 new ObjectCacheAppCache(),
                 NoAppCache.Instance,
                 new IsolatedCaches(type => new ObjectCacheAppCache()));
-
-            _macroRendererMock = new Mock<IMacroRenderer>();
         }
 
         [TestCase("anything", true)]
@@ -34,12 +29,7 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Web.Common.Macros
             {
                 MacroSource = macroSource
             };
-
-            _macroRendererMock.Setup(m => m.GetMacroFileName(It.IsAny<MacroModel>()))
-                .Returns(expectedNonNull ? "some-file-name" : null);
-
-            var filename = _macroRendererMock.Object.GetMacroFileName(model);
-
+            var filename = MacroRenderer.GetMacroFileName(model);
             if (expectedNonNull)
             {
                 Assert.IsNotNull(filename);
