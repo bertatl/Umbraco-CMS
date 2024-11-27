@@ -160,21 +160,11 @@ namespace Umbraco.Cms.Tests.UnitTests.Umbraco.Infrastructure.Logging
         [Test]
         public void Logs_Can_Be_Queried()
         {
-            // Setup mock to return a sample PagedResult<LogMessage>
-            var samplePagedResult = new PagedResult<LogMessage>(
-                100,
-                102,
-                2,
-                Enumerable.Range(0, 100).Select(i => new LogMessage()).ToList()
-            );
-            _logViewer.Setup(x => x.GetLogs(It.IsAny<LogTimePeriod>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Direction>(), It.IsAny<string>(), It.IsAny<string[]>()))
-                .Returns(samplePagedResult);
-
             var sw = new Stopwatch();
             sw.Start();
 
-// Should get me the most 100 recent log entries & using default overloads for remaining params
-            PagedResult<LogMessage> allLogs = _logViewer.Object.GetLogs(_logTimePeriod, pageNumber: 1);
+            // Should get me the most 100 recent log entries & using default overloads for remaining params
+            PagedResult<LogMessage> allLogs = _logViewer.GetLogs(_logTimePeriod, pageNumber: 1);
 
             sw.Stop();
 
